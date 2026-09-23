@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Running MiniCS as a server container: build, volumes, operations.">
+<title>Docker · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html" class="active" aria-current="page">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Running</p>
+          <h1>Docker</h1>
+          <p class="page-blurb">Running MiniCS as a server container: build, volumes, operations.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/docker.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>MiniCS Lite ships as a <strong>server container</strong>: the same Flask app the desktop
+shell wraps, served on HTTP with the entire store (config, SQLite, Chroma,
+graph, documents) kept in a single mounted volume. Use it to run the studio on
+a home server, a VPS, or alongside your model servers.</p>
+<hr />
+<h2 id="1-what-the-image-does">1. What the image does<a class="heading-anchor" href="#1-what-the-image-does" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Aspect</th>
+<th>Behaviour</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base</td>
+<td><code>python:3.13-slim</code>, package installed from <code>src/</code> with <code>pip install .</code></td>
+</tr>
+<tr>
+<td>Entrypoint</td>
+<td><code>minics serve --host 0.0.0.0 --no-browser</code> (no GUI needed)</td>
+</tr>
+<tr>
+<td>Store</td>
+<td><code>/data</code> — set via the <code>MINICS_HOME</code> environment variable, declared as a <code>VOLUME</code></td>
+</tr>
+<tr>
+<td>User</td>
+<td>Non-root <code>minics</code> user (uid 1000)</td>
+</tr>
+<tr>
+<td>Health</td>
+<td><code>HEALTHCHECK</code> polls <code>GET /healthz</code> every 30 s</td>
+</tr>
+<tr>
+<td>First run</td>
+<td>The store (folder structure + SQLite migrations) is <strong>auto-created</strong> on startup, then the setup wizard is available in the UI</td>
+</tr>
+</tbody>
+</table>
+<p>There is <strong>no authentication</strong> — the server is meant for a trusted network
+(localhost, LAN, VPN). Do not expose it directly to the internet.</p>
+<h2 id="2-build-and-run">2. Build and run<a class="heading-anchor" href="#2-build-and-run" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>build<span class="w"> </span>-t<span class="w"> </span>minics-lite<span class="w"> </span>.
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>minics-lite<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="m">8765</span>:8765<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>minics-data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>minics-lite
+</code></pre></div>
+
+<p>Then open <code>http://localhost:8765</code>. On first start:</p>
+<ol>
+<li>the container creates <code>/data</code> (the full <code>~/.minics</code> layout) automatically,</li>
+<li>the UI opens on the setup screen — configure your LLM + embedding
+   endpoints in <strong>Settings</strong>, hit <em>Test connection</em>, <em>Finish setup</em>,</li>
+<li>import documents and start authoring; everything persists in the volume.</li>
+</ol>
+<h3 id="bind-mounts-instead-of-named-volumes">Bind mounts instead of named volumes<a class="heading-anchor" href="#bind-mounts-instead-of-named-volumes" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>-p<span class="w"> </span><span class="m">8765</span>:8765<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>/srv/minics:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>minics-lite
+</code></pre></div>
+
+<p>With a bind mount the container runs as uid 1000, so make the host directory
+writable for it: <code>chown -R 1000:1000 /srv/minics</code> (or run with
+<code>--user "$(id -u):$(id -g)"</code> on a directory you own).</p>
+<h2 id="3-docker-compose-recommended">3. Docker Compose (recommended)<a class="heading-anchor" href="#3-docker-compose-recommended" title="Permanent link">&para;</a></h2>
+<p>A ready-made <a href="https://github.com/jasonjimnz/minichat_studio/blob/main/docker-compose.yml"><code>docker-compose.yml</code></a> ships in the repo:</p>
+<div class="highlight"><pre><span></span><code><span class="nt">services</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">minics</span><span class="p">:</span>
+<span class="w">    </span><span class="nt">build</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">.</span>
+<span class="w">    </span><span class="nt">image</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">minics-lite</span>
+<span class="w">    </span><span class="nt">container_name</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">minics-lite</span>
+<span class="w">    </span><span class="nt">ports</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="s">"8765:8765"</span>
+<span class="w">    </span><span class="nt">volumes</span><span class="p">:</span>
+<span class="w">      </span><span class="p p-Indicator">-</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">minics-data:/data</span>
+<span class="w">    </span><span class="nt">restart</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">unless-stopped</span>
+
+<span class="nt">volumes</span><span class="p">:</span>
+<span class="w">  </span><span class="nt">minics-data</span><span class="p">:</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build
+docker<span class="w"> </span>compose<span class="w"> </span>logs<span class="w"> </span>-f<span class="w">          </span><span class="c1"># follow startup / job activity</span>
+docker<span class="w"> </span>compose<span class="w"> </span>down<span class="w">             </span><span class="c1"># stops; the minics-data volume persists</span>
+</code></pre></div>
+
+<h2 id="4-configuration-inside-the-container">4. Configuration inside the container<a class="heading-anchor" href="#4-configuration-inside-the-container" title="Permanent link">&para;</a></h2>
+<p>All the usual mechanisms work (see <a href="configuration.html">configuration.md</a>):</p>
+<ul>
+<li><strong>UI</strong> — the Settings screen writes <code>config.json</code> inside the volume.</li>
+<li><strong>CLI in the container</strong> —</li>
+</ul>
+<p>```bash
+  # interactive wizard
+  docker compose exec minics minics setup</p>
+<p># or non-interactive, e.g. pointing at an Ollama host gateway
+  docker compose exec minics minics setup \
+    --base-url http://host.docker.internal:11434/v1 \
+    --model llama3.1-instruct \
+    --embedding-model nomic-embed-text</p>
+<p>docker compose exec minics minics models
+  ```</p>
+<ul>
+<li><strong>Mounted config</strong> — pre-create <code>/data/config.json</code> on the host and mount
+  the folder; it is read on startup.</li>
+</ul>
+<p>When pointing MiniCS at services on the <em>host machine</em> from inside the
+container, use <code>http://host.docker.internal:PORT/v1</code> (Docker Desktop) or the
+host's LAN address; on Linux add
+<code>--add-host=host.docker.internal:host-gateway</code> to the run command.</p>
+<h2 id="5-useful-operations">5. Useful operations<a class="heading-anchor" href="#5-useful-operations" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>minics<span class="w"> </span>minics<span class="w"> </span>info<span class="w">        </span><span class="c1"># show resolved paths</span>
+docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>minics<span class="w"> </span>minics<span class="w"> </span>reindex<span class="w">     </span><span class="c1"># rebuild vector index + graph</span>
+docker<span class="w"> </span>compose<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>minics<span class="w"> </span>minics<span class="w"> </span><span class="nb">export</span><span class="w"> </span>my-collection<span class="w"> </span>-o<span class="w"> </span>/tmp/out.jsonl<span class="w"> </span>--format<span class="w"> </span>jsonl
+docker<span class="w"> </span>compose<span class="w"> </span>cp<span class="w"> </span>minics-lite:/tmp/out.jsonl<span class="w"> </span>./out.jsonl
+</code></pre></div>
+
+<p>Backups are a copy of the volume: stop the container (for a consistent SQLite
+snapshot) and copy <code>minics-data</code>.</p>
+<h2 id="6-troubleshooting">6. Troubleshooting<a class="heading-anchor" href="#6-troubleshooting" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Cause / fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /</code> unreachable</td>
+<td>Container still starting (first pip-less start is fast, but health has a 15 s grace) — check <code>docker logs minics-lite</code>.</td>
+</tr>
+<tr>
+<td>Endpoint connection test fails</td>
+<td>The model server is not reachable from inside the container — use <code>host.docker.internal</code> / LAN addresses, not <code>localhost</code>.</td>
+</tr>
+<tr>
+<td>Permission denied on bind mount</td>
+<td>The container runs as uid 1000 — <code>chown -R 1000:1000</code> the mounted directory.</td>
+</tr>
+<tr>
+<td>Graph features unavailable</td>
+<td>LadybugDB failed to open its database file — check that the volume is writable; the rest of the app keeps working (retrieval degrades to vectors-only).</td>
+</tr>
+<tr>
+<td>Reset everything</td>
+<td><code>docker compose down -v</code> deletes the store volume.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-how-the-pieces-fit">7. How the pieces fit<a class="heading-anchor" href="#7-how-the-pieces-fit" title="Permanent link">&para;</a></h2>
+<p>The image reuses the exact same code paths as the desktop app: <code>minics serve</code>
+→ <code>run_server()</code> → <code>create_app(ctx)</code> on an <code>AppContext</code> whose home is
+<code>/data</code>. First-run initialisation is the CLI contract — every command that
+needs the store (including <code>serve</code>) creates the folder structure and applies
+SQLite migrations before doing anything else (see
+<a href="backend.html">backend.md</a>, the CLI section).</p>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="serving.html"><span class="pager-label">Previous</span><span class="pager-title">Serving with Flask</span></a>
+<a class="pager-card next" href="api.html"><span class="pager-label">Next</span><span class="pager-title">HTTP API</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-what-the-image-does">1. What the image does</a></li><li class="toc-l2"><a href="#2-build-and-run">2. Build and run</a></li><li class="toc-l3"><a href="#bind-mounts-instead-of-named-volumes">Bind mounts instead of named volumes</a></li><li class="toc-l2"><a href="#3-docker-compose-recommended">3. Docker Compose (recommended)</a></li><li class="toc-l2"><a href="#4-configuration-inside-the-container">4. Configuration inside the container</a></li><li class="toc-l2"><a href="#5-useful-operations">5. Useful operations</a></li><li class="toc-l2"><a href="#6-troubleshooting">6. Troubleshooting</a></li><li class="toc-l2"><a href="#7-how-the-pieces-fit">7. How the pieces fit</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

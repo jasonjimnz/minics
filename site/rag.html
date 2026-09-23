@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Conversion, chunking, entity extraction, ChromaDB, Ladybug graph, RRF.">
+<title>RAG & graph engine · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html" class="active" aria-current="page">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Core</p>
+          <h1>RAG &amp; graph engine</h1>
+          <p class="page-blurb">Conversion, chunking, entity extraction, ChromaDB, Ladybug graph, RRF.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/rag.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>How MiniCS turns imported documents into retrievable, citable grounding:
+conversion → chunking → entity extraction → vector index + knowledge graph →
+hybrid retrieval fused with Reciprocal Rank Fusion.</p>
+<div class="highlight"><pre><span></span><code>PDF/DOCX/TXT/MD/TeX ──► markdown ──► chunks ──┬─► embeddings ──► ChromaDB (vectors)
+                                              └─► entities  ──► Ladybug   (topology)
+
+query ──┬────────────────► Chroma  (semantic)   ──┐
+        │                                          ├─► RRF ─► chunks ─► grounding
+        └────────────────► Ladybug (topology)     ──┘
+</code></pre></div>
+
+<p>Everything degrades gracefully: if the graph is unavailable the vector side
+still answers, and vice-versa.</p>
+<hr />
+<h2 id="1-document-conversion-documentsconvertpy">1. Document conversion (<code>documents/convert.py</code>)<a class="heading-anchor" href="#1-document-conversion-documentsconvertpy" title="Permanent link">&para;</a></h2>
+<p>Every file becomes <strong>markdown</strong> — the canonical text form that is chunked,
+mined for entities, shown in the editor, and kept on disk under
+<code>documents/markdown/</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Extensions</th>
+<th>Converter</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>PDF</td>
+<td><code>.pdf</code></td>
+<td><code>pypdf</code>, page by page; broken pages skipped; author/title metadata harvested.</td>
+</tr>
+<tr>
+<td>DOCX</td>
+<td><code>.docx</code></td>
+<td><code>mammoth</code> → HTML → <code>markdownify</code> (ATX headings, <code>-</code> bullets, images stripped); falls back to <code>python-docx</code> (styles → headings/lists, tables → markdown pipes).</td>
+</tr>
+<tr>
+<td>TXT</td>
+<td><code>.txt</code>, <code>.text</code></td>
+<td>Encoding-chained read (<code>utf-8</code> → <code>utf-8-sig</code> → <code>cp1252</code> → <code>latin-1</code>); ALL-CAPS short lines promoted to <code>##</code> headings.</td>
+</tr>
+<tr>
+<td>Markdown</td>
+<td><code>.md</code>, <code>.markdown</code></td>
+<td>Passed through.</td>
+</tr>
+<tr>
+<td>LaTeX</td>
+<td><code>.tex</code>, <code>.latex</code>, <code>.ltx</code></td>
+<td>Math (<code>$$…$$</code>, <code>\[...\]</code>, <code>$...$</code>) stashed first; a regex table maps structure (<code>\section{}</code> → <code>## …</code>, <code>\textbf{}</code> → <code>**…**</code>, <code>\item</code> → <code>-</code>, <code>\cite{}</code> → <code>[…]</code>); <code>pylatexenc</code> strips the rest; math restored.</td>
+</tr>
+</tbody>
+</table>
+<p><code>clean_markdown()</code> (the deterministic one) then tidies: normalises newlines,
+removes zero-width characters, rejoins hyphenated line breaks, drops
+page-number lines, collapses 3+ blank lines. <code>convert_file()</code> returns a
+<code>ConvertedDocument(kind, title, markdown, metadata)</code> with the title guessed
+from metadata / the first <code>#</code> heading / the file stem.</p>
+<h2 id="2-chunking-ragchunkingpy">2. Chunking (<code>rag/chunking.py</code>)<a class="heading-anchor" href="#2-chunking-ragchunkingpy" title="Permanent link">&para;</a></h2>
+<p><code>split_markdown(markdown, chunk_size, chunk_overlap)</code>:</p>
+<ol>
+<li><code>MarkdownHeaderTextSplitter</code> splits on <code>#</code>–<code>####</code>, keeping the heading
+   metadata (<code>h1</code>–<code>h4</code>) and the headers themselves in the text
+   (<code>strip_headers=False</code>).</li>
+<li>The heading trail (<code>h1 › h2 › h3</code>) is stored per chunk — the graph stores
+   it, and the UI shows where a chunk came from.</li>
+<li>Sections larger than <code>chunk_size</code> go through
+   <code>RecursiveCharacterTextSplitter</code> (<code>\n\n</code> → <code>\n</code> → <code>". "</code> → <code>" "</code> → <code>""</code>)
+   with <code>chunk_overlap</code>.</li>
+<li>Each <code>Chunk(index, text, heading, tokens, metadata)</code> gets a cheap token
+   estimate (~4 chars/token). Documents with no headings fall back to pure
+   recursive splitting.</li>
+</ol>
+<p><code>split_text()</code> is the plain-text variant. Chunk sizes come from
+<code>embedding.chunk_size</code> / <code>chunk_overlap</code> (default 1000/150).</p>
+<h2 id="3-entity-extraction-ragentitiespy">3. Entity extraction (<code>rag/entities.py</code>)<a class="heading-anchor" href="#3-entity-extraction-ragentitiespy" title="Permanent link">&para;</a></h2>
+<p>The graph needs stable <strong>topology</strong>, not perfect NLP — so extraction is cheap
+and offline-first. <code>extract_entities(text, max_entities)</code> gathers four kinds:</p>
+<table>
+<thead>
+<tr>
+<th>Kind</th>
+<th>Source</th>
+<th>Weight</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>markup</code></td>
+<td><code>**bold**</code> or <code>`code`</code> spans the author emphasised</td>
+<td>2.0</td>
+</tr>
+<tr>
+<td><code>phrase</code></td>
+<td>capitalised multi-word sequences ("Reciprocal Rank Fusion"), trailing connectives trimmed</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td><code>acronym</code></td>
+<td>ALL-CAPS tokens (RRF, LLM)</td>
+<td>1.5</td>
+</tr>
+<tr>
+<td><code>term</code></td>
+<td>frequency-ranked significant words (stop-word filtered, length ≥ 4)</td>
+<td>1.0 + 0.25 × (count − 1)</td>
+</tr>
+</tbody>
+</table>
+<p>Entities are deduplicated case-insensitively (repeat mentions grow
+<code>mentions</code>), ranked by weight, then capped. <code>extract_cooccurrence(entities)</code>
+returns <code>(a, b, weight)</code> pairs for entities appearing in the same chunk
+(capped at 40 pairs).</p>
+<p>An optional <strong>LLM enrichment</strong> pass (<code>AuthoringService.enrich_graph</code> →
+<code>llm.extract_entities</code>) adds higher-quality entities per chunk afterwards.</p>
+<h2 id="4-the-knowledge-graph-raggraphpy">4. The knowledge graph (<code>rag/graph.py</code>)<a class="heading-anchor" href="#4-the-knowledge-graph-raggraphpy" title="Permanent link">&para;</a></h2>
+<p><strong>Ladybug</strong> stores the topology in one file (<code>graphdb/minics.graph</code>):</p>
+<div class="highlight"><pre><span></span><code>(Document {id, public_id, title, kind})
+   -[:HAS_CHUNK {position}]-&gt;  (Chunk {id, document_id, idx, heading})
+   -[:NEXT]-&gt;                  (Chunk)          # reading order
+(Chunk) -[:MENTIONS {weight}]-&gt; (Entity {name, kind, mentions})
+(Entity) -[:CO_OCCURS {weight}]-&gt; (Entity)
+</code></pre></div>
+
+<p><code>GraphStore</code> wraps a <code>ladybug.Connection</code> behind an <code>RLock</code>:</p>
+<ul>
+<li><strong>Schema</strong> (<code>SCHEMA</code>) is created on first connect; <code>is_available()</code> probes
+  connectivity (the rest of the app treats the graph as optional).</li>
+<li><strong>Writes</strong>: <code>upsert_document</code>, <code>clear_document_chunks</code> (idempotent
+  re-indexing), <code>add_chunk</code> + <code>link_next</code>, <code>add_mention</code>
+  (<code>MERGE</code> entity, accumulate edge weight), <code>add_cooccurrence</code>.</li>
+<li><strong>Reads</strong>: <code>find_entities</code> (substring match ranked by mentions),
+  <code>chunks_for_entities</code> (chunks scored by summed mention weights),
+  <code>neighbors</code> (<code>CO_OCCURS*1..hops</code> expansion), <code>expand_chunks</code> (one <code>NEXT</code>
+  step), <code>subgraph</code> (nodes/edges around query terms for the Graph view),
+  <code>stats</code> (documents/chunks/entities/mentions/cooccurrences).</li>
+<li><code>clear()</code> wipes relationships then nodes for a full rebuild.</li>
+</ul>
+<p><code>GraphIndexer.index_document()</code> re-chunks the markdown, rebuilds that
+document's chunk nodes, links <code>NEXT</code> in reading order, and adds
+mentions/co-occurrences per chunk — reporting progress per chunk and checking
+cancellation. <code>search(query)</code> matches query terms → entities → optional
+neighbour expansion (<code>retrieval.graph_hops</code>) → chunk ranking → <code>NEXT</code>
+expansion when short.</p>
+<h2 id="5-the-vector-store-ragvectorstorepy">5. The vector store (<code>rag/vectorstore.py</code>)<a class="heading-anchor" href="#5-the-vector-store-ragvectorstorepy" title="Permanent link">&para;</a></h2>
+<p><strong>ChromaDB</strong> <code>PersistentClient</code> in <code>~/.minics/vectordb</code>, one collection
+(default <code>minics</code>), <strong>cosine</strong> space, telemetry off.</p>
+<ul>
+<li>MiniCS embeds text itself (<code>llm.client.embed_texts</code>) and hands vectors to
+  Chroma — the model, dimension and batching stay under its own config.</li>
+<li><code>upsert(ids, embeddings, documents, metadatas)</code> sanitises metadata to
+  scalars (lists become comma-joined strings).</li>
+<li><code>query(embedding, n_results, where)</code> returns hits with
+  <code>score = max(0, 1 - distance)</code>; <code>delete_document(document_id)</code> uses the
+  <code>document_id</code> metadata filter; <code>reset()</code> drops the collection.</li>
+</ul>
+<h2 id="6-the-indexing-pipeline-ragindexerpy">6. The indexing pipeline (<code>rag/indexer.py</code>)<a class="heading-anchor" href="#6-the-indexing-pipeline-ragindexerpy" title="Permanent link">&para;</a></h2>
+<p><code>DocumentIndexer.index_document(ref, progress, job_ctx)</code>:</p>
+<ol>
+<li>Load the document + its markdown (empty → status <code>error</code>).</li>
+<li>Chunk with the configured size/overlap.</li>
+<li><strong>Embed in batches</strong> (<code>embedding.batch_size</code>, default 64), reporting
+   progress across the 10%–85% span and checking cancellation between
+   batches. A dimension mismatch against <code>embedding.dimension</code> publishes a
+   warning event.</li>
+<li>Write to Chroma (<code>delete_document</code> then <code>upsert</code>) with metadata:
+   <code>document_id</code>, <code>document_public_id</code>, <code>title</code>, <code>chunk_index</code>, <code>heading</code>,
+   <code>kind</code>, <code>tags</code>. Vector ids are deterministic:
+   <code>vector_id_for(doc_id, idx)</code> → <code>doc-{id}-chunk-{idx}</code>.</li>
+<li>Persist the canonical chunk text to SQLite (<code>document_chunks</code>) in one
+   transaction — Chroma and SQLite are (re)written together so they cannot
+   drift.</li>
+<li>Set the document <code>ready</code> with <code>chunk_count</code> and publish
+   <code>document.indexed</code>.</li>
+</ol>
+<p><code>remove_document()</code> clears both stores; <code>reindex_all()</code> loops documents,
+publishing <code>document.index_failed</code> warnings for stragglers.</p>
+<h2 id="7-fusion-ragfusionpy">7. Fusion (<code>rag/fusion.py</code>)<a class="heading-anchor" href="#7-fusion-ragfusionpy" title="Permanent link">&para;</a></h2>
+<p>The two retrievers produce scores on incomparable scales (cosine similarity
+vs. entity weights), so MiniCS fuses <strong>ranks</strong>:</p>
+<div class="highlight"><pre><span></span><code>score(d) = Σ_r  w_r / (k + rank_r(d))
+</code></pre></div>
+
+<ul>
+<li><code>reciprocal_rank_fusion(rankings, k=60, weights)</code> — pure id-list version.</li>
+<li><code>fuse_hit_lists(rankings, key="chunk_id", k, weights)</code> — the version used
+  in production: merges hit dicts field-by-field (first non-empty wins),
+  annotates every hit with <code>fused_score</code>, <code>ranks</code> (<code>{"vector": 1, "graph": 4}</code>)
+  and <code>sources</code> (<code>["vector", "graph"]</code>), and sorts by fused score.</li>
+</ul>
+<p><code>k = 60</code> (configurable, <code>retrieval.rrf_k</code>) damps the top of each list, making
+fusion robust to one retriever being noisy. A retriever with weight ≤ 0 is
+skipped entirely.</p>
+<h2 id="8-hybrid-retrieval-ragretrieverpy">8. Hybrid retrieval (<code>rag/retriever.py</code>)<a class="heading-anchor" href="#8-hybrid-retrieval-ragretrieverpy" title="Permanent link">&para;</a></h2>
+<p><code>HybridRetriever.retrieve(query, top_k, use_rag, use_graph, document_ids,
+candidates)</code>:</p>
+<ol>
+<li>Read defaults from <code>retrieval.*</code> settings.</li>
+<li><strong>Vector side</strong>: embed the query, <code>VectorStore.query</code> with the candidate
+   pool (optionally filtered by <code>document_ids</code> via a Chroma <code>$in</code> filter).
+   Failures warn on the bus and return <code>[]</code>.</li>
+<li><strong>Graph side</strong>: <code>GraphIndexer.search</code> (term → entity → chunks). Same
+   failure policy.</li>
+<li><strong>Fuse</strong> with <code>fuse_hit_lists</code>, take <code>top_k</code>.</li>
+<li><strong>Enrich</strong> from SQLite: canonical chunk text, document titles, heading and
+   index — producing <code>RetrievedChunk</code> objects carrying
+   <code>vector_score</code> / <code>graph_score</code> / <code>fused_score</code> / <code>ranks</code> / <code>sources</code> /
+   <code>entities</code>.</li>
+</ol>
+<p><code>RetrievalResult</code> adds <code>used_rag</code> / <code>used_graph</code> / diagnostics and:</p>
+<ul>
+<li><code>citations()</code> → <code>Citation</code> objects (kind, ref, title, 280-char snippet,
+  score, document_id),</li>
+<li><code>context_text(max_chars=8000)</code> → the numbered grounding block:</li>
+</ul>
+<p>```
+  [1] Handbook — Installation › Requirements
+  <chunk text></p>
+<p>[2] FAQ — Troubleshooting
+  <chunk text>
+  ```</p>
+<p><code>build_grounding_block()</code> pairs the context with its citations — exactly what
+the chat service injects into prompts and the UI renders as <code>[n]</code> references.</p>
+<h2 id="9-retrieval-settings-at-a-glance">9. Retrieval settings at a glance<a class="heading-anchor" href="#9-retrieval-settings-at-a-glance" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Setting</th>
+<th>Effect</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>top_k</code> (8)</td>
+<td>Chunks returned after fusion.</td>
+</tr>
+<tr>
+<td><code>candidates</code> (24)</td>
+<td>Pool fetched from each retriever before fusion.</td>
+</tr>
+<tr>
+<td><code>rrf_k</code> (60)</td>
+<td>Fusion damping; higher flattens rank differences.</td>
+</tr>
+<tr>
+<td><code>vector_weight</code> / <code>graph_weight</code> (1.0)</td>
+<td>Relative trust per retriever.</td>
+</tr>
+<tr>
+<td><code>graph_hops</code> (1)</td>
+<td>Entity-neighbour expansion depth (1–3).</td>
+</tr>
+<tr>
+<td><code>use_rag</code> / <code>use_graph</code></td>
+<td>Retriever switches (also per conversation).</td>
+</tr>
+<tr>
+<td><code>use_grounding</code></td>
+<td>Whether retrieved context is actually injected into prompts.</td>
+</tr>
+<tr>
+<td><code>embedding.chunk_size</code> / <code>chunk_overlap</code></td>
+<td>Chunking granularity (re-index after changing).</td>
+</tr>
+</tbody>
+</table>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="llm.html"><span class="pager-label">Previous</span><span class="pager-title">LLM layer</span></a>
+<a class="pager-card next" href="serving.html"><span class="pager-label">Next</span><span class="pager-title">Serving with Flask</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-document-conversion-documentsconvertpy">1. Document conversion (documents/convert.py)</a></li><li class="toc-l2"><a href="#2-chunking-ragchunkingpy">2. Chunking (rag/chunking.py)</a></li><li class="toc-l2"><a href="#3-entity-extraction-ragentitiespy">3. Entity extraction (rag/entities.py)</a></li><li class="toc-l2"><a href="#4-the-knowledge-graph-raggraphpy">4. The knowledge graph (rag/graph.py)</a></li><li class="toc-l2"><a href="#5-the-vector-store-ragvectorstorepy">5. The vector store (rag/vectorstore.py)</a></li><li class="toc-l2"><a href="#6-the-indexing-pipeline-ragindexerpy">6. The indexing pipeline (rag/indexer.py)</a></li><li class="toc-l2"><a href="#7-fusion-ragfusionpy">7. Fusion (rag/fusion.py)</a></li><li class="toc-l2"><a href="#8-hybrid-retrieval-ragretrieverpy">8. Hybrid retrieval (rag/retriever.py)</a></li><li class="toc-l2"><a href="#9-retrieval-settings-at-a-glance">9. Retrieval settings at a glance</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

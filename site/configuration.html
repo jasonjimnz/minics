@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Every config key, the setup wizard and API-key masking.">
+<title>Configuration · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html" class="active" aria-current="page">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Core</p>
+          <h1>Configuration</h1>
+          <p class="page-blurb">Every config key, the setup wizard and API-key masking.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/configuration.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>All configuration lives in one file — <code>~/.minics/config.json</code> — managed by
+<code>core/config.py</code> (<code>Config</code>, <code>ConfigManager</code>). It is the single source of truth
+for how MiniCS talks to the LLM/embedding endpoints and how it behaves.</p>
+<hr />
+<h2 id="1-where-it-lives">1. Where it lives<a class="heading-anchor" href="#1-where-it-lives" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>~/.minics/config.json
+</code></pre></div>
+
+<p>Override the whole home directory with the <code>MINICS_HOME</code> environment variable
+(<code>core/paths.py:ENV_HOME</code>). Tests use this to run against throwaway homes.</p>
+<p>Writes are <strong>atomic</strong>: the payload goes to a temp file in the same directory,
+is fsynced, then <code>os.replace</code>d over the target — a crash can never leave a
+half-written config (<code>ConfigManager._atomic_write</code>).</p>
+<h2 id="2-the-schema">2. The schema<a class="heading-anchor" href="#2-the-schema" title="Permanent link">&para;</a></h2>
+<p>The config is four pydantic sections inside <code>Config</code>:</p>
+<h3 id="llm-chat-endpoint-llmsettings"><code>llm</code> — chat endpoint (<code>LLMSettings</code>)<a class="heading-anchor" href="#llm-chat-endpoint-llmsettings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>base_url</code></td>
+<td>str</td>
+<td><code>""</code></td>
+<td>OpenAI-compatible base URL, e.g. <code>http://localhost:11434/v1</code>. Trailing slashes stripped by validator.</td>
+</tr>
+<tr>
+<td><code>api_key</code></td>
+<td>str</td>
+<td><code>""</code></td>
+<td>May be empty for local servers (<code>not-needed</code> placeholder is sent instead).</td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td>str</td>
+<td><code>""</code></td>
+<td>Default chat model name.</td>
+</tr>
+<tr>
+<td><code>temperature</code></td>
+<td>float</td>
+<td><code>0.7</code></td>
+<td>0.0–2.0.</td>
+</tr>
+<tr>
+<td><code>top_p</code></td>
+<td>float</td>
+<td><code>1.0</code></td>
+<td>Nucleus sampling.</td>
+</tr>
+<tr>
+<td><code>max_tokens</code></td>
+<td>int</td>
+<td><code>2048</code></td>
+<td>Completion budget for chat calls. Long-output tasks (markdown cleaning, entry generation) pass their own larger budget — see <a href="llm.html">llm.md</a>.</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>float</td>
+<td><code>120.0</code></td>
+<td>HTTP timeout in seconds.</td>
+</tr>
+<tr>
+<td><code>extra</code></td>
+<td>dict</td>
+<td><code>{}</code></td>
+<td>Extra body params forwarded verbatim as <code>model_kwargs</code> to <code>ChatOpenAI</code> (e.g. <code>{"num_ctx": 8192}</code>).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="embedding-embedding-endpoint-embeddingsettings"><code>embedding</code> — embedding endpoint (<code>EmbeddingSettings</code>)<a class="heading-anchor" href="#embedding-embedding-endpoint-embeddingsettings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>base_url</code> / <code>api_key</code></td>
+<td>str</td>
+<td><code>""</code></td>
+<td>Fall back to the LLM endpoint when blank (<code>embedding_base_url</code> / <code>embedding_api_key</code> properties).</td>
+</tr>
+<tr>
+<td><code>model</code></td>
+<td>str</td>
+<td><code>""</code></td>
+<td>Embedding model name.</td>
+</tr>
+<tr>
+<td><code>dimension</code></td>
+<td>int</td>
+<td><code>0</code></td>
+<td>Vector size. <strong>Required</strong> (<code>&gt; 0</code>) before MiniCS is "ready": Chroma collections are created with an explicit dimensionality, and the indexer warns on mismatch. Auto-detected by probing with a test string.</td>
+</tr>
+<tr>
+<td><code>batch_size</code></td>
+<td>int</td>
+<td><code>64</code></td>
+<td>Chunks per embedding request during indexing.</td>
+</tr>
+<tr>
+<td><code>chunk_size</code> / <code>chunk_overlap</code></td>
+<td>int</td>
+<td><code>1000</code> / <code>150</code></td>
+<td>Chunking for indexing (characters).</td>
+</tr>
+<tr>
+<td><code>timeout</code></td>
+<td>float</td>
+<td><code>120.0</code></td>
+<td>HTTP timeout.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="retrieval-hybrid-retrieval-defaults-retrievalsettings"><code>retrieval</code> — hybrid retrieval defaults (<code>RetrievalSettings</code>)<a class="heading-anchor" href="#retrieval-hybrid-retrieval-defaults-retrievalsettings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>top_k</code></td>
+<td>int</td>
+<td><code>8</code></td>
+<td>Final chunks returned per retrieval.</td>
+</tr>
+<tr>
+<td><code>candidates</code></td>
+<td>int</td>
+<td><code>24</code></td>
+<td>Per-retriever candidate pool before fusion.</td>
+</tr>
+<tr>
+<td><code>rrf_k</code></td>
+<td>int</td>
+<td><code>60</code></td>
+<td>RRF damping constant — bigger flattens rank differences.</td>
+</tr>
+<tr>
+<td><code>vector_weight</code> / <code>graph_weight</code></td>
+<td>float</td>
+<td><code>1.0</code> / <code>1.0</code></td>
+<td>Retriever weights in the fusion sum.</td>
+</tr>
+<tr>
+<td><code>graph_hops</code></td>
+<td>int</td>
+<td><code>1</code></td>
+<td>Entity-neighbour expansion hops (1–3).</td>
+</tr>
+<tr>
+<td><code>use_rag</code> / <code>use_graph</code> / <code>use_grounding</code></td>
+<td>bool</td>
+<td>all <code>true</code></td>
+<td>Per-conversation defaults; chat conversations store their own copy of these three switches.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="app-desktopserver-behaviour-appsettings"><code>app</code> — desktop/server behaviour (<code>AppSettings</code>)<a class="heading-anchor" href="#app-desktopserver-behaviour-appsettings" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Key</th>
+<th>Type</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>theme</code></td>
+<td>str</td>
+<td><code>"system"</code></td>
+<td>Theme id persisted server-side; the UI also caches it in <code>localStorage</code>.</td>
+</tr>
+<tr>
+<td><code>language</code></td>
+<td>str</td>
+<td><code>"en"</code></td>
+<td>Reserved for i18n.</td>
+</tr>
+<tr>
+<td><code>host</code> / <code>port</code></td>
+<td>str/int</td>
+<td><code>127.0.0.1</code> / <code>8765</code></td>
+<td>Server bind address; the desktop shell picks a free port starting from this one.</td>
+</tr>
+<tr>
+<td><code>open_browser</code></td>
+<td>bool</td>
+<td><code>false</code></td>
+<td><code>minics serve</code> opens the browser.</td>
+</tr>
+<tr>
+<td><code>window_width</code> / <code>window_height</code></td>
+<td>int</td>
+<td><code>1360</code> / <code>900</code></td>
+<td>PyWebView window size (min 900×600).</td>
+</tr>
+<tr>
+<td><code>log_level</code></td>
+<td>str</td>
+<td><code>"INFO"</code></td>
+<td>Reserved for logging setup.</td>
+</tr>
+<tr>
+<td><code>max_workers</code></td>
+<td>int</td>
+<td><code>4</code></td>
+<td>Background job thread pool size (1–32).</td>
+</tr>
+<tr>
+<td><code>sqlite_busy_timeout</code></td>
+<td>float</td>
+<td><code>5.0</code></td>
+<td>SQLite <code>busy_timeout</code> in seconds.</td>
+</tr>
+<tr>
+<td><code>clean_imports_with_llm</code></td>
+<td>bool</td>
+<td><code>true</code></td>
+<td>Run the LLM cleanup pass on imported markdown (in addition to the heuristic cleaner).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-readiness">3. Readiness<a class="heading-anchor" href="#3-readiness" title="Permanent link">&para;</a></h2>
+<p><code>Config.missing_requirements()</code> returns what is still missing:</p>
+<ul>
+<li><code>llm.base_url</code>, <code>llm.model</code>,</li>
+<li><code>embedding.model</code>, <code>embedding.base_url</code>, <code>embedding.dimension &gt; 0</code>.</li>
+</ul>
+<p><code>Config.is_ready()</code> is <code>true</code> when that list is empty. The dashboard's
+"Getting started" checklist and the top-bar <strong>ready/setup</strong> pill both read
+<code>/api/health</code>, which exposes <code>ready</code> and <code>missing</code>. <code>setup_complete</code> flips to
+<code>true</code> once the setup wizard's connection test succeeds
+(<code>ConfigManager.mark_setup_complete</code>).</p>
+<h2 id="4-secrets-handling">4. Secrets handling<a class="heading-anchor" href="#4-secrets-handling" title="Permanent link">&para;</a></h2>
+<p>API keys are masked before the config leaves the server:</p>
+<ul>
+<li><code>Config.public_dict()</code> replaces <code>llm.api_key</code> / <code>embedding.api_key</code> with
+  <code>********</code> (<code>SECRET_MASK</code>) and adds <code>api_key_set</code> booleans.</li>
+<li>When the UI submits settings, a value equal to <code>********</code> means "unchanged"
+  — <code>ConfigManager.update()</code> swaps the mask back for the stored value
+  (<code>config.py:203-206</code>). The browser never sees or re-sends real keys.</li>
+</ul>
+<h2 id="5-changing-configuration">5. Changing configuration<a class="heading-anchor" href="#5-changing-configuration" title="Permanent link">&para;</a></h2>
+<h3 id="setup-wizard-interactive">Setup wizard (interactive)<a class="heading-anchor" href="#setup-wizard-interactive" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>setup
+</code></pre></div>
+
+<p>Asks for LLM base URL/key/model and embedding base URL/key/model (listing
+available models from the endpoint when reachable), applies optional
+<code>--temperature</code> / <code>--max-tokens</code>, probes the embedding dimension
+automatically, and runs a connection test by default. Non-interactive mode
+activates when <code>--base-url</code>, <code>--model</code> or <code>--embedding-model</code> is passed.</p>
+<h3 id="cli-one-liner">CLI one-liner<a class="heading-anchor" href="#cli-one-liner" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>config<span class="w"> </span>--set<span class="w"> </span><span class="s1">'{"llm": {"max_tokens": 8192}}'</span>
+</code></pre></div>
+
+<p><code>--set</code> takes a JSON object that is <strong>deep-merged</strong> into the current config
+(<code>_deep_merge</code>), so you can patch a single nested key.</p>
+<h3 id="rest-api">REST API<a class="heading-anchor" href="#rest-api" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>curl<span class="w"> </span>-X<span class="w"> </span>PUT<span class="w"> </span>http://127.0.0.1:8765/api/config<span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">     </span>-d<span class="w"> </span><span class="s1">'{"retrieval": {"top_k": 12}}'</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8765/api/config/test<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span>
+curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8765/api/config/setup<span class="w"> </span>-d<span class="w"> </span><span class="s1">'{}'</span><span class="w"> </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span>
+</code></pre></div>
+
+<p>The Settings screen in the UI builds the same patches client-side and calls
+<code>PUT /api/config</code>.</p>
+<h3 id="in-python">In Python<a class="heading-anchor" href="#in-python" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="n">ctx</span><span class="o">.</span><span class="n">update_config</span><span class="p">({</span><span class="s2">"app"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"max_workers"</span><span class="p">:</span> <span class="mi">8</span><span class="p">}})</span>
+</code></pre></div>
+
+<h2 id="6-how-changes-propagate">6. How changes propagate<a class="heading-anchor" href="#6-how-changes-propagate" title="Permanent link">&para;</a></h2>
+<p><code>AppContext.update_config()</code> bumps an <code>llm_epoch</code> counter and evicts the cached
+vector store. The next access to <code>ctx.vectorstore</code> rebuilds the Chroma
+collection with the current <code>embedding.dimension</code> — so changing the embedding
+model/dimension takes effect immediately for subsequent indexing, while
+previously indexed vectors stay until re-indexed. Everything else (services,
+repositories, job manager) reads <code>ctx.config</code> live on each access.</p>
+<p>Connection-related endpoints that accept a config patch
+(<code>POST /api/config/test</code>, <code>/api/config/setup</code>, <code>/api/config/embedding-dimension</code>)
+apply the patch <em>before</em> running, so you can test unsaved settings from the
+Settings screen.</p>
+<h2 id="7-environment-variables">7. Environment variables<a class="heading-anchor" href="#7-environment-variables" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Variable</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MINICS_HOME</code></td>
+<td>Redirect the entire home directory (config, db, stores, documents). Used by the test suite.</td>
+</tr>
+</tbody>
+</table>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="libraries.html"><span class="pager-label">Previous</span><span class="pager-title">Libraries</span></a>
+<a class="pager-card next" href="backend.html"><span class="pager-label">Next</span><span class="pager-title">Core &amp; backend</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-where-it-lives">1. Where it lives</a></li><li class="toc-l2"><a href="#2-the-schema">2. The schema</a></li><li class="toc-l3"><a href="#llm-chat-endpoint-llmsettings">llm — chat endpoint (LLMSettings)</a></li><li class="toc-l3"><a href="#embedding-embedding-endpoint-embeddingsettings">embedding — embedding endpoint (EmbeddingSettings)</a></li><li class="toc-l3"><a href="#retrieval-hybrid-retrieval-defaults-retrievalsettings">retrieval — hybrid retrieval defaults (RetrievalSettings)</a></li><li class="toc-l3"><a href="#app-desktopserver-behaviour-appsettings">app — desktop/server behaviour (AppSettings)</a></li><li class="toc-l2"><a href="#3-readiness">3. Readiness</a></li><li class="toc-l2"><a href="#4-secrets-handling">4. Secrets handling</a></li><li class="toc-l2"><a href="#5-changing-configuration">5. Changing configuration</a></li><li class="toc-l3"><a href="#setup-wizard-interactive">Setup wizard (interactive)</a></li><li class="toc-l3"><a href="#cli-one-liner">CLI one-liner</a></li><li class="toc-l3"><a href="#rest-api">REST API</a></li><li class="toc-l3"><a href="#in-python">In Python</a></li><li class="toc-l2"><a href="#6-how-changes-propagate">6. How changes propagate</a></li><li class="toc-l2"><a href="#7-environment-variables">7. Environment variables</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

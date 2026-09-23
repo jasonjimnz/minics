@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Every REST endpoint, the SSE stream, background jobs, error mapping.">
+<title>HTTP API · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html" class="active" aria-current="page">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Reference</p>
+          <h1>HTTP API</h1>
+          <p class="page-blurb">Every REST endpoint, the SSE stream, background jobs, error mapping.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/api.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>The Flask layer (<code>minics/server</code>) is a thin, typed façade over the service
+layer. Every endpoint returns the same JSON envelope, long work returns a job,
+and live progress streams over Server-Sent Events. The API is what the
+built-in SPA consumes — there is no auth layer because the server binds to
+<code>127.0.0.1</code> by default; keep it that way if you expose it.</p>
+<hr />
+<h2 id="1-conventions">1. Conventions<a class="heading-anchor" href="#1-conventions" title="Permanent link">&para;</a></h2>
+<h3 id="response-envelope-serverdepspy">Response envelope (<code>server/deps.py</code>)<a class="heading-anchor" href="#response-envelope-serverdepspy" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code><span class="p">{</span><span class="w"> </span><span class="nt">"ok"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span><span class="w">  </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">…</span><span class="w"> </span><span class="p">}</span><span class="w"> </span><span class="p">}</span>
+<span class="p">{</span><span class="w"> </span><span class="nt">"ok"</span><span class="p">:</span><span class="w"> </span><span class="kc">false</span><span class="p">,</span><span class="w"> </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="s2">"human readable message"</span><span class="w"> </span><span class="p">}</span>
+</code></pre></div>
+
+<p>Extra keys may be merged at the top level (e.g. <code>job_response</code> returns both
+<code>data</code> and a top-level <code>job</code> for backwards compatibility).</p>
+<h3 id="error-mapping">Error mapping<a class="heading-anchor" href="#error-mapping" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Exception</th>
+<th>HTTP</th>
+<th>Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NotFoundError</code></td>
+<td>404</td>
+<td><code>{ok: false, error}</code></td>
+</tr>
+<tr>
+<td><code>FileNotFoundError</code></td>
+<td>404</td>
+<td><code>{ok: false, error}</code></td>
+</tr>
+<tr>
+<td><code>ValueError</code></td>
+<td>400</td>
+<td><code>{ok: false, error}</code></td>
+</tr>
+<tr>
+<td><code>LLMError</code></td>
+<td>502</td>
+<td><code>{ok: false, error}</code></td>
+</tr>
+<tr>
+<td><code>DatabaseError</code></td>
+<td>500</td>
+<td><code>{ok: false, error}</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="references">References<a class="heading-anchor" href="#references" title="Permanent link">&para;</a></h3>
+<p>Almost every <code>&lt;ref&gt;</code> path segment accepts either the numeric <code>id</code> or the
+<code>public_id</code> (<code>Service.resolve_id</code>).</p>
+<h3 id="background-jobs">Background jobs<a class="heading-anchor" href="#background-jobs" title="Permanent link">&para;</a></h3>
+<p>Anything slow returns <strong><code>202 Accepted</code></strong> with a job payload instead of the
+result:</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">"ok"</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">"data"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">"id"</span><span class="p">:</span><span class="w"> </span><span class="s2">"1a2b3c4d5e6f"</span><span class="p">,</span><span class="w"> </span><span class="nt">"name"</span><span class="p">:</span><span class="w"> </span><span class="s2">"Import 2 document(s)"</span><span class="p">,</span><span class="w"> </span><span class="nt">"source"</span><span class="p">:</span><span class="w"> </span><span class="s2">"api"</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"status"</span><span class="p">:</span><span class="w"> </span><span class="s2">"queued"</span><span class="p">,</span><span class="w"> </span><span class="nt">"progress"</span><span class="p">:</span><span class="w"> </span><span class="mf">0.0</span><span class="p">,</span><span class="w"> </span><span class="nt">"message"</span><span class="p">:</span><span class="w"> </span><span class="s2">""</span><span class="p">,</span><span class="w"> </span><span class="nt">"result"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"error"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="nt">"metadata"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">"entry"</span><span class="p">:</span><span class="w"> </span><span class="s2">"ab12cd34"</span><span class="p">},</span>
+<span class="w">    </span><span class="nt">"created_at"</span><span class="p">:</span><span class="w"> </span><span class="mf">1758...</span><span class="p">,</span><span class="w"> </span><span class="nt">"started_at"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span><span class="w"> </span><span class="nt">"finished_at"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">"duration"</span><span class="p">:</span><span class="w"> </span><span class="kc">null</span>
+<span class="w">  </span><span class="p">},</span>
+<span class="w">  </span><span class="nt">"job"</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="w"> </span><span class="err">…</span><span class="w"> </span><span class="err">same</span><span class="w"> </span><span class="err">…</span><span class="w"> </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Poll <code>GET /api/jobs/&lt;id&gt;</code> or subscribe to <code>/api/events</code>; the status moves
+<code>queued → running → success | error | cancelled</code>, <code>progress</code> spans 0–1 and
+<code>result</code> holds the payload on success.</p>
+<hr />
+<h2 id="2-system-serverapisystempy">2. System (<code>server/api/system.py</code>)<a class="heading-anchor" href="#2-system-serverapisystempy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method &amp; path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /</code></td>
+<td>The SPA (renders <code>index.html</code> with a config bootstrap).</td>
+</tr>
+<tr>
+<td><code>GET /healthz</code></td>
+<td>Minimal liveness: <code>{ok, version}</code>.</td>
+</tr>
+<tr>
+<td><code>GET /api/health</code></td>
+<td>Version, home path, <code>ready</code>, <code>setup_complete</code>, <code>missing</code> requirements.</td>
+</tr>
+<tr>
+<td><code>GET /api/config</code></td>
+<td>Full config with masked API keys + <code>missing_requirements</code>.</td>
+</tr>
+<tr>
+<td><code>PUT /api/config</code></td>
+<td>Deep-merge a patch; returns the updated public config.</td>
+</tr>
+<tr>
+<td><code>POST /api/config/test</code></td>
+<td>Apply an optional patch, then run the connection test (chat ping + embedding probe + model list).</td>
+</tr>
+<tr>
+<td><code>POST /api/config/setup</code></td>
+<td>Same as test; on success flags <code>setup_complete</code>.</td>
+</tr>
+<tr>
+<td><code>GET /api/config/models?kind=chat|embedding&amp;base_url=&amp;api_key=</code></td>
+<td>List models from the given endpoint (falls back to configured values; a masked key resolves to the stored one).</td>
+</tr>
+<tr>
+<td><code>POST /api/config/embedding-dimension</code></td>
+<td>Apply an optional patch, probe the dimension, persist it, return <code>{dimension}</code>.</td>
+</tr>
+<tr>
+<td><code>GET /api/overview</code></td>
+<td>Dashboard counts: datasets, entries (total/approved/drafts/in_review), document stats, graph stats, chunk totals, <code>ready</code>.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-datasets-serverapidatasetspy">3. Datasets (<code>server/api/datasets.py</code>)<a class="heading-anchor" href="#3-datasets-serverapidatasetspy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method &amp; path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /api/datasets?search=&amp;tag=&amp;limit=&amp;offset=</code></td>
+<td>Page datasets (each with <code>stats</code>: entries, by_status, approved).</td>
+</tr>
+<tr>
+<td><code>POST /api/datasets</code></td>
+<td><code>{name, description?, tags?, source?, metadata?, settings?}</code> → 201.</td>
+</tr>
+<tr>
+<td><code>GET /api/datasets/&lt;ref&gt;</code></td>
+<td>One dataset + stats.</td>
+</tr>
+<tr>
+<td><code>PATCH /api/datasets/&lt;ref&gt;</code></td>
+<td>Update fields (name re-slugs).</td>
+</tr>
+<tr>
+<td><code>DELETE /api/datasets/&lt;ref&gt;</code></td>
+<td>Delete (entries cascade).</td>
+</tr>
+<tr>
+<td><code>GET /api/datasets/&lt;ref&gt;/stats</code></td>
+<td>Stats only.</td>
+</tr>
+<tr>
+<td><code>GET /api/datasets/&lt;ref&gt;/entries?status=&amp;search=&amp;limit=&amp;offset=</code></td>
+<td>The dataset's entries.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-entries-serverapientriespy">4. Entries (<code>server/api/entries.py</code>)<a class="heading-anchor" href="#4-entries-serverapientriespy" title="Permanent link">&para;</a></h2>
+<h3 id="crud">CRUD<a class="heading-anchor" href="#crud" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method &amp; path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /api/entries?dataset=&amp;status=&amp;search=&amp;tag=&amp;limit=&amp;offset=</code></td>
+<td>Page entries (<code>items</code> + <code>total</code>).</td>
+</tr>
+<tr>
+<td><code>POST /api/entries</code></td>
+<td>Create from <code>{messages}</code> or <code>{system, user, assistant}</code> plus dataset/tags/status/notes/source/metadata → 201.</td>
+</tr>
+<tr>
+<td><code>POST /api/entries/bulk</code></td>
+<td><code>{entries: [chatml…], dataset?, status?}</code> → 201 with created count.</td>
+</tr>
+<tr>
+<td><code>GET /api/entries/&lt;ref&gt;</code></td>
+<td>Entry + <code>validation</code> (structural problems) + collections containing it.</td>
+</tr>
+<tr>
+<td><code>PATCH /api/entries/&lt;ref&gt;</code></td>
+<td>Update fields; message changes bump <code>version</code> and snapshot; <code>reason</code> overrides the snapshot label.</td>
+</tr>
+<tr>
+<td><code>DELETE /api/entries/&lt;ref&gt;</code></td>
+<td>Delete.</td>
+</tr>
+<tr>
+<td><code>GET /api/entries/&lt;ref&gt;/versions</code></td>
+<td>Version history (newest first).</td>
+</tr>
+<tr>
+<td><code>GET /api/entries/&lt;ref&gt;/validate</code></td>
+<td><code>{valid, problems}</code>.</td>
+</tr>
+<tr>
+<td><code>POST /api/entries/&lt;ref&gt;/status</code></td>
+<td><code>{status}</code> → set draft/in_review/approved/rejected.</td>
+</tr>
+<tr>
+<td><code>POST /api/entries/&lt;ref&gt;/tags</code></td>
+<td><code>{tags: [...]}</code> merged in (deduplicated).</td>
+</tr>
+</tbody>
+</table>
+<h3 id="llm-authoring-all-return-202-job">LLM authoring (all return 202 + job)<a class="heading-anchor" href="#llm-authoring-all-return-202-job" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method &amp; path</th>
+<th>Body</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /api/entries/&lt;ref&gt;/enhance</code></td>
+<td><code>{fields: ["assistant"], instruction?, use_grounding?, persist?, model?}</code></td>
+</tr>
+<tr>
+<td><code>POST /api/entries/&lt;ref&gt;/suggest-tags</code></td>
+<td><code>{max_tags?, add?, model?}</code></td>
+</tr>
+<tr>
+<td><code>POST /api/entries/&lt;ref&gt;/evaluate</code></td>
+<td><code>{use_grounding?, model?}</code></td>
+</tr>
+<tr>
+<td><code>POST /api/entries/generate</code></td>
+<td><code>{topic, dataset?, system_hint?, use_grounding?, tags?, model?}</code> — persists a new entry.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="grounding-preview">Grounding preview<a class="heading-anchor" href="#grounding-preview" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Method &amp; path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /api/entries/&lt;ref&gt;/grounding</code></td>
+<td><code>{query?, use_rag?, use_graph?, top_k?}</code> — retrieval result the entry would be grounded with (query defaults to system + user text).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-collections-export-serverapicollectionspy">5. Collections &amp; export (<code>server/api/collections.py</code>)<a class="heading-anchor" href="#5-collections-export-serverapicollectionspy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method &amp; path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /api/collections?search=&amp;dataset=</code></td>
+<td>List (includes available <code>formats</code>).</td>
+</tr>
+<tr>
+<td><code>POST /api/collections</code></td>
+<td><code>{name, description?, dataset?, tags?, entry_ids?, metadata?}</code> → 201.</td>
+</tr>
+<tr>
+<td><code>GET /api/collections/&lt;ref&gt;</code></td>
+<td>Collection + stats + entries.</td>
+</tr>
+<tr>
+<td><code>PATCH /api/collections/&lt;ref&gt;</code></td>
+<td>Update fields.</td>
+</tr>
+<tr>
+<td><code>DELETE /api/collections/&lt;ref&gt;</code></td>
+<td>Delete (membership join rows cascade).</td>
+</tr>
+<tr>
+<td><code>POST /api/collections/&lt;ref&gt;/entries</code></td>
+<td><code>{entries: [refs…]}</code> appended in order.</td>
+</tr>
+<tr>
+<td><code>PUT /api/collections/&lt;ref&gt;/entries</code></td>
+<td>Replace membership wholesale.</td>
+</tr>
+<tr>
+<td><code>DELETE /api/collections/&lt;ref&gt;/entries</code></td>
+<td><code>{entries: [refs…]}</code> removed.</td>
+</tr>
+<tr>
+<td><code>GET /api/collections/&lt;ref&gt;/export?format=chatml|jsonl|alpaca|sharegpt|markdown&amp;include_metadata=&amp;only_approved=</code></td>
+<td>File download with <code>Content-Disposition</code> (<code>&lt;slug&gt;.json/.jsonl/.md</code>).</td>
+</tr>
+</tbody>
+</table>
+<p>Export shapes: <strong>chatml/jsonl</strong> <code>{"messages": [...]}</code> (metadata optional);
+<strong>alpaca</strong> <code>{system, instruction, input, output}</code>; <strong>sharegpt</strong>
+<code>{"conversations": [{from: human|gpt|system, value}]}</code>; <strong>markdown</strong> readable
+blocks with status/tags/quality.</p>
+<h2 id="6-documents-serverapidocumentspy">6. Documents (<code>server/api/documents.py</code>)<a class="heading-anchor" href="#6-documents-serverapidocumentspy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method &amp; path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /api/documents/supported</code></td>
+<td>Accepted extensions and kinds.</td>
+</tr>
+<tr>
+<td><code>GET /api/documents?search=&amp;status=&amp;limit=&amp;offset=</code></td>
+<td>List + library stats.</td>
+</tr>
+<tr>
+<td><code>POST /api/documents</code> (multipart <code>files</code>, <code>tags</code>, <code>index</code>)</td>
+<td>Upload → <strong>202 + job</strong> (convert → clean → index → graph).</td>
+</tr>
+<tr>
+<td><code>POST /api/documents</code> (JSON <code>{title, markdown, index?}</code>)</td>
+<td>Create a markdown note → document + optional index job.</td>
+</tr>
+<tr>
+<td><code>GET /api/documents/&lt;ref&gt;</code></td>
+<td>Document + markdown + chunks.</td>
+</tr>
+<tr>
+<td><code>DELETE /api/documents/&lt;ref&gt;</code></td>
+<td>Remove vector chunks, graph nodes and files.</td>
+</tr>
+<tr>
+<td><code>GET /api/documents/&lt;ref&gt;/markdown</code></td>
+<td>Raw markdown (<code>text/markdown</code>).</td>
+</tr>
+<tr>
+<td><code>PUT /api/documents/&lt;ref&gt;/markdown</code></td>
+<td><code>{markdown, reindex?}</code> — save (and optionally re-index).</td>
+</tr>
+<tr>
+<td><code>POST /api/documents/&lt;ref&gt;/index</code></td>
+<td>Re-index this document → 202 + job.</td>
+</tr>
+<tr>
+<td><code>POST /api/documents/&lt;ref&gt;/clean</code></td>
+<td>LLM markdown cleanup → 202 + job.</td>
+</tr>
+<tr>
+<td><code>POST /api/documents/&lt;ref&gt;/enrich-graph</code></td>
+<td><code>{max_entities?, model?}</code> — LLM entity extraction into the graph → 202.</td>
+</tr>
+<tr>
+<td><code>POST /api/documents/reindex</code></td>
+<td><code>{graph?: true}</code> — re-index everything (60% vector, 40% graph progress) → 202.</td>
+</tr>
+</tbody>
+</table>
+<p>Import dedupes by SHA-256: re-uploading the same bytes returns the existing
+document.</p>
+<h2 id="7-chat-serverapichatpy">7. Chat (<code>server/api/chat.py</code>)<a class="heading-anchor" href="#7-chat-serverapichatpy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method &amp; path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /api/chat/conversations</code></td>
+<td>List with message counts.</td>
+</tr>
+<tr>
+<td><code>POST /api/chat/conversations</code></td>
+<td><code>{title?, system_prompt?, use_rag?, use_graph?, use_grounding?, dataset?}</code> → 201.</td>
+</tr>
+<tr>
+<td><code>GET /api/chat/conversations/&lt;ref&gt;</code></td>
+<td>Conversation + messages.</td>
+</tr>
+<tr>
+<td><code>PATCH /api/chat/conversations/&lt;ref&gt;</code></td>
+<td>Update title/system prompt/switches.</td>
+</tr>
+<tr>
+<td><code>DELETE /api/chat/conversations/&lt;ref&gt;</code></td>
+<td>Delete.</td>
+</tr>
+<tr>
+<td><code>GET /api/chat/conversations/&lt;ref&gt;/messages</code></td>
+<td>History.</td>
+</tr>
+<tr>
+<td><code>POST /api/chat/conversations/&lt;ref&gt;/messages</code></td>
+<td>Non-streaming send → full answer + citations + retrieval info.</td>
+</tr>
+<tr>
+<td><code>DELETE /api/chat/conversations/&lt;ref&gt;/messages</code></td>
+<td>Clear history.</td>
+</tr>
+<tr>
+<td><code>POST /api/chat/conversations/&lt;ref&gt;/stream</code></td>
+<td>SSE streaming send (see below).</td>
+</tr>
+<tr>
+<td><code>POST /api/chat/conversations/&lt;ref&gt;/retrieve</code></td>
+<td><code>{query, use_rag?, use_graph?, top_k?}</code> — preview retrieval without touching the transcript.</td>
+</tr>
+<tr>
+<td><code>GET /api/chat/conversations/&lt;ref&gt;/citations</code></td>
+<td>All citations stored on the conversation's messages.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="streaming-wire-format">Streaming wire format<a class="heading-anchor" href="#streaming-wire-format" title="Permanent link">&para;</a></h3>
+<p><code>POST …/stream</code> responds <code>text/event-stream</code>. Each frame is
+<code>event: &lt;type&gt;</code> + <code>data: &lt;json&gt;</code>:</p>
+<table>
+<thead>
+<tr>
+<th>Event</th>
+<th>Payload</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>retrieval</code></td>
+<td><code>{retrieval: RetrievalResult.to_dict(), grounding: bool}</code> — emitted first, before generation.</td>
+</tr>
+<tr>
+<td><code>token</code></td>
+<td><code>{text}</code> — incremental answer text.</td>
+</tr>
+<tr>
+<td><code>error</code></td>
+<td><code>{error}</code> — model failure; the stream ends after this.</td>
+</tr>
+<tr>
+<td><code>done</code></td>
+<td><code>{content, citations, usage, message}</code> — final accumulated answer; the assistant message is persisted before this fires.</td>
+</tr>
+</tbody>
+</table>
+<p>Keep-alives appear as SSE comment frames (<code>: keep-alive</code>).</p>
+<h2 id="8-jobs-events-serverapijobspy">8. Jobs &amp; events (<code>server/api/jobs.py</code>)<a class="heading-anchor" href="#8-jobs-events-serverapijobspy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method &amp; path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /api/jobs</code></td>
+<td>All jobs (newest first semantics via client) + <code>active</code> count.</td>
+</tr>
+<tr>
+<td><code>GET /api/jobs/&lt;id&gt;</code></td>
+<td>One job.</td>
+</tr>
+<tr>
+<td><code>POST /api/jobs/&lt;id&gt;/cancel</code></td>
+<td>Cooperative cancellation.</td>
+</tr>
+<tr>
+<td><code>POST /api/jobs/cancel-all</code></td>
+<td>Cancel every non-terminal job.</td>
+</tr>
+<tr>
+<td><code>GET /api/events?after=&lt;id&gt;&amp;job=&lt;id&gt;</code></td>
+<td><strong>SSE stream</strong> of the global event bus (replays history after <code>after</code>, optionally filtered to one job).</td>
+</tr>
+<tr>
+<td><code>GET /api/events/history?after=&amp;limit=</code></td>
+<td>Recent events as JSON.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="global-event-stream">Global event stream<a class="heading-anchor" href="#global-event-stream" title="Permanent link">&para;</a></h3>
+<p>Frames carry the event <code>type</code> as the SSE event name and the full event dict as
+data: <code>id, type, message, level, progress, source, data, ts, job_id</code>. Common
+types: <code>job.queued/started/progress/log/error/finished/cancelling</code>,
+<code>document.created/converted/indexed/index_failed</code>,
+<code>graph.indexed/index_failed</code>, <code>dataset.*</code>, <code>entry.*</code>, <code>collection.*</code>,
+<code>chat.*</code>, <code>retrieval.vector_failed</code>, <code>embedding.dimension_mismatch</code>.</p>
+<h2 id="9-retrieval-graph-serverapiretrievalpy">9. Retrieval &amp; graph (<code>server/api/retrieval.py</code>)<a class="heading-anchor" href="#9-retrieval-graph-serverapiretrievalpy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Method &amp; path</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>POST /api/retrieval/search</code></td>
+<td><code>{query, top_k?, use_rag?, use_graph?, candidates?, document_ids?}</code> → fused <code>RetrievalResult</code>.</td>
+</tr>
+<tr>
+<td><code>GET /api/retrieval/status</code></td>
+<td>Vector index summary, graph availability + stats, retrieval settings.</td>
+</tr>
+<tr>
+<td><code>GET /api/graph/subgraph?q=&amp;limit=</code></td>
+<td>Nodes/edges around entities matching <code>q</code> (for the Graph view).</td>
+</tr>
+<tr>
+<td><code>GET /api/graph/entities?q=&amp;limit=</code></td>
+<td>Matching entities ranked by mentions.</td>
+</tr>
+<tr>
+<td><code>POST /api/graph/rebuild</code></td>
+<td>Clear and rebuild the whole graph → 202 + job.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="10-a-worked-example">10. A worked example<a class="heading-anchor" href="#10-a-worked-example" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1) upload and index a document (job-based)</span>
+<span class="nv">JOB</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>-F<span class="w"> </span><span class="nv">files</span><span class="o">=</span>@handbook.pdf<span class="w"> </span>http://127.0.0.1:8765/api/documents<span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span>.job.id<span class="k">)</span>
+
+<span class="c1"># 2) watch it finish</span>
+curl<span class="w"> </span>-s<span class="w"> </span>http://127.0.0.1:8765/api/jobs/<span class="nv">$JOB</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.data.status
+
+<span class="c1"># 3) search it</span>
+curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8765/api/retrieval/search<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-d<span class="w"> </span><span class="s1">'{"query": "installation requirements", "top_k": 5}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>.data.chunks<span class="o">[</span><span class="m">0</span><span class="o">]</span>
+
+<span class="c1"># 4) stream a grounded chat answer</span>
+<span class="nv">CONV</span><span class="o">=</span><span class="k">$(</span>curl<span class="w"> </span>-s<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8765/api/chat/conversations<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">'{"title": "Demo"}'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>jq<span class="w"> </span>-r<span class="w"> </span>.data.public_id<span class="k">)</span>
+curl<span class="w"> </span>-N<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8765/api/chat/conversations/<span class="nv">$CONV</span>/stream<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-H<span class="w"> </span><span class="s2">"Content-Type: application/json"</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">'{"content": "How do I install it?"}'</span>
+</code></pre></div>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="docker.html"><span class="pager-label">Previous</span><span class="pager-title">Docker</span></a>
+<a class="pager-card next" href="frontend.html"><span class="pager-label">Next</span><span class="pager-title">Frontend</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-conventions">1. Conventions</a></li><li class="toc-l3"><a href="#response-envelope-serverdepspy">Response envelope (server/deps.py)</a></li><li class="toc-l3"><a href="#error-mapping">Error mapping</a></li><li class="toc-l3"><a href="#references">References</a></li><li class="toc-l3"><a href="#background-jobs">Background jobs</a></li><li class="toc-l2"><a href="#2-system-serverapisystempy">2. System (server/api/system.py)</a></li><li class="toc-l2"><a href="#3-datasets-serverapidatasetspy">3. Datasets (server/api/datasets.py)</a></li><li class="toc-l2"><a href="#4-entries-serverapientriespy">4. Entries (server/api/entries.py)</a></li><li class="toc-l3"><a href="#crud">CRUD</a></li><li class="toc-l3"><a href="#llm-authoring-all-return-202-job">LLM authoring (all return 202 + job)</a></li><li class="toc-l3"><a href="#grounding-preview">Grounding preview</a></li><li class="toc-l2"><a href="#5-collections-export-serverapicollectionspy">5. Collections &amp; export (server/api/collections.py)</a></li><li class="toc-l2"><a href="#6-documents-serverapidocumentspy">6. Documents (server/api/documents.py)</a></li><li class="toc-l2"><a href="#7-chat-serverapichatpy">7. Chat (server/api/chat.py)</a></li><li class="toc-l3"><a href="#streaming-wire-format">Streaming wire format</a></li><li class="toc-l2"><a href="#8-jobs-events-serverapijobspy">8. Jobs &amp; events (server/api/jobs.py)</a></li><li class="toc-l3"><a href="#global-event-stream">Global event stream</a></li><li class="toc-l2"><a href="#9-retrieval-graph-serverapiretrievalpy">9. Retrieval &amp; graph (server/api/retrieval.py)</a></li><li class="toc-l2"><a href="#10-a-worked-example">10. A worked example</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

@@ -1,0 +1,18 @@
+# Keep the build context minimal.
+.git
+.gitignore
+.venv
+.pytest_cache
+.ruff_cache
+**/__pycache__
+**/*.pyc
+*.egg-info
+build
+dist
+tests
+docs
+*.md
+!README.md
+Dockerfile
+docker-compose.yml
+.dockerignore

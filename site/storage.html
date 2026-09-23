@@ -1,0 +1,268 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The ~/.minics store, embedded databases, backups and portability.">
+<title>Data & storage · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html" class="active" aria-current="page">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Reference</p>
+          <h1>Data &amp; storage</h1>
+          <p class="page-blurb">The ~/.minics store, embedded databases, backups and portability.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/storage.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>MiniCS is <strong>local-first</strong>: the application and all of its data live on your
+machine, in one folder. There is no cloud, no account and no sync service.
+This page explains exactly what is stored where, how the embedded databases
+work, and what that means for backups, moving and running multiple instances.</p>
+<hr />
+<h2 id="1-one-folder-the-store">1. One folder: the store<a class="heading-anchor" href="#1-one-folder-the-store" title="Permanent link">&para;</a></h2>
+<p>Everything lives in <strong><code>~/.minics</code></strong> by default. Override it with the
+<code>MINICS_HOME</code> environment variable — every code path resolves paths through
+<code>core/paths.py</code> (<code>MinicsPaths</code>), nothing is ever hardcoded:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">MINICS_HOME</span><span class="o">=</span>/srv/minics<span class="w">        </span><span class="c1"># Windows: set MINICS_HOME=D:\minics</span>
+</code></pre></div>
+
+<p>The store is created automatically by any command that needs it
+(<code>minics init</code> does it explicitly), including SQLite migrations.</p>
+<h2 id="2-what-is-inside">2. What is inside<a class="heading-anchor" href="#2-what-is-inside" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>~/.minics/
+├── config.json            # all settings (LLM/embedding endpoints, app config)
+├── minics.sqlite3         # the relational store (WAL mode)
+├── minics.sqlite3-wal     # SQLite write-ahead log (transient)
+├── minics.sqlite3-shm
+├── documents/
+│   ├── originals/         # uploaded PDF/DOCX/TXT/MD/TeX, untouched
+│   └── markdown/          # the cleaned markdown conversion of each document
+├── vectordb/              # ChromaDB embedded persistent store (vectors + metadata)
+├── graphdb/
+│   └── minics.graph       # LadybugDB embedded knowledge graph
+├── cache/                 # working files
+└── logs/                  # application logs
+</code></pre></div>
+
+<table>
+<thead>
+<tr>
+<th>Path</th>
+<th>Owned by</th>
+<th>Contents</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>config.json</code></td>
+<td><code>core/config.py</code></td>
+<td>Four pydantic sections: <code>llm</code>, <code>embedding</code>, <code>app</code>, … (full schema in <a href="configuration.html">configuration.md</a>).</td>
+</tr>
+<tr>
+<td><code>minics.sqlite3</code></td>
+<td><code>core/db.py</code></td>
+<td>Datasets, entries (+ version history), collections, documents, jobs.</td>
+</tr>
+<tr>
+<td><code>documents/originals/</code></td>
+<td><code>documents/convert.py</code></td>
+<td>Source files exactly as uploaded.</td>
+</tr>
+<tr>
+<td><code>documents/markdown/</code></td>
+<td><code>documents/convert.py</code></td>
+<td>Cleaned markdown — the input to chunking and indexing.</td>
+</tr>
+<tr>
+<td><code>vectordb/</code></td>
+<td><code>rag/vectorstore.py</code></td>
+<td>ChromaDB collections, created with your embedding <strong>dimension</strong>.</td>
+</tr>
+<tr>
+<td><code>graphdb/</code></td>
+<td><code>rag/graph.py</code></td>
+<td>Entities and relations for graph-aware retrieval.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-the-embedded-databases">3. The embedded databases<a class="heading-anchor" href="#3-the-embedded-databases" title="Permanent link">&para;</a></h2>
+<p>MiniCS deliberately uses <strong>three embedded databases</strong> — no database server to
+install, no connection strings, each store is just a file inside the folder:</p>
+<table>
+<thead>
+<tr>
+<th>Engine</th>
+<th>File</th>
+<th>Role</th>
+<th>Concurrency model</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>SQLite</strong></td>
+<td><code>minics.sqlite3</code></td>
+<td>System of record for all app data</td>
+<td>WAL mode: many readers + <strong>one dedicated writer thread</strong> inside the process; every write is funnelled through it (<code>core/db.py</code>).</td>
+</tr>
+<tr>
+<td><strong>ChromaDB</strong></td>
+<td><code>vectordb/</code></td>
+<td>Vector index over document chunks</td>
+<td>Embedded persistent client; safe within the single app process.</td>
+</tr>
+<tr>
+<td><strong>LadybugDB</strong></td>
+<td><code>graphdb/minics.graph</code></td>
+<td>Knowledge graph (entities + relations)</td>
+<td>Embedded; opened at startup.</td>
+</tr>
+</tbody>
+</table>
+<p>Two design consequences worth knowing:</p>
+<ul>
+<li><strong>One process per store.</strong> These embedded engines assume a single owning
+  application. Run one MiniCS instance against a given <code>MINICS_HOME</code> — do not
+  open the same folder from two processes (two <code>minics serve</code> runs, or CLI
+  commands while a server holds the same store) and never share the folder
+  over a network filesystem. A second, <em>separate</em> store is as easy as a second
+  <code>MINICS_HOME</code>.</li>
+<li><strong>Graceful degradation.</strong> If the graph file cannot be opened, retrieval
+  falls back to vectors-only; if embeddings are unreachable, chat keeps
+  working without grounding. The app never becomes unusable because one store
+  is unhappy.</li>
+</ul>
+<h2 id="4-configuration-and-secrets">4. Configuration and secrets<a class="heading-anchor" href="#4-configuration-and-secrets" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>config.json</code> is written <strong>atomically</strong> (temp file → fsync → <code>os.replace</code>),
+  so a crash can never leave a half-written config.</li>
+<li><strong>API keys are stored in plain text</strong> in <code>config.json</code> — that is the price of
+  local-first simplicity. The CLI and UI always <em>display</em> them masked
+  (<code>sk-…abcd</code>), but treat the file like you would <code>.env</code> files: keep the folder
+  private, and prefer <code>MINICS_HOME</code> inside an encrypted volume (BitLocker,
+  FileVault, LUKS) if that matters to you.</li>
+<li>Local model servers usually need no key at all — an empty key sends a
+  <code>not-needed</code> placeholder.</li>
+</ul>
+<h2 id="5-backups">5. Backups<a class="heading-anchor" href="#5-backups" title="Permanent link">&para;</a></h2>
+<p>Because the store is plain files, backups are simple:</p>
+<ol>
+<li><strong>Stop the application</strong> (or pause activity) so SQLite reaches a consistent
+   snapshot, then</li>
+<li><strong>copy the whole folder</strong> — nothing else is needed, config included.</li>
+</ol>
+<p>Docker note: the store is a single volume, so the same rule applies — stop the
+container (<code>docker compose down</code>), copy the volume / bind-mounted directory,
+start again. See <a href="docker.html">docker.md</a>.</p>
+<p>A minimal in-place SQLite backup (while the app is stopped) is also possible:</p>
+<div class="highlight"><pre><span></span><code>sqlite3<span class="w"> </span>~/.minics/minics.sqlite3<span class="w"> </span><span class="s2">".backup '/tmp/minics-backup.sqlite3'"</span>
+</code></pre></div>
+
+<h2 id="6-moving-or-syncing-the-store">6. Moving or syncing the store<a class="heading-anchor" href="#6-moving-or-syncing-the-store" title="Permanent link">&para;</a></h2>
+<p>The store is <strong>portable by construction</strong> — relative layout, absolute paths
+resolved at runtime, engine-agnostic formats:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># move the store to a new machine / disk</span>
+tar<span class="w"> </span>-C<span class="w"> </span>~<span class="w"> </span>-czf<span class="w"> </span>minics-store.tgz<span class="w"> </span>.minics
+<span class="nb">export</span><span class="w"> </span><span class="nv">MINICS_HOME</span><span class="o">=</span>/srv/minics
+tar<span class="w"> </span>-C<span class="w"> </span>/srv<span class="w"> </span>-xzf<span class="w"> </span>minics-store.tgz
+</code></pre></div>
+
+<p>Move the folder (or set <code>MINICS_HOME</code> to the new location), install the package
+on the target, and the app continues exactly where it left off. Avoid syncing
+the <em>live</em> folder with Dropbox/Nextcloud-style tools while the app runs — sync
+a stopped copy instead, for the SQLite consistency reason above.</p>
+<h2 id="7-upgrades-resets-and-privacy">7. Upgrades, resets and privacy<a class="heading-anchor" href="#7-upgrades-resets-and-privacy" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Concern</th>
+<th>Reality</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Package upgrade</td>
+<td>Never touches the store; schema migrations are automatic and additive on next start.</td>
+</tr>
+<tr>
+<td>Uninstall</td>
+<td><code>pip uninstall</code> leaves <code>~/.minics</code> untouched.</td>
+</tr>
+<tr>
+<td>Full reset</td>
+<td>Delete the folder (<code>rm -rf ~/.minics</code>), or in Docker <code>docker compose down -v</code>.</td>
+</tr>
+<tr>
+<td>Partial reset</td>
+<td>Delete individual databases (e.g. <code>vectordb/</code>) and re-run <code>minics reindex</code> — the relational store is untouched.</td>
+</tr>
+<tr>
+<td>Privacy</td>
+<td>No telemetry, no accounts; the only network traffic is to the model endpoints <strong>you</strong> configured, plus document retrieval is entirely local.</td>
+</tr>
+<tr>
+<td>Inspectability</td>
+<td>The data is yours: open the SQLite file with any tool, read the markdown conversions, export datasets in five formats (<a href="features.html">features.md</a>).</td>
+</tr>
+</tbody>
+</table>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="frontend.html"><span class="pager-label">Previous</span><span class="pager-title">Frontend</span></a>
+<a class="pager-card next" href="development.html"><span class="pager-label">Next</span><span class="pager-title">Development</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-one-folder-the-store">1. One folder: the store</a></li><li class="toc-l2"><a href="#2-what-is-inside">2. What is inside</a></li><li class="toc-l2"><a href="#3-the-embedded-databases">3. The embedded databases</a></li><li class="toc-l2"><a href="#4-configuration-and-secrets">4. Configuration and secrets</a></li><li class="toc-l2"><a href="#5-backups">5. Backups</a></li><li class="toc-l2"><a href="#6-moving-or-syncing-the-store">6. Moving or syncing the store</a></li><li class="toc-l2"><a href="#7-upgrades-resets-and-privacy">7. Upgrades, resets and privacy</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

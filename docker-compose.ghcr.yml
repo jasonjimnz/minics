@@ -1,0 +1,20 @@
+# MiniCS Lite — server stack from the pre-built GHCR image (no clone needed).
+#
+#   docker compose -f docker-compose.ghcr.yml up -d
+#   open http://localhost:8765
+#
+# Uses the published image, so you only need this file — not the repo.
+# Pin a specific release by replacing `latest` with e.g. `0.3.0`.
+
+services:
+  minics:
+    image: ghcr.io/jasonjimnz/minics-lite:latest
+    container_name: minics-lite
+    ports:
+      - "8765:8765"
+    volumes:
+      - minics-data:/data
+    restart: unless-stopped
+
+volumes:
+  minics-data:

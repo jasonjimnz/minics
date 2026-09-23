@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Every dependency: what it does, where it is used, why it was chosen.">
+<title>Libraries · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html" class="active" aria-current="page">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Core</p>
+          <h1>Libraries</h1>
+          <p class="page-blurb">Every dependency: what it does, where it is used, why it was chosen.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/libraries.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>Every runtime dependency declared in <code>pyproject.toml</code>, what it does, where it
+is used and why it was chosen. MiniCS follows one rule: <strong>prefer small,
+well-scoped libraries over frameworks that own your code</strong>.</p>
+<hr />
+<h2 id="1-web-desktop-shell">1. Web / desktop shell<a class="heading-anchor" href="#1-web-desktop-shell" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Version</th>
+<th>Used in</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Flask</strong></td>
+<td>≥ 3.0</td>
+<td><code>server/app.py</code>, <code>server/api/*</code></td>
+<td>Minimal, explicit web framework. The app factory pattern + blueprints map 1:1 onto MiniCS's module layout; no ORM or auth machinery to fight. Werkzeug (bundled) also powers the threaded dev server inside the desktop shell (<code>werkzeug.serving.make_server</code>).</td>
+</tr>
+<tr>
+<td><strong>PyWebView</strong></td>
+<td>≥ 5.0</td>
+<td><code>desktop.py</code></td>
+<td>Renders the local Flask UI inside a native OS window using the system webview. Gives a "desktop app" feel with zero bundling. MiniCS degrades gracefully to the system browser if no GUI backend is available.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="2-config-validation">2. Config / validation<a class="heading-anchor" href="#2-config-validation" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Version</th>
+<th>Used in</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pydantic v2</strong></td>
+<td>≥ 2.6</td>
+<td><code>core/config.py</code>, <code>domain/entities.py</code>, <code>core/repository.py</code>, <code>llm/structured.py</code></td>
+<td>One library does four jobs: config validation, domain entities, JSON (de)serialisation, and JSON-Schema generation for structured LLM output. Pydantic v2's Rust core keeps model_validate cheap in hot paths. The generic repository inspects <code>model_fields</code> annotations to derive SQLite column types (JSON columns, bool columns).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="3-llm-orchestration">3. LLM + orchestration<a class="heading-anchor" href="#3-llm-orchestration" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Version</th>
+<th>Used in</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>openai</strong></td>
+<td>≥ 1.40</td>
+<td><code>llm/client.py</code></td>
+<td>Raw OpenAI SDK used directly for model discovery (<code>client.models.list</code>), embeddings (<code>client.embeddings.create</code>) and the connection test. MiniCS talks to <em>any</em> OpenAI-compatible server by swapping <code>base_url</code>.</td>
+</tr>
+<tr>
+<td><strong>langchain / langchain-core</strong></td>
+<td>≥ 0.3</td>
+<td><code>llm/structured.py</code>, <code>services/chat.py</code>, <code>llm/enhance.py</code></td>
+<td>Used sparingly and deliberately: <code>with_structured_output</code> (native schema + json_mode strategies), chat message types (<code>SystemMessage</code>, <code>HumanMessage</code>, <code>AIMessage</code>), and <code>chat.stream()</code> for token streaming. Everything else is hand-rolled.</td>
+</tr>
+<tr>
+<td><strong>langchain-openai</strong></td>
+<td>≥ 0.2</td>
+<td><code>llm/client.py</code> (<code>build_chat_model</code>, <code>build_embeddings</code>)</td>
+<td><code>ChatOpenAI</code> / <code>OpenAIEmbeddings</code> wrappers around the same OpenAI protocol. <code>check_embedding_ctx_length=False</code> is set so tiktoken does not try to tokenise unknown local embedding models.</td>
+</tr>
+<tr>
+<td><strong>langchain-community</strong></td>
+<td>≥ 0.3</td>
+<td>dependency umbrella</td>
+<td>Kept for compatibility with the LangChain stack; most RAG pieces are implemented locally.</td>
+</tr>
+<tr>
+<td><strong>langchain-text-splitters</strong></td>
+<td>≥ 0.3</td>
+<td><code>rag/chunking.py</code></td>
+<td><code>MarkdownHeaderTextSplitter</code> (splits on <code>#</code>–<code>####</code> while keeping the heading trail in metadata) and <code>RecursiveCharacterTextSplitter</code> (paragraph → sentence → word fallback). Battle-tested splitters instead of a custom parser.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-vector-graph-stores">4. Vector + graph stores<a class="heading-anchor" href="#4-vector-graph-stores" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Version</th>
+<th>Used in</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>chromadb</strong></td>
+<td>≥ 0.5, &lt; 2</td>
+<td><code>rag/vectorstore.py</code></td>
+<td>Embedded, persistent vector database (<code>PersistentClient</code>, no server process). Cosine distance space; MiniCS computes embeddings itself and hands vectors over, so model/dimension/batching stay in its own config. Telemetry is disabled via <code>Settings(anonymized_telemetry=False)</code>.</td>
+</tr>
+<tr>
+<td><strong>ladybug</strong></td>
+<td>≥ 0.17, &lt; 0.19</td>
+<td><code>rag/graph.py</code></td>
+<td>Embedded property-graph database with a Cypher-like query language (<code>MERGE</code>, <code>MATCH … DELETE</code>). Single-file storage (<code>graphdb/minics.graph</code>). Used for the Document → Chunk → Entity topology and <code>CO_OCCURS</code> relationships.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="5-document-conversion">5. Document conversion<a class="heading-anchor" href="#5-document-conversion" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Version</th>
+<th>Used in</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>pypdf</strong></td>
+<td>≥ 4.2</td>
+<td><code>documents/convert.py</code> (<code>pdf_to_markdown</code>)</td>
+<td>Pure-Python PDF text extraction, page by page; a broken page is skipped rather than failing the import. Metadata (author/title) is harvested for the document title.</td>
+</tr>
+<tr>
+<td><strong>python-docx</strong></td>
+<td>≥ 1.1</td>
+<td><code>documents/convert.py</code> (fallback DOCX path)</td>
+<td>Second-chance DOCX extraction: paragraphs with heading/list styles mapped to markdown, plus real markdown tables built from DOCX tables.</td>
+</tr>
+<tr>
+<td><strong>mammoth</strong></td>
+<td>≥ 1.8</td>
+<td><code>documents/convert.py</code> (primary DOCX path)</td>
+<td>Converts DOCX → semantic HTML, which <code>markdownify</code> then turns into clean markdown (ATX headings, <code>-</code> bullets, images stripped).</td>
+</tr>
+<tr>
+<td><strong>markdownify</strong></td>
+<td>≥ 0.12</td>
+<td><code>documents/convert.py</code></td>
+<td>HTML → markdown conversion for the mammoth path.</td>
+</tr>
+<tr>
+<td><strong>pylatexenc</strong></td>
+<td>≥ 2.10</td>
+<td><code>documents/convert.py</code> (<code>latex_to_markdown</code>)</td>
+<td>Final cleanup pass for LaTeX: a regex table handles structure (<code>\section</code> → <code>## …</code>, <code>\textbf</code> → <code>**…**</code>, <code>\item</code> → <code>-</code>, math stashed and restored), then <code>LatexNodes2Text</code> strips whatever remains. Falls back to pure regex if the import fails.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-dev-dependencies">6. Dev dependencies<a class="heading-anchor" href="#6-dev-dependencies" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Library</th>
+<th>Version</th>
+<th>Why</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>pytest</strong></td>
+<td>≥ 8.0</td>
+<td>Test runner. <code>pytest.ini_options</code> sets <code>testpaths = ["tests"]</code>, quiet output.</td>
+</tr>
+<tr>
+<td><strong>pytest-cov</strong></td>
+<td>≥ 5.0</td>
+<td>Coverage when requested (<code>pytest --cov</code>).</td>
+</tr>
+<tr>
+<td><strong>ruff</strong></td>
+<td>≥ 0.6</td>
+<td>Linter + import sorting. Config: <code>line-length = 100</code>, <code>target-version = "py310"</code>, rules <code>E,F,I,W,UP,B</code> with <code>B008</code> ignored (Flask dependency injection in route defaults).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-standard-library-doing-the-heavy-lifting">7. Standard library doing the heavy lifting<a class="heading-anchor" href="#7-standard-library-doing-the-heavy-lifting" title="Permanent link">&para;</a></h2>
+<p>A lot of MiniCS is deliberately stdlib-only:</p>
+<table>
+<thead>
+<tr>
+<th>Module</th>
+<th>Where</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sqlite3</code></td>
+<td><code>core/db.py</code></td>
+<td>The entire persistence layer, including WAL, migrations, and the writer-thread pattern.</td>
+</tr>
+<tr>
+<td><code>threading</code>, <code>queue</code>, <code>concurrent.futures</code></td>
+<td><code>core/db.py</code>, <code>core/events.py</code>, <code>core/jobs.py</code></td>
+<td>Writer thread, pub/sub bus, job pool, minimal futures.</td>
+</tr>
+<tr>
+<td><code>argparse</code></td>
+<td><code>cli.py</code></td>
+<td>The whole CLI.</td>
+</tr>
+<tr>
+<td><code>http.server</code> (via werkzeug)</td>
+<td><code>desktop.py</code></td>
+<td>The local server the webview points at.</td>
+</tr>
+<tr>
+<td><code>re</code>, <code>unicodedata</code>, <code>hashlib</code>, <code>uuid</code>, <code>json</code></td>
+<td><code>core/utils.py</code>, <code>documents/convert.py</code>, <code>rag/entities.py</code></td>
+<td>Slugs, IDs, SHA-256 dedupe, LaTeX/text munging, heuristic entity extraction.</td>
+</tr>
+<tr>
+<td><code>pathlib</code>, <code>dataclasses</code></td>
+<td>everywhere</td>
+<td>Path management and light-weight value objects (<code>Chunk</code>, <code>Event</code>, <code>Job</code>, <code>RetrievedChunk</code>).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="8-the-front-end-no-dependencies-at-all">8. The front-end (no dependencies at all)<a class="heading-anchor" href="#8-the-front-end-no-dependencies-at-all" title="Permanent link">&para;</a></h2>
+<p>The browser side uses <strong>no JavaScript libraries and no build step</strong>:</p>
+<ul>
+<li>plain ES2020 in four IIFE modules (<code>api.js</code>, <code>ui.js</code>, <code>views.js</code>, <code>app.js</code>),</li>
+<li><code>fetch</code> + <code>ReadableStream</code> for REST and SSE consumption
+  (<code>EventSource</code> for the global event feed),</li>
+<li>hand-written markdown renderer and modal/toast system,</li>
+<li>pure CSS custom properties for theming.</li>
+</ul>
+<p>Details in <a href="frontend.html">frontend.md</a>.</p>
+<h2 id="9-what-was-deliberately-not-used">9. What was deliberately <em>not</em> used<a class="heading-anchor" href="#9-what-was-deliberately-not-used" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Not used</th>
+<th>Why not</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>SQLAlchemy / an ORM</td>
+<td>The data model is simple; the generic pydantic repository covers CRUD without a second query language.</td>
+</tr>
+<tr>
+<td>Celery / Redis</td>
+<td>Background work is thread-pool scale (document imports, embeddings), not distributed-queue scale.</td>
+</tr>
+<tr>
+<td>React / Vue / a bundler</td>
+<td>The UI is a handful of views; a no-build SPA keeps install weight at zero and the code instantly editable.</td>
+</tr>
+<tr>
+<td>spaCy / an NLP stack</td>
+<td>The graph needs topology, not linguistics — regex heuristics plus optional LLM enrichment suffice and keep installs light.</td>
+</tr>
+<tr>
+<td>LangChain chains/agents</td>
+<td>MiniCS needs structured calls and streaming, not orchestration; using only the client wrappers keeps behaviour predictable and debuggable.</td>
+</tr>
+</tbody>
+</table>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="architecture.html"><span class="pager-label">Previous</span><span class="pager-title">Architecture</span></a>
+<a class="pager-card next" href="configuration.html"><span class="pager-label">Next</span><span class="pager-title">Configuration</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-web-desktop-shell">1. Web / desktop shell</a></li><li class="toc-l2"><a href="#2-config-validation">2. Config / validation</a></li><li class="toc-l2"><a href="#3-llm-orchestration">3. LLM + orchestration</a></li><li class="toc-l2"><a href="#4-vector-graph-stores">4. Vector + graph stores</a></li><li class="toc-l2"><a href="#5-document-conversion">5. Document conversion</a></li><li class="toc-l2"><a href="#6-dev-dependencies">6. Dev dependencies</a></li><li class="toc-l2"><a href="#7-standard-library-doing-the-heavy-lifting">7. Standard library doing the heavy lifting</a></li><li class="toc-l2"><a href="#8-the-front-end-no-dependencies-at-all">8. The front-end (no dependencies at all)</a></li><li class="toc-l2"><a href="#9-what-was-deliberately-not-used">9. What was deliberately not used</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

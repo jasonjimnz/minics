@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The full feature tour: library, grounding, retrieval, LLM tools, UI.">
+<title>Features · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html" class="active" aria-current="page">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Getting started</p>
+          <h1>Features</h1>
+          <p class="page-blurb">The full feature tour: library, grounding, retrieval, LLM tools, UI.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/features.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>Everything MiniCS Lite can do, area by area. Each section links to the document
+that explains how it works internally.</p>
+<hr />
+<h2 id="1-dataset-library">1. Dataset library<a class="heading-anchor" href="#1-dataset-library" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>What you get</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Datasets</td>
+<td>Named groups of entries with stats (counts, statuses, tags).</td>
+</tr>
+<tr>
+<td>ChatML entries</td>
+<td>One training sample with <code>system</code>/<code>user</code>/<code>assistant</code> messages, tags, notes.</td>
+</tr>
+<tr>
+<td>Status workflow</td>
+<td>Draft → review → approved, enforced by the service layer.</td>
+</tr>
+<tr>
+<td>Versioning</td>
+<td>Every message edit creates a version — full history, no data loss.</td>
+</tr>
+<tr>
+<td>Validation</td>
+<td>Structural ChatML validation on save (roles, message shape).</td>
+</tr>
+<tr>
+<td>Collections</td>
+<td>Curated, ordered subsets of entries for export.</td>
+</tr>
+</tbody>
+</table>
+<p>Internals: <a href="backend.html">backend.md</a> (entities, repository, services).</p>
+<h2 id="2-grounding-engine-documents-in-knowledge-out">2. Grounding engine — documents in, knowledge out<a class="heading-anchor" href="#2-grounding-engine-documents-in-knowledge-out" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>What you get</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Import formats</td>
+<td><strong>PDF, DOCX, TXT, Markdown, LaTeX</strong>.</td>
+</tr>
+<tr>
+<td>Conversion</td>
+<td>Every file becomes cleaned markdown; the LLM can optionally repair bad conversions.</td>
+</tr>
+<tr>
+<td>Heading-aware chunking</td>
+<td>Chunks respect document structure, so retrieved pieces stay coherent.</td>
+</tr>
+<tr>
+<td>Vector index</td>
+<td>ChromaDB with your configured embedding model; dimension detected and enforced.</td>
+</tr>
+<tr>
+<td>Knowledge graph</td>
+<td>Entities and relations extracted into an embedded LadybugDB graph.</td>
+</tr>
+<tr>
+<td>Reindexing</td>
+<td>One command rebuilds vectors + graph for the whole library.</td>
+</tr>
+</tbody>
+</table>
+<p>Internals: <a href="rag.html">rag.md</a>.</p>
+<h2 id="3-hybrid-retrieval">3. Hybrid retrieval<a class="heading-anchor" href="#3-hybrid-retrieval" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>What you get</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Vector search</td>
+<td>Semantic similarity over document chunks.</td>
+</tr>
+<tr>
+<td>Graph search</td>
+<td>Topology-aware results from the entity graph.</td>
+</tr>
+<tr>
+<td>RRF fusion</td>
+<td>Reciprocal Rank Fusion merges both ranked lists.</td>
+</tr>
+<tr>
+<td>Graceful degradation</td>
+<td>If the graph is unavailable, retrieval degrades to vectors-only (and vice versa) — nothing crashes.</td>
+</tr>
+<tr>
+<td>Terminal search</td>
+<td><code>minics search "query" --top-k 5</code> for quick checks.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="4-llm-authoring-toolbox">4. LLM authoring toolbox<a class="heading-anchor" href="#4-llm-authoring-toolbox" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>What you get</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Enhance fields</td>
+<td>One-click rewrite of any field with model assistance.</td>
+</tr>
+<tr>
+<td>Suggest tags</td>
+<td>Model proposes tags from the entry content.</td>
+</tr>
+<tr>
+<td>Evaluate entries</td>
+<td>Six quality dimensions scored per entry.</td>
+</tr>
+<tr>
+<td>Generate entries</td>
+<td>New ChatML entries generated <strong>grounded</strong> in your imported documents.</td>
+</tr>
+<tr>
+<td>Clean markdown</td>
+<td>Repair converted documents before chunking.</td>
+</tr>
+<tr>
+<td>Structured output</td>
+<td>Three fallback strategies plus truncation handling, so flaky models still produce usable JSON.</td>
+</tr>
+</tbody>
+</table>
+<p>Internals: <a href="llm.html">llm.md</a>.</p>
+<h2 id="5-chat-with-switches">5. Chat with switches<a class="heading-anchor" href="#5-chat-with-switches" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>What you get</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Per-conversation RAG toggle</td>
+<td>Retrieve from your documents or not.</td>
+</tr>
+<tr>
+<td>Per-conversation graph toggle</td>
+<td>Include knowledge-graph topology.</td>
+</tr>
+<tr>
+<td>Grounding preview</td>
+<td>See exactly which chunks <em>would</em> be injected — retrieval and injection are independent.</td>
+</tr>
+<tr>
+<td>Citations</td>
+<td>Answers reference the source documents and chunks they used.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-export-anywhere">6. Export anywhere<a class="heading-anchor" href="#6-export-anywhere" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>What you get</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Formats</td>
+<td><strong>ChatML, JSONL, Alpaca, ShareGPT, Markdown</strong>.</td>
+</tr>
+<tr>
+<td>Consistency</td>
+<td>Byte-identical output from UI, CLI or Python — one code path.</td>
+</tr>
+<tr>
+<td>Filtering</td>
+<td>Export only approved entries, include or strip metadata.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="7-background-first-operations">7. Background-first operations<a class="heading-anchor" href="#7-background-first-operations" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>What you get</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Worker pool</td>
+<td>Imports, indexing and evaluations run off the request thread.</td>
+</tr>
+<tr>
+<td>Live progress</td>
+<td>Server-Sent Events stream job progress to every open UI.</td>
+</tr>
+<tr>
+<td>Concurrency safety</td>
+<td>All SQLite writes funnel through a single dedicated writer thread (WAL).</td>
+</tr>
+</tbody>
+</table>
+<p>Internals: <a href="backend.html">backend.md</a> (jobs, events) and <a href="api.html">api.md</a> (the SSE stream).</p>
+<h2 id="8-three-ways-to-run-it">8. Three ways to run it<a class="heading-anchor" href="#8-three-ways-to-run-it" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>Command</th>
+<th>Best for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Desktop</td>
+<td><code>minics</code></td>
+<td>Daily authoring — native window via PyWebView.</td>
+</tr>
+<tr>
+<td>Browser</td>
+<td><code>minics serve</code></td>
+<td>Headless machines, remote boxes, quick demos.</td>
+</tr>
+<tr>
+<td>Container</td>
+<td><code>docker compose up -d</code></td>
+<td>Home server / VPS with a persistent volume.</td>
+</tr>
+</tbody>
+</table>
+<p>All three share the same Flask engine and the same store — see
+<a href="serving.html">serving.md</a> and <a href="docker.html">docker.md</a>.</p>
+<h2 id="9-cli-and-python-api">9. CLI and Python API<a class="heading-anchor" href="#9-cli-and-python-api" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Full CLI</strong> — <code>init</code>, <code>setup</code>, <code>config</code>, <code>models</code>, <code>app</code>, <code>serve</code>,
+  <code>datasets</code>, <code>entries</code>, <code>documents</code>, <code>reindex</code>, <code>export</code>, <code>search</code>,
+  <code>version</code>, <code>info</code>. All output is JSON and composes with <code>jq</code>
+  (command reference in <a href="backend.html">backend.md</a>).</li>
+<li><strong>Library mode</strong> — <code>from minics.services.context import get_context</code> gives you
+  <code>ctx.datasets</code>, <code>ctx.entries</code>, <code>ctx.collections</code>, <code>ctx.documents</code>,
+  <code>ctx.authoring</code>, <code>ctx.chat</code>, <code>ctx.export</code> and <code>ctx.retriever</code>: the exact
+  services the UI calls (see <a href="getting-started.html">getting-started.md</a>).</li>
+</ul>
+<h2 id="10-themable-no-build-ui">10. Themable no-build UI<a class="heading-anchor" href="#10-themable-no-build-ui" title="Permanent link">&para;</a></h2>
+<ul>
+<li>A single-page app with <strong>no framework, no bundler, no <code>node_modules</code></strong> —
+  plain ES2020 JavaScript served straight from the package.</li>
+<li><strong>15 hand-tuned themes</strong> (System, Light, Dark, Ocean, Forest, Sunset, Nord,
+  Rose, Midnight, Paper, Mono, Grape, Dracula, Catppuccin Mocha, Solarized) —
+  pure CSS-variable swaps with dark form controls and themed scrollbars.</li>
+<li>Hash routing, SSE consumption, markdown rendering and an interactive graph
+  canvas, all module-based — details in <a href="frontend.html">frontend.md</a>.</li>
+</ul>
+<h2 id="11-local-first-by-design">11. Local-first by design<a class="heading-anchor" href="#11-local-first-by-design" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>One folder, your machine</strong> — everything (config, SQLite, vectors, graph,
+  documents) lives in <code>~/.minics</code>; see <a href="storage.html">storage.md</a>.</li>
+<li><strong>No cloud, no accounts, no telemetry</strong> — the only outbound calls are to the
+  model endpoints <em>you</em> configure.</li>
+<li><strong>OpenAI-protocol first</strong> — any compatible endpoint works, local models
+  included.</li>
+</ul>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="getting-started.html"><span class="pager-label">Previous</span><span class="pager-title">Getting started</span></a>
+<a class="pager-card next" href="architecture.html"><span class="pager-label">Next</span><span class="pager-title">Architecture</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-dataset-library">1. Dataset library</a></li><li class="toc-l2"><a href="#2-grounding-engine-documents-in-knowledge-out">2. Grounding engine — documents in, knowledge out</a></li><li class="toc-l2"><a href="#3-hybrid-retrieval">3. Hybrid retrieval</a></li><li class="toc-l2"><a href="#4-llm-authoring-toolbox">4. LLM authoring toolbox</a></li><li class="toc-l2"><a href="#5-chat-with-switches">5. Chat with switches</a></li><li class="toc-l2"><a href="#6-export-anywhere">6. Export anywhere</a></li><li class="toc-l2"><a href="#7-background-first-operations">7. Background-first operations</a></li><li class="toc-l2"><a href="#8-three-ways-to-run-it">8. Three ways to run it</a></li><li class="toc-l2"><a href="#9-cli-and-python-api">9. CLI and Python API</a></li><li class="toc-l2"><a href="#10-themable-no-build-ui">10. Themable no-build UI</a></li><li class="toc-l2"><a href="#11-local-first-by-design">11. Local-first by design</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

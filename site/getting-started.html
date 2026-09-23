@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Create the store, run the wizard, build your first grounded dataset.">
+<title>Getting started · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html" class="active" aria-current="page">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Getting started</p>
+          <h1>Getting started</h1>
+          <p class="page-blurb">Create the store, run the wizard, build your first grounded dataset.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/getting-started.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>From zero to a working studio in a few minutes: create the store, point MiniCS
+at your model endpoints, launch the app, and build your first dataset with
+grounding from your own documents.</p>
+<hr />
+<h2 id="1-create-the-store">1. Create the store<a class="heading-anchor" href="#1-create-the-store" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>init
+</code></pre></div>
+
+<p>This creates the home directory (default <code>~/.minics</code>), the folder structure and
+the SQLite database, and applies schema migrations. You only need to run it
+once — every command that needs the store (<code>setup</code>, <code>serve</code>, <code>app</code>, <code>export</code>,
+…) <strong>auto-creates it on first use</strong>, so <code>init</code> is really for users who want the
+folder to exist explicitly.</p>
+<p>To keep the store somewhere else (external disk, server volume, encrypted
+folder), set <code>MINICS_HOME</code> first:</p>
+<div class="highlight"><pre><span></span><code><span class="nb">export</span><span class="w"> </span><span class="nv">MINICS_HOME</span><span class="o">=</span>/srv/minics<span class="w">      </span><span class="c1"># Windows: set MINICS_HOME=D:\minics</span>
+</code></pre></div>
+
+<h2 id="2-run-the-setup-wizard">2. Run the setup wizard<a class="heading-anchor" href="#2-run-the-setup-wizard" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>setup
+</code></pre></div>
+
+<p>The wizard asks for two endpoints (they may live on different servers):</p>
+<ul>
+<li>a <strong>chat endpoint</strong> — any OpenAI-compatible <code>/v1/chat/completions</code> server
+  (OpenAI, vLLM, <code>llama.cpp</code>, LM Studio, Ollama, …),</li>
+<li>an <strong>embedding endpoint</strong> — any server speaking <code>/v1/embeddings</code>.</li>
+</ul>
+<p>It then probes the embedding <strong>dimension</strong> (Chroma collections are created
+with it) and runs a connection test. The API key is stored locally in
+<code>~/.minics/config.json</code> and always masked when displayed.</p>
+<p>Non-interactive variant — useful for scripts and containers:</p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>setup<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--base-url<span class="w"> </span>http://localhost:11434/v1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--model<span class="w"> </span>llama3.1-instruct<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embedding-model<span class="w"> </span>nomic-embed-text
+</code></pre></div>
+
+<p>Everything the wizard writes is documented key by key in
+<a href="configuration.html">configuration.md</a>. You can change any of it later in the
+UI (<strong>Settings</strong>) or with <code>minics config --set '{"llm": {"model": "..."}}'</code>.</p>
+<h2 id="3-launch-the-app">3. Launch the app<a class="heading-anchor" href="#3-launch-the-app" title="Permanent link">&para;</a></h2>
+<p>Three interchangeable ways — same engine, same store:</p>
+<div class="highlight"><pre><span></span><code>minics<span class="w">                        </span><span class="c1"># desktop app (PyWebView window)</span>
+minics<span class="w"> </span>serve<span class="w"> </span>--port<span class="w"> </span><span class="m">8800</span><span class="w">      </span><span class="c1"># browser only, opens http://127.0.0.1:8800</span>
+docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> </span>-d<span class="w"> </span>--build<span class="w">  </span><span class="c1"># server container (see docker.md)</span>
+</code></pre></div>
+
+<ul>
+<li>The <strong>desktop app</strong> embeds a local Flask server and opens it in a native
+  window. If no webview is available (headless Linux), it falls back to your
+  browser automatically.</li>
+<li><strong><code>minics serve</code></strong> runs the same server and opens the UI in your default
+  browser; add <code>--no-browser</code> to keep it quiet.</li>
+<li>Details on hosting the Flask app properly (reverse proxy, ports, security)
+  are in <a href="serving.html">serving.md</a>.</li>
+</ul>
+<p>On first launch you land on the setup screen — if you already ran
+<code>minics setup</code>, the dashboard is ready to go.</p>
+<h2 id="4-build-your-first-dataset">4. Build your first dataset<a class="heading-anchor" href="#4-build-your-first-dataset" title="Permanent link">&para;</a></h2>
+<p>In the UI: <strong>New dataset</strong> → give it a name → <strong>New entry</strong>. An entry is one
+ChatML training sample with <code>system</code>, <code>user</code> and <code>assistant</code> messages. Save it
+as a <strong>draft</strong>, mark it <strong>reviewed</strong> when checked, <strong>approve</strong> it when done —
+that is the built-in draft → review → approved workflow, and every message edit
+is versioned automatically.</p>
+<p>From the terminal:</p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>datasets<span class="w"> </span>--create<span class="w"> </span><span class="s2">"Support QA"</span>
+minics<span class="w"> </span>entries<span class="w"> </span>--dataset<span class="w"> </span><span class="s2">"Support QA"</span><span class="w"> </span>--limit<span class="w"> </span><span class="m">10</span>
+</code></pre></div>
+
+<p>Or from Python, using the same service layer the UI uses:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">minics.services.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>
+
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">()</span>
+<span class="n">ds</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">"Support QA"</span><span class="p">)</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">entries</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">ds</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">messages</span><span class="o">=</span><span class="p">[</span>
+    <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"system"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"You answer from the manual."</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"user"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"How do I reindex?"</span><span class="p">},</span>
+    <span class="p">{</span><span class="s2">"role"</span><span class="p">:</span> <span class="s2">"assistant"</span><span class="p">,</span> <span class="s2">"content"</span><span class="p">:</span> <span class="s2">"Run `minics reindex`…"</span><span class="p">},</span>
+<span class="p">])</span>
+</code></pre></div>
+
+<p>Structural ChatML validation runs on save, so malformed message lists are
+rejected before they enter the library.</p>
+<h2 id="5-import-and-index-documents">5. Import and index documents<a class="heading-anchor" href="#5-import-and-index-documents" title="Permanent link">&para;</a></h2>
+<p>This is what powers retrieval and grounding. Supported input formats:
+<strong>PDF, DOCX, TXT, Markdown and LaTeX</strong>. Every file is converted to cleaned
+markdown (optionally repaired by the LLM), then chunked by headings and indexed
+into the vector store and the knowledge graph.</p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>documents<span class="w"> </span>--import<span class="w"> </span>paper.pdf<span class="w"> </span>--index
+minics<span class="w"> </span>reindex<span class="w">                                   </span><span class="c1"># rebuild vectors + graph for everything</span>
+</code></pre></div>
+
+<p>Or drag files in through the UI's <strong>Documents</strong> screen. Verify retrieval before
+writing any prompts:</p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>search<span class="w"> </span><span class="s2">"what is RRF?"</span><span class="w"> </span>--top-k<span class="w"> </span><span class="m">5</span>
+</code></pre></div>
+
+<h2 id="6-chat-with-grounding">6. Chat with grounding<a class="heading-anchor" href="#6-chat-with-grounding" title="Permanent link">&para;</a></h2>
+<p>Open a conversation and flip the per-conversation switches:</p>
+<ul>
+<li><strong>RAG</strong> — inject retrieved chunks from your imported documents,</li>
+<li><strong>Graph</strong> — add topology from the knowledge graph,</li>
+<li><strong>Grounding</strong> — preview exactly what would be injected before sending.</li>
+</ul>
+<p>Retrieval and injection are separate: you can <em>preview</em> what the model would
+see without forcing it into the prompt. Citations point back to source
+documents and chunks.</p>
+<h2 id="7-export-anywhere">7. Export anywhere<a class="heading-anchor" href="#7-export-anywhere" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="s2">"Support QA"</span><span class="w"> </span>-o<span class="w"> </span>out.jsonl<span class="w"> </span>--format<span class="w"> </span>jsonl<span class="w"> </span>--approved
+</code></pre></div>
+
+<p>Formats: <strong>ChatML, JSONL, Alpaca, ShareGPT and Markdown</strong> — byte-identical
+whether you export from the UI, the CLI or Python. Use <code>--approved</code> to ship
+only entries that passed review.</p>
+<h2 id="8-everyday-workflow">8. Everyday workflow<a class="heading-anchor" href="#8-everyday-workflow" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Step</th>
+<th>UI</th>
+<th>CLI</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Configure endpoints</td>
+<td>Settings screen</td>
+<td><code>minics setup</code></td>
+</tr>
+<tr>
+<td>Create dataset</td>
+<td>Datasets → New</td>
+<td><code>minics datasets --create N</code></td>
+</tr>
+<tr>
+<td>Author entries</td>
+<td>Editor with enhance/suggest buttons</td>
+<td><code>minics entries --dataset N</code></td>
+</tr>
+<tr>
+<td>Import documents</td>
+<td>Documents → Import</td>
+<td><code>minics documents --import F --index</code></td>
+</tr>
+<tr>
+<td>Check retrieval</td>
+<td>Chat grounding preview</td>
+<td><code>minics search "query"</code></td>
+</tr>
+<tr>
+<td>Export</td>
+<td>Collections → Export</td>
+<td><code>minics export C -o out --format jsonl</code></td>
+</tr>
+</tbody>
+</table>
+<p>All CLI output is JSON, so it composes with <code>jq</code>; the full command reference is
+in <a href="backend.html">backend.md</a>, and every REST endpoint behind the UI is documented
+in <a href="api.html">api.md</a>.</p>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="installation.html"><span class="pager-label">Previous</span><span class="pager-title">Installation</span></a>
+<a class="pager-card next" href="features.html"><span class="pager-label">Next</span><span class="pager-title">Features</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-create-the-store">1. Create the store</a></li><li class="toc-l2"><a href="#2-run-the-setup-wizard">2. Run the setup wizard</a></li><li class="toc-l2"><a href="#3-launch-the-app">3. Launch the app</a></li><li class="toc-l2"><a href="#4-build-your-first-dataset">4. Build your first dataset</a></li><li class="toc-l2"><a href="#5-import-and-index-documents">5. Import and index documents</a></li><li class="toc-l2"><a href="#6-chat-with-grounding">6. Chat with grounding</a></li><li class="toc-l2"><a href="#7-export-anywhere">7. Export anywhere</a></li><li class="toc-l2"><a href="#8-everyday-workflow">8. Everyday workflow</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

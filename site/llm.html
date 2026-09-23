@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="OpenAI-protocol client, embeddings, structured output, prompt library.">
+<title>LLM layer · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html" class="active" aria-current="page">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Core</p>
+          <h1>LLM layer</h1>
+          <p class="page-blurb">OpenAI-protocol client, embeddings, structured output, prompt library.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/llm.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>Everything MiniCS does with models lives in <code>minics/llm</code>: the OpenAI-protocol
+client factory, embeddings, structured output with three fallback strategies,
+the prompt library and the authoring helpers. One decision shapes it all:
+<strong>every provider is reached through the OpenAI protocol</strong> — OpenAI, Azure-style
+gateways, vLLM, llama.cpp, LM Studio, Ollama's OpenAI shim — with no
+provider-specific code.</p>
+<hr />
+<h2 id="1-clientpy-protocol-access">1. <code>client.py</code> — protocol access<a class="heading-anchor" href="#1-clientpy-protocol-access" title="Permanent link">&para;</a></h2>
+<h3 id="raw-clients">Raw clients<a class="heading-anchor" href="#raw-clients" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Factory</th>
+<th>Used for</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>build_openai_client(cfg, timeout)</code></td>
+<td>Model discovery (<code>models.list</code>), the ping test, anything needing raw control.</td>
+</tr>
+<tr>
+<td><code>build_async_openai_client(cfg, timeout)</code></td>
+<td>Async variant for future server-side use.</td>
+</tr>
+<tr>
+<td><code>build_embeddings_client(cfg, timeout)</code></td>
+<td>The embedding endpoint, falling back to the LLM base URL/key when the embedding section is blank.</td>
+</tr>
+</tbody>
+</table>
+<p>Local endpoints that need no key get the <code>PLACEHOLDER_KEY</code> (<code>"not-needed"</code>),
+because the SDK insists on one.</p>
+<h3 id="model-discovery">Model discovery<a class="heading-anchor" href="#model-discovery" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>list_models(base_url, api_key, ...)</code> returns <code>ModelInfo</code> rows and <strong>never
+  raises for missing <code>/models</code> support</strong> (many local servers omit it) — it
+  raises <code>LLMError</code> on real failures.</li>
+<li><code>is_embedding_model(id)</code> uses hint substrings (<code>embed</code>, <code>bge</code>, <code>e5</code>, <code>gte</code>,
+  <code>nomic</code>, <code>mxbai</code>, <code>voyage</code>, …); anything else is chat.</li>
+<li><code>split_models</code> → <code>{"chat": [...], "embedding": [...]}</code>; <code>list_available_models</code>
+  queries both endpoints independently (once, when they coincide).</li>
+<li><code>test_connection(cfg)</code> pings chat (<code>max_tokens=1</code>), probes the embedding
+  dimension, and lists models — returning a structured report used by the
+  setup wizard and Settings screen.</li>
+</ul>
+<h3 id="langchain-wrappers">LangChain wrappers<a class="heading-anchor" href="#langchain-wrappers" title="Permanent link">&para;</a></h3>
+<ul>
+<li><code>build_chat_model(cfg, model, temperature, max_tokens, **overrides)</code> →
+  <code>ChatOpenAI</code> with <code>max_retries=2</code>, config-driven temperature/top_p/
+  max_tokens/timeout, and <code>cfg.llm.extra</code> forwarded verbatim as
+  <code>model_kwargs</code> (e.g. <code>{"num_ctx": 8192}</code> for Ollama).</li>
+<li><code>build_embeddings(cfg)</code> → <code>OpenAIEmbeddings</code> with
+  <strong><code>check_embedding_ctx_length=False</code></strong> — critical for local models, so
+  tiktoken never tokenises text it doesn't know.</li>
+<li><code>embed_texts(texts, cfg)</code> batches nothing itself but preserves server order
+  by <code>index</code> (some servers reorder). <code>probe_embedding_dimension()</code> embeds one
+  short string and returns the vector length.</li>
+</ul>
+<h2 id="2-structuredpy-structured-output">2. <code>structured.py</code> — structured output<a class="heading-anchor" href="#2-structuredpy-structured-output" title="Permanent link">&para;</a></h2>
+<p><code>invoke_structured(schema, *, system, user, config, model, temperature,
+max_tokens)</code> returns a <strong>validated pydantic object</strong>; callers never parse
+JSON. Because OpenAI-compatible servers differ wildly in structured-output
+support, it tries the strongest mechanism first and falls back:</p>
+<table>
+<thead>
+<tr>
+<th>#</th>
+<th>Strategy</th>
+<th>How</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1</td>
+<td><strong>Native structured output</strong></td>
+<td><code>chat.with_structured_output(schema).invoke(messages)</code> — tool calling or <code>json_schema</code> depending on the server.</td>
+</tr>
+<tr>
+<td>2</td>
+<td><strong>JSON mode</strong></td>
+<td><code>with_structured_output(schema, method="json_mode")</code> with a <code>_schema_hint</code> appended to the user message ("Respond with a single JSON object with these fields: …").</td>
+</tr>
+<tr>
+<td>3</td>
+<td><strong>Prompt + parse</strong></td>
+<td>Plain completion; <code>_extract_json</code> pulls a fenced <code>```json</code> block or the outermost <code>{...}</code>; <code>schema.model_validate</code> does the rest.</td>
+</tr>
+</tbody>
+</table>
+<p>Every failure is recorded (<code>structured: …</code>, <code>json_mode: …</code>, <code>text: …</code>) and the
+combined message raises <code>StructuredOutputError</code>.</p>
+<h3 id="truncation-detection-outputtruncatederror">Truncation detection (<code>OutputTruncatedError</code>)<a class="heading-anchor" href="#truncation-detection-outputtruncatederror" title="Permanent link">&para;</a></h3>
+<p>A completion cut off by the token limit used to surface as a cryptic
+"Could not parse response content as the length limit was reached". Now:</p>
+<ul>
+<li><code>_is_truncation(exc)</code> recognises length-limit wording and
+  <code>finish_reason='length'</code> markers in exception text (strategies 1 and 2),</li>
+<li><code>_finish_reason(response)</code> inspects <code>response_metadata</code> /
+  <code>generation_info</code> (strategy 3),</li>
+<li>on detection MiniCS <strong>raises <code>OutputTruncatedError</code> immediately</strong> with the
+  effective limit and the failing strategy — falling back to other strategies
+  would truncate identically, so there is no point trying:</li>
+</ul>
+<blockquote>
+<p><em>The model hit its output token limit (max_tokens=2048) during the
+'structured' step, so the structured response was cut off. Increase
+llm.max_tokens or reduce the input size.</em></p>
+</blockquote>
+<p>The effective limit is the <code>max_tokens</code> argument or <code>cfg.llm.max_tokens</code>.</p>
+<h2 id="3-promptspy-the-prompt-library">3. <code>prompts.py</code> — the prompt library<a class="heading-anchor" href="#3-promptspy-the-prompt-library" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Prompt</th>
+<th>Used by</th>
+<th>Contract</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>FIELD_ENHANCE_SYSTEM</code></td>
+<td><code>enhance_field</code></td>
+<td>Rewrite one ChatML field; preserve intent/language/facts; no meta commentary; minimal changes when already good.</td>
+</tr>
+<tr>
+<td><code>TAG_SYSTEM</code></td>
+<td><code>suggest_tags</code></td>
+<td>Short reusable lowercase tags; task-type + domain; never exceed the requested maximum; never repeat existing.</td>
+</tr>
+<tr>
+<td><code>EVALUATION_SYSTEM</code></td>
+<td><code>evaluate</code></td>
+<td>Score 0–1 on clarity, correctness, completeness, instruction_following, format, safety; overall reflects the weakest important dimension; concrete strengths/issues/suggestions.</td>
+</tr>
+<tr>
+<td><code>GENERATE_ENTRY_SYSTEM</code></td>
+<td><code>generate_entry</code></td>
+<td>Produce one high-quality ChatML entry (system may be empty); ground every claim in the supplied material.</td>
+</tr>
+<tr>
+<td><code>MARKDOWN_CLEAN_SYSTEM</code></td>
+<td><code>clean_markdown</code></td>
+<td>Repair extraction artefacts; keep ALL information, order, math, numbers, names, citations; never summarise or rewrite.</td>
+</tr>
+<tr>
+<td><code>ENTITY_SYSTEM</code></td>
+<td>LLM entity extraction</td>
+<td>Compact entity list with kinds (person/organisation/product/method/concept/place/other) and salience 0–1.</td>
+</tr>
+</tbody>
+</table>
+<p><code>entry_as_text(system=, user=, assistant=, …)</code> renders an entry as readable
+XML-ish blocks (<code>&lt;system&gt;…&lt;/system&gt;</code> etc.) for prompts.</p>
+<h2 id="4-enhancepy-authoring-helpers">4. <code>enhance.py</code> — authoring helpers<a class="heading-anchor" href="#4-enhancepy-authoring-helpers" title="Permanent link">&para;</a></h2>
+<p>All helpers return validated pydantic objects (<code>FieldEnhancement</code>,
+<code>TagSuggestions</code>, <code>EvaluationResult</code>, <code>GeneratedEntry</code>, <code>MarkdownCleanup</code>,
+<code>EntityExtraction</code>) via <code>invoke_structured</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Helper</th>
+<th>Output budget</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>enhance_field(role, content, …)</code></td>
+<td>config default</td>
+<td>Context = rest of entry + optional instruction; temperature 0.4.</td>
+</tr>
+<tr>
+<td><code>suggest_tags(…)</code></td>
+<td>config default</td>
+<td>Avoids existing tags; caps at <code>max_tags</code>; temperature 0.3.</td>
+</tr>
+<tr>
+<td><code>evaluate(…)</code></td>
+<td>config default</td>
+<td>Clamps score/dimensions into [0, 1] afterwards; grounding material truncated to 4000 chars; temperature 0.</td>
+</tr>
+<tr>
+<td><code>generate_entry(topic, grounding, …)</code></td>
+<td>config default</td>
+<td>Grounding truncated to 6000 chars; temperature 0.8.</td>
+</tr>
+<tr>
+<td><code>clean_markdown(markdown, …)</code></td>
+<td><strong><code>CLEAN_MAX_TOKENS = 8192</code></strong></td>
+<td>See below.</td>
+</tr>
+<tr>
+<td><code>extract_entities(text, …)</code></td>
+<td><strong><code>ENTITY_MAX_TOKENS = 4096</code></strong></td>
+<td>Passage truncated to 6000 chars.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="why-the-bigger-budgets">Why the bigger budgets<a class="heading-anchor" href="#why-the-bigger-budgets" title="Permanent link">&para;</a></h3>
+<p>Cleaning <strong>echoes the whole document back</strong> inside <code>MarkdownCleanup.markdown</code>,
+and extraction output varies across models. The defaults of 8192 / 4096
+override the (smaller) global <code>llm.max_tokens</code> for these calls only.</p>
+<h3 id="clean_markdown-segmentation-and-the-truncation-retry"><code>clean_markdown</code> — segmentation and the truncation retry<a class="heading-anchor" href="#clean_markdown-segmentation-and-the-truncation-retry" title="Permanent link">&para;</a></h3>
+<ol>
+<li>Text longer than <code>max_chars</code> (default 16 000) is split on paragraph
+   boundaries (<code>_segments</code>) and each segment is cleaned recursively, then
+   joined with <code>\n\n</code>.</li>
+<li>A single segment still fits inside one LLM call — but if it <strong>truncates</strong>
+   (<code>OutputTruncatedError</code>), the segment is <strong>split in half on paragraph
+   boundaries and retried</strong> (<code>max(len(text) // 2, 1000)</code>). If a segment cannot
+   be split further (one huge paragraph), the truncation error propagates with
+   its clear message.</li>
+<li>Every recursion passes <code>max_tokens</code> through, so partial results always join
+   into one coherent markdown document.</li>
+</ol>
+<p><code>enhance_entry(entry, fields, instruction)</code> is the convenience wrapper used by
+the authoring service (per-field calls with the other fields as context), and
+<code>summarize_text()</code> is a generic text helper for the chat UI via <code>invoke_text</code>.</p>
+<h2 id="5-where-the-helpers-are-used">5. Where the helpers are used<a class="heading-anchor" href="#5-where-the-helpers-are-used" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Path</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>"✦ Enhance assistant" (entries view)</td>
+<td><code>POST /api/entries/&lt;ref&gt;/enhance</code> → <code>AuthoringService.enhance_entry_fields</code> → <code>enhance_field</code> (optionally grounded, persisted as a new version).</td>
+</tr>
+<tr>
+<td>"✦ Suggest tags"</td>
+<td><code>POST /api/entries/&lt;ref&gt;/suggest-tags</code> → <code>suggest_tags</code> (optionally applied).</td>
+</tr>
+<tr>
+<td>"✓ Evaluate"</td>
+<td><code>POST /api/entries/&lt;ref&gt;/evaluate</code> → <code>evaluate</code> → <code>Evaluation</code> persisted; quality score set.</td>
+</tr>
+<tr>
+<td>"+ New entry → Generate"</td>
+<td><code>POST /api/entries/generate</code> → grounded retrieval + <code>generate_entry</code> → new entry.</td>
+</tr>
+<tr>
+<td>"Clean with LLM" (document editor)</td>
+<td><code>POST /api/documents/&lt;ref&gt;/clean</code> → <code>clean_markdown</code> written back.</td>
+</tr>
+<tr>
+<td>"Enrich graph"</td>
+<td><code>POST /api/documents/&lt;ref&gt;/enrich-graph</code> → chunk-wise <code>extract_entities</code> merged into the graph.</td>
+</tr>
+<tr>
+<td>Import cleaning</td>
+<td><code>AppSettings.clean_imports_with_llm</code> → <code>DocumentService._maybe_clean</code> uses the LLM cleaner on import (falls back to the heuristic cleaner on failure).</td>
+</tr>
+</tbody>
+</table>
+<p>All of these run as <strong>background jobs</strong>; the UI tracks them via
+<code>App.watchJob</code> and the SSE stream.</p>
+<h2 id="6-streaming-chat">6. Streaming chat<a class="heading-anchor" href="#6-streaming-chat" title="Permanent link">&para;</a></h2>
+<p><code>ChatService.stream()</code> uses <code>build_chat_model(...).stream(messages)</code> and yields
+SSE-ready dicts: <code>{"type": "retrieval", …}</code>, <code>{"type": "token", "text": …}</code>,
+<code>{"type": "error", …}</code>, <code>{"type": "done", content, citations, usage, message}</code>.
+Token usage is harvested from <code>usage_metadata</code> or <code>response_metadata.token_usage</code>.
+See <a href="api.html">api.md</a> for the wire format and <a href="rag.html">rag.md</a> for how the
+grounding block is built.</p>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="backend.html"><span class="pager-label">Previous</span><span class="pager-title">Core &amp; backend</span></a>
+<a class="pager-card next" href="rag.html"><span class="pager-label">Next</span><span class="pager-title">RAG &amp; graph engine</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-clientpy-protocol-access">1. client.py — protocol access</a></li><li class="toc-l3"><a href="#raw-clients">Raw clients</a></li><li class="toc-l3"><a href="#model-discovery">Model discovery</a></li><li class="toc-l3"><a href="#langchain-wrappers">LangChain wrappers</a></li><li class="toc-l2"><a href="#2-structuredpy-structured-output">2. structured.py — structured output</a></li><li class="toc-l3"><a href="#truncation-detection-outputtruncatederror">Truncation detection (OutputTruncatedError)</a></li><li class="toc-l2"><a href="#3-promptspy-the-prompt-library">3. prompts.py — the prompt library</a></li><li class="toc-l2"><a href="#4-enhancepy-authoring-helpers">4. enhance.py — authoring helpers</a></li><li class="toc-l3"><a href="#why-the-bigger-budgets">Why the bigger budgets</a></li><li class="toc-l3"><a href="#clean_markdown-segmentation-and-the-truncation-retry">clean_markdown — segmentation and the truncation retry</a></li><li class="toc-l2"><a href="#5-where-the-helpers-are-used">5. Where the helpers are used</a></li><li class="toc-l2"><a href="#6-streaming-chat">6. Streaming chat</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

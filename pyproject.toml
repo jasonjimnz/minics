@@ -1,0 +1,87 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "minichat-studio"
+version = "0.3.0"
+description = "MiniCS Lite (Mini ChatML Studio Lite) — a local-first studio for building high quality LLM datasets with RAG + graph grounding."
+readme = "README.md"
+requires-python = ">=3.10"
+license = { text = "MIT" }
+authors = [{ name = "Jason Jimenez Cruz", email = "jasonjimenezcruz@gmail.com" }]
+keywords = ["llm", "dataset", "rag", "graph", "chromadb", "ladybug", "flask", "pywebview"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: Web Environment",
+    "Framework :: Flask",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering :: Artificial Intelligence",
+]
+
+dependencies = [
+    # Web / desktop shell
+    "flask>=3.0",
+    "pywebview>=5.0",
+    # Config / validation
+    "pydantic>=2.6",
+    # LLM + orchestration
+    "openai>=1.40",
+    "langchain>=0.3",
+    "langchain-core>=0.3",
+    "langchain-openai>=0.2",
+    "langchain-community>=0.3",
+    "langchain-text-splitters>=0.3",
+    # Vector + graph stores
+    "chromadb>=0.5,<2",
+    "ladybug>=0.17,<0.19",
+    # Document conversion
+    "pypdf>=4.2",
+    "python-docx>=1.1",
+    "mammoth>=1.8",
+    "markdownify>=0.12",
+    "pylatexenc>=2.10",
+]
+
+[project.optional-dependencies]
+dev = [
+    "pytest>=8.0",
+    "pytest-cov>=5.0",
+    "ruff>=0.6",
+]
+
+[project.scripts]
+minics = "minics.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/jasonjimnz/minics"
+Repository = "https://github.com/jasonjimnz/minics"
+Issues = "https://github.com/jasonjimnz/minics/issues"
+Changelog = "https://github.com/jasonjimnz/minics/releases"
+
+[tool.setuptools]
+package-dir = { "" = "src" }
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.setuptools.package-data]
+minics = ["server/templates/**/*", "server/static/**/*"]
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "W", "UP", "B"]
+ignore = ["B008"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-q"
+
+
+
+

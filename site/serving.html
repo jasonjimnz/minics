@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="minics serve, the app factory, reverse proxies and security notes.">
+<title>Serving with Flask · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html" class="active" aria-current="page">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Running</p>
+          <h1>Serving with Flask</h1>
+          <p class="page-blurb">minics serve, the app factory, reverse proxies and security notes.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/serving.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>MiniCS ships one HTTP engine — a Flask app built by <code>create_app()</code> — and every
+run mode wraps it: the desktop shell embeds it in a PyWebView window, <code>minics
+serve</code> exposes it to your browser, and Docker runs it in a container. This page
+explains the server itself and how to host it deliberately.</p>
+<hr />
+<h2 id="1-the-three-run-modes">1. The three run modes<a class="heading-anchor" href="#1-the-three-run-modes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Mode</th>
+<th>What happens</th>
+<th>When to use</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>minics</code> (desktop)</td>
+<td>Picks a free port, starts the Flask app on a <strong>threaded werkzeug server</strong> in a daemon thread, opens a PyWebView window at <code>http://127.0.0.1:&lt;port&gt;/</code>. Falls back to your browser if no webview exists.</td>
+<td>Daily authoring.</td>
+</tr>
+<tr>
+<td><code>minics serve</code></td>
+<td>Runs the same Flask app via <code>run_browser()</code> and opens it in your default browser.</td>
+<td>Headless machines, remote boxes.</td>
+</tr>
+<tr>
+<td>Your own process</td>
+<td>Import <code>create_app()</code> and serve it however you like.</td>
+<td>Custom deployments, WSGI servers, testing.</td>
+</tr>
+</tbody>
+</table>
+<p>All modes use the identical code path: <code>get_context()</code> → <code>ensure_ready()</code>
+(auto-creates the store) → <code>create_app(ctx)</code>.</p>
+<h2 id="2-minics-serve-the-built-in-server">2. <code>minics serve</code> — the built-in server<a class="heading-anchor" href="#2-minics-serve-the-built-in-server" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>serve<span class="w">                    </span><span class="c1"># default host/port from config (127.0.0.1:8765)</span>
+minics<span class="w"> </span>serve<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8800</span><span class="w"> </span>--no-browser
+</code></pre></div>
+
+<table>
+<thead>
+<tr>
+<th>Flag</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>--host</code></td>
+<td>Bind address. Defaults to the <code>app.host</code> config key (<code>127.0.0.1</code>).</td>
+</tr>
+<tr>
+<td><code>--port</code></td>
+<td>Port. Defaults to the <code>app.port</code> config key (<code>8765</code>).</td>
+</tr>
+<tr>
+<td><code>--no-browser</code></td>
+<td>Do not open a browser tab.</td>
+</tr>
+<tr>
+<td><code>--debug</code></td>
+<td>Flask debug mode (development only).</td>
+</tr>
+</tbody>
+</table>
+<p>First run auto-creates the store — on a fresh machine <code>minics serve</code> alone
+gives you a working, empty studio.</p>
+<h2 id="3-running-the-flask-app-yourself">3. Running the Flask app yourself<a class="heading-anchor" href="#3-running-the-flask-app-yourself" title="Permanent link">&para;</a></h2>
+<p>The app factory is public API:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">minics.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_app</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minics.services.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>
+
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">()</span>          <span class="c1"># honours MINICS_HOME; auto-creates the store</span>
+<span class="n">app</span> <span class="o">=</span> <span class="n">create_app</span><span class="p">(</span><span class="n">ctx</span><span class="p">)</span>
+<span class="n">app</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">"127.0.0.1"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">8800</span><span class="p">)</span>
+</code></pre></div>
+
+<p><code>create_app()</code> also accepts <code>home=</code> (store path) and <code>config_overrides=</code>
+(dict deep-merged over <code>config.json</code>) — convenient for tests and one-off
+deployments:</p>
+<div class="highlight"><pre><span></span><code><span class="n">app</span> <span class="o">=</span> <span class="n">create_app</span><span class="p">(</span><span class="n">home</span><span class="o">=</span><span class="s2">"/srv/minics"</span><span class="p">,</span> <span class="n">config_overrides</span><span class="o">=</span><span class="p">{</span><span class="s2">"app"</span><span class="p">:</span> <span class="p">{</span><span class="s2">"port"</span><span class="p">:</span> <span class="mi">9001</span><span class="p">}})</span>
+</code></pre></div>
+
+<p>What the app exposes:</p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Purpose</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>/</code></td>
+<td>The SPA (static files under <code>minics/server/static/</code>).</td>
+</tr>
+<tr>
+<td><code>/api/...</code></td>
+<td>The REST endpoints — every one documented in <a href="api.html">api.md</a>.</td>
+</tr>
+<tr>
+<td><code>/api/events</code></td>
+<td>The <strong>SSE</strong> stream for live job/event progress.</td>
+</tr>
+<tr>
+<td><code>/healthz</code></td>
+<td>Health probe (the Docker <code>HEALTHCHECK</code> polls this).</td>
+</tr>
+</tbody>
+</table>
+<blockquote>
+<p><strong>Threading matters.</strong> The SSE stream and background jobs require a threaded
+server. Flask's built-in <code>app.run(threaded=True)</code> (the default) is fine;
+never run it with a single-threaded WSGI worker.</p>
+</blockquote>
+<h2 id="4-production-considerations">4. Production considerations<a class="heading-anchor" href="#4-production-considerations" title="Permanent link">&para;</a></h2>
+<h3 id="no-authentication-by-design">No authentication — by design<a class="heading-anchor" href="#no-authentication-by-design" title="Permanent link">&para;</a></h3>
+<p>MiniCS has <strong>no login, no user model, no rate limiting</strong>. The API can create,
+edit and delete your datasets. Treat the server as a <strong>single-user application
+on a trusted network</strong>:</p>
+<ul>
+<li>keep the default <code>127.0.0.1</code> binding when the UI is only for you,</li>
+<li>expose it to your LAN or VPN only if everyone on that network may edit the
+  store,</li>
+<li><strong>never</strong> port-forward it directly to the public internet.</li>
+</ul>
+<p>If you need remote access, put it behind a proxy that adds authentication
+(basic auth, SSO, Tailscale/Firewall gating) — see below.</p>
+<h3 id="behind-a-reverse-proxy-nginx-example">Behind a reverse proxy (nginx example)<a class="heading-anchor" href="#behind-a-reverse-proxy-nginx-example" title="Permanent link">&para;</a></h3>
+<p>Two things need care: SSE and request sizes.</p>
+<div class="highlight"><pre><span></span><code><span class="k">server</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">listen</span><span class="w"> </span><span class="mi">443</span><span class="w"> </span><span class="s">ssl</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">server_name</span><span class="w"> </span><span class="s">minics.example.com</span><span class="p">;</span>
+
+<span class="w">    </span><span class="kn">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">        </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://127.0.0.1:8765</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_http_version</span><span class="w"> </span><span class="mi">1</span><span class="s">.1</span><span class="p">;</span>
+
+<span class="w">        </span><span class="c1"># SSE: the /api/events stream must not be buffered</span>
+<span class="w">        </span><span class="kn">proxy_buffering</span><span class="w"> </span><span class="no">off</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_cache</span><span class="w"> </span><span class="no">off</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_read_timeout</span><span class="w"> </span><span class="s">3600s</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Connection</span><span class="w"> </span><span class="s">""</span><span class="p">;</span>
+
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">X-Forwarded-For</span><span class="w"> </span><span class="nv">$proxy_add_x_forwarded_for</span><span class="p">;</span>
+<span class="w">        </span><span class="kn">client_max_body_size</span><span class="w"> </span><span class="mi">100m</span><span class="p">;</span><span class="w">   </span><span class="c1"># document uploads</span>
+<span class="w">    </span><span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>Basic auth at the proxy is the simplest way to add credentials:</p>
+<div class="highlight"><pre><span></span><code><span class="k">auth_basic</span><span class="w"> </span><span class="s">"MiniCS"</span><span class="p">;</span>
+<span class="k">auth_basic_user_file</span><span class="w"> </span><span class="s">/etc/nginx/.htpasswd</span><span class="p">;</span>
+</code></pre></div>
+
+<h3 id="wsgi-servers">WSGI servers<a class="heading-anchor" href="#wsgi-servers" title="Permanent link">&para;</a></h3>
+<p>The app is a plain Flask/WSGI application, so any compliant server works, e.g.:</p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>waitress
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="c1"># wsgi.py</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minics.services.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minics.server</span><span class="w"> </span><span class="kn">import</span> <span class="n">create_app</span>
+
+<span class="n">application</span> <span class="o">=</span> <span class="n">create_app</span><span class="p">(</span><span class="n">get_context</span><span class="p">())</span>   <span class="c1"># store auto-created on first request</span>
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>waitress-serve<span class="w"> </span>--host<span class="w"> </span><span class="m">0</span>.0.0.0<span class="w"> </span>--port<span class="w"> </span><span class="m">8765</span><span class="w"> </span>--threads<span class="w"> </span><span class="m">8</span><span class="w"> </span>wsgi:application
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>or, in your own wrapper script (the most explicit option):
+
+```python
+from waitress import serve
+from minics.services.context import get_context
+from minics.server import create_app
+
+serve(create_app(get_context()), host="0.0.0.0", port=8765, threads=8)
+</code></pre></div>
+
+<p>Keep in mind:</p>
+<ul>
+<li><strong>One process, one store.</strong> SQLite and the embedded vector/graph databases
+  (see <a href="storage.html">storage.md</a>) assume a single application process. Do not
+  run multiple instances against the same <code>~/.minics</code>; scale up containers
+  instead.</li>
+<li><strong>Threads, not processes.</strong> The writer-thread and SSE design is
+  in-process; prefer a threaded server (waitress with <code>threads=N</code>) over
+  multi-process forking models.</li>
+<li><strong>WebSocket-free</strong> — progress is SSE only, which simplifies proxies.</li>
+</ul>
+<h2 id="5-configuration-keys-that-affect-serving">5. Configuration keys that affect serving<a class="heading-anchor" href="#5-configuration-keys-that-affect-serving" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Key (in <code>config.json</code>)</th>
+<th>Default</th>
+<th>Meaning</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>app.host</code></td>
+<td><code>127.0.0.1</code></td>
+<td>Bind address used when <code>--host</code> is omitted.</td>
+</tr>
+<tr>
+<td><code>app.port</code></td>
+<td><code>8765</code></td>
+<td>Port used when <code>--port</code> is omitted.</td>
+</tr>
+<tr>
+<td><code>app.open_browser</code></td>
+<td><code>true</code></td>
+<td>Whether <code>minics serve</code> opens a browser.</td>
+</tr>
+</tbody>
+</table>
+<p>The full schema is in <a href="configuration.html">configuration.md</a>.</p>
+<h2 id="6-docker-is-the-same-server">6. Docker is the same server<a class="heading-anchor" href="#6-docker-is-the-same-server" title="Permanent link">&para;</a></h2>
+<p>The Docker image simply runs <code>minics serve --host 0.0.0.0 --no-browser</code> with
+the store mounted at <code>/data</code> — everything on this page (routes, proxying,
+auth) applies unchanged. Build and run instructions, compose file and
+container-specific troubleshooting are in <a href="docker.html">docker.md</a>.</p>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="rag.html"><span class="pager-label">Previous</span><span class="pager-title">RAG &amp; graph engine</span></a>
+<a class="pager-card next" href="docker.html"><span class="pager-label">Next</span><span class="pager-title">Docker</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-the-three-run-modes">1. The three run modes</a></li><li class="toc-l2"><a href="#2-minics-serve-the-built-in-server">2. minics serve — the built-in server</a></li><li class="toc-l2"><a href="#3-running-the-flask-app-yourself">3. Running the Flask app yourself</a></li><li class="toc-l2"><a href="#4-production-considerations">4. Production considerations</a></li><li class="toc-l3"><a href="#no-authentication-by-design">No authentication — by design</a></li><li class="toc-l3"><a href="#behind-a-reverse-proxy-nginx-example">Behind a reverse proxy (nginx example)</a></li><li class="toc-l3"><a href="#wsgi-servers">WSGI servers</a></li><li class="toc-l2"><a href="#5-configuration-keys-that-affect-serving">5. Configuration keys that affect serving</a></li><li class="toc-l2"><a href="#6-docker-is-the-same-server">6. Docker is the same server</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

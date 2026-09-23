@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The no-build SPA: routing, SSE, theming, markdown renderer, graph canvas.">
+<title>Frontend · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html" class="active" aria-current="page">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Reference</p>
+          <h1>Frontend</h1>
+          <p class="page-blurb">The no-build SPA: routing, SSE, theming, markdown renderer, graph canvas.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/frontend.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>The MiniCS UI is a <strong>no-build single-page application</strong> served from
+<code>minics/server/static/</code> and rendered by <code>templates/index.html</code>. There is no
+framework, no bundler and no <code>node_modules</code> — plain ES2020 JavaScript in four
+IIFE modules, one stylesheet, and browser-native <code>fetch</code>, <code>EventSource</code>,
+<code>ReadableStream</code> and CSS custom properties.</p>
+<div class="highlight"><pre><span></span><code>templates/index.html      shell: sidebar, topbar, view container, modal, toasts
+static/css/app.css        theme system + all component styles
+static/js/api.js          fetch wrapper, upload, SSE parsing, EventSource
+static/js/ui.js           DOM helpers, markdown renderer, toasts, modal, themes
+static/js/views.js        the nine views (≈1200 lines)
+static/js/app.js          hash router, event wiring, job tracking, health poll
+</code></pre></div>
+
+<p>Load order in <code>index.html</code> matters: <code>api.js</code> → <code>ui.js</code> → <code>views.js</code> →
+<code>app.js</code>. A single inline script injects <code>window.MINICS = {version, config}</code>
+(Jinja-rendered from <code>Config.public_dict()</code>), and every asset URL carries
+<code>?v={{ version }}</code> for cache busting.</p>
+<hr />
+<h2 id="1-the-shell-templatesindexhtml">1. The shell (<code>templates/index.html</code>)<a class="heading-anchor" href="#1-the-shell-templatesindexhtml" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Sidebar</strong>: brand, the nine nav buttons (<code>data-route</code> attributes), the
+  theme picker, and a status line showing the home path.</li>
+<li><strong>Topbar</strong>: menu toggle (mobile), a global search box, the <strong>ready/setup
+  pill</strong> and a Refresh button.</li>
+<li><strong><code>&lt;section id="view"&gt;</code></strong>: the router target.</li>
+<li><strong><code>#toasts</code></strong> and <strong><code>#modal-root</code></strong>: overlay layers used by every view.</li>
+</ul>
+<h2 id="2-apijs-the-http-client">2. <code>api.js</code> — the HTTP client<a class="heading-anchor" href="#2-apijs-the-http-client" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>API.get/post/put/patch/del(path, json)</code> — JSON requests through <code>request()</code>.</li>
+<li><code>API.upload(path, files, fields)</code> — multipart <code>FormData</code> upload (used by the
+  document dropzone).</li>
+<li><code>handle(response)</code> unwraps the <code>{ok, data}</code> envelope, throwing
+  <code>Error(body.error)</code> with <code>.status</code> and <code>.body</code> attached on failure.</li>
+<li><code>API.stream(path, body, onEvent, signal)</code> — POST + <code>response.body</code>
+  <code>.getReader()</code>, buffering chunks, splitting on <code>\n\n</code> frames and handing
+  parsed SSE events to <code>onEvent</code>. An <code>AbortSignal</code> powers the chat <strong>Stop</strong>
+  button.</li>
+<li><code>API.events(onEvent, afterId)</code> — <code>EventSource</code> on <code>/api/events?after=&lt;id&gt;</code>;
+  the browser auto-reconnects and replays missed events from the bus history.</li>
+</ul>
+<h2 id="3-uijs-the-toolkit">3. <code>ui.js</code> — the toolkit<a class="heading-anchor" href="#3-uijs-the-toolkit" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong><code>UI.el(tag, attrs, ...children)</code></strong> — hyperscript-style element builder
+  (<code>class</code>, <code>text</code>, <code>html</code>, <code>dataset</code>, <code>style</code> objects, <code>on*</code> listeners,
+  boolean attributes). All views are built with it; <code>UI.clear(node)</code> empties a
+  container.</li>
+<li><strong>Markdown renderer</strong> (<code>UI.markdown</code>) — a small line-based renderer:
+  fenced code blocks, <code>#</code>–<code>######</code> headings, ordered/unordered lists,
+  blockquotes, pipe tables, paragraphs; inline <code>code</code>, <strong>bold</strong>, <em>italic</em>,
+  links. Input is HTML-escaped first (<code>UI.escapeHtml</code>), so model output is
+  rendered safely. Used for assistant bubbles and the document preview.</li>
+<li><strong>Toasts</strong> — <code>UI.toast(message, level, detail?, timeout?)</code>, levels styled
+  per theme; auto-dismisses with a fade.</li>
+<li><strong>Modal</strong> — <code>UI.modal.open({title, body, actions, onMount})</code> (Esc/backdrop
+  close) and <code>UI.modal.confirm({...})</code> returning a Promise — the standard
+  delete/confirm flow.</li>
+<li><strong>Formatters</strong> — <code>fmtDate</code>, <code>fmtBytes</code>, <code>fmtDuration</code>.</li>
+<li><strong>Themes</strong> — <code>UI.applyTheme</code> sets <code>data-theme</code> on <code>&lt;html&gt;</code> and persists the
+  choice in <code>localStorage</code>; <code>UI.themeOptions(selected)</code> builds a grouped
+  (Light / Dark optgroup) picker shared by the sidebar and the Settings view;
+  <code>UI.initThemes</code> wires the sidebar select from the <code>UI.THEMES</code> list
+  (<code>[id, label, kind]</code> entries).</li>
+</ul>
+<h2 id="4-appjs-routing-lifecycle">4. <code>app.js</code> — routing &amp; lifecycle<a class="heading-anchor" href="#4-appjs-routing-lifecycle" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Hash router</strong>: <code>#/route?query</code> with nine routes — <code>dashboard</code>, <code>datasets</code>,
+  <code>entries</code>, <code>collections</code>, <code>documents</code>, <code>chat</code>, <code>graph</code>, <code>jobs</code>, <code>settings</code>.
+  <code>hashchange</code> re-renders; unknown routes fall back to the dashboard.</li>
+<li><strong><code>render()</code></strong> highlights the active nav item, shows a loading state, then
+  delegates to <code>window.Views[route](view, params)</code>.</li>
+<li><strong>Job tracking</strong>: <code>App.watchJob(id, callback)</code> polls
+  <code>GET /api/jobs/&lt;id&gt;</code> every ~800 ms until terminal, toasting errors and
+  invoking the callback with <code>job.result</code>. <code>App.trackJob</code> registers ids
+  without polling.</li>
+<li><strong>SSE wiring</strong>: <code>job.finished</code> → toast + Activity refresh; warnings → toasts;
+  any event carrying <code>progress</code> updates the matching job row's bar and label
+  live.</li>
+<li><strong>Health</strong>: <code>refreshHealth()</code> updates the ready pill from <code>/api/health</code> on
+  load and every 30 s.</li>
+<li><strong>Global search</strong>: Enter in the topbar routes to the current context's
+  search (documents/datasets/collections keep the current route; everything
+  else searches entries).</li>
+<li><strong>Theme select</strong> writes the choice to <code>/api/config</code> (<code>app.theme</code>) so the
+  server-side preference matches.</li>
+</ul>
+<h2 id="5-the-views-viewsjs">5. The views (<code>views.js</code>)<a class="heading-anchor" href="#5-the-views-viewsjs" title="Permanent link">&para;</a></h2>
+<p>Each view is an async function receiving the container (and hash params).
+Shared state lives in a module-level <code>state</code> object so selections survive
+re-renders.</p>
+<h3 id="dashboard">Dashboard<a class="heading-anchor" href="#dashboard" title="Permanent link">&para;</a></h3>
+<p>Six stat cards (datasets, entries, approved, documents, chunks indexed, graph
+entities) that navigate on click; a <strong>Getting started</strong> checklist whose six
+steps read live counts; recent activity from <code>/api/events/history</code>.</p>
+<h3 id="datasets">Datasets<a class="heading-anchor" href="#datasets" title="Permanent link">&para;</a></h3>
+<p>Card grid with per-dataset entry/approved counts and tag chips; create/edit
+modal (name, description, tags); confirm-delete. Clicking a card opens its
+entries filtered by dataset.</p>
+<h3 id="entries">Entries<a class="heading-anchor" href="#entries" title="Permanent link">&para;</a></h3>
+<p>Two-pane layout: filterable list (dataset, status, free-text with debounce)
+and an editor pane. The editor lets you <strong>reorder/delete/re-role messages</strong>
+(role select + ↑/↓/✕ per message), edit tags/notes/status inline, and shows
+structural validation problems. Toolbar actions:</p>
+<ul>
+<li><strong>Save</strong> — <code>PATCH /api/entries/&lt;ref&gt;</code> (auto-versioned server-side),</li>
+<li><strong>✦ Enhance assistant</strong> / <strong>✦ Suggest tags</strong> / <strong>✓ Evaluate</strong> — background
+  jobs; enhance results open a <strong>suggestion modal</strong> showing the improved text,
+  rationale and change chips, evaluate toasts the score and refreshes,</li>
+<li><strong>Grounding</strong> — modal previewing the chunks this entry would be grounded
+  with (fused scores and per-retriever ranks),</li>
+<li><strong>Collect</strong> — add to an existing collection or create one on the fly,</li>
+</ul>
+<p>"+ New entry" offers manual fields <strong>or LLM generation from a topic</strong>
+(grounded) as a background job.</p>
+<h3 id="collections">Collections<a class="heading-anchor" href="#collections" title="Permanent link">&para;</a></h3>
+<p>Card grid; the open-modal combines membership management (search-and-add
+picker, per-entry remove) and one-click export buttons for all five formats.</p>
+<h3 id="documents">Documents<a class="heading-anchor" href="#documents" title="Permanent link">&para;</a></h3>
+<p>A <strong>drag-and-drop dropzone</strong> (plus click-to-browse) uploading via
+<code>API.upload</code>; the import job is tracked and refreshes on completion.
+Toolbar: Reindex all, New markdown note. The table lists kind, status,
+chunk count, size and updated time. <strong>Open</strong> launches the document modal:</p>
+<ul>
+<li>status/kind/chunks pills, Clean with LLM, Enrich graph, Reindex actions,</li>
+<li>a <strong>markdown toolbar</strong> (bold, italic, H2, list, quote, inline code, code
+  block, link) operating on the textarea selection,</li>
+<li>a <strong>live split editor</strong>: textarea on the left, <code>UI.markdown</code> preview on the
+  right, re-rendered on every keystroke,</li>
+<li>Save persists via <code>PUT /markdown</code> with <code>reindex: true</code>; Delete confirms.</li>
+</ul>
+<h3 id="chat">Chat<a class="heading-anchor" href="#chat" title="Permanent link">&para;</a></h3>
+<p>Two-pane: conversation list + chat pane. Per-conversation <strong>switches for RAG,
+Graph and Grounding</strong> (each PATCHes the conversation immediately), an editable
+system prompt, and a streaming composer:</p>
+<ol>
+<li>the user bubble is appended and an empty assistant bubble created,</li>
+<li><code>API.stream</code> consumes <code>/stream</code>: <code>retrieval</code> stores citations and marks
+   grounding; <code>token</code> appends text (auto-scroll); <code>error</code> toasts; <code>done</code>
+   renders the numbered citations under the bubble,</li>
+<li><strong>Stop</strong> aborts via <code>AbortController</code>,</li>
+<li>assistant bubbles render markdown; user bubbles stay plain text.</li>
+</ol>
+<h3 id="graph">Graph<a class="heading-anchor" href="#graph" title="Permanent link">&para;</a></h3>
+<p>Stats cards from <code>/api/retrieval/status</code>, a query box, and a <strong>circular SVG
+layout</strong> drawn client-side (<code>drawGraph</code>): nodes sized by mention count,
+<code>CO_OCCURS</code> edges between them, all using theme CSS variables so it re-skins
+automatically. Rebuild triggers the graph rebuild job.</p>
+<h3 id="activity-jobs">Activity (jobs)<a class="heading-anchor" href="#activity-jobs" title="Permanent link">&para;</a></h3>
+<p>Live list of background jobs — status pill, animated progress bar, current
+message, duration, Cancel button — kept up to date by the SSE handler, plus a
+capped event-log card and a "Cancel all" action.</p>
+<h3 id="settings">Settings<a class="heading-anchor" href="#settings" title="Permanent link">&para;</a></h3>
+<p>Four cards mirroring the config schema (LLM endpoint, embedding endpoint,
+retrieval defaults, application):</p>
+<ul>
+<li><strong>Load</strong> buttons fetch <code>/api/config/models</code> to populate model dropdowns,</li>
+<li><strong>Detect</strong> probes <code>/api/config/embedding-dimension</code>,</li>
+<li><strong>Test connection</strong> saves, runs <code>/api/config/test</code>, and renders per-endpoint
+  ok/failure pills with details,</li>
+<li><strong>Finish setup</strong> calls <code>/api/config/setup</code>,</li>
+<li>a setup-required banner appears when <code>missing_requirements</code> is non-empty,</li>
+<li>Saving <code>PUT</code>s the whole patch; missing-requirements are recomputed by the
+  server and the ready pill updates on the next health poll.</li>
+</ul>
+<h2 id="6-theming">6. Theming<a class="heading-anchor" href="#6-theming" title="Permanent link">&para;</a></h2>
+<p><code>app.css</code> defines every visual token as CSS custom properties on <code>:root</code>
+(light defaults), with <code>[data-theme="…"]</code> blocks overriding them. Fifteen
+themes ship out of the box:</p>
+<ul>
+<li><strong>system</strong> — follows <code>prefers-color-scheme</code> via a media query,</li>
+<li><strong>light family</strong> — <code>light</code>, <code>ocean</code>, <code>forest</code>, <code>sunset</code>, <code>rose</code>, <code>paper</code>,
+  <code>mono</code>, <code>grape</code>, <code>solarized</code> (tinted surfaces + chromatic accent pairings),</li>
+<li><strong>dark family</strong> — <code>dark</code>, <code>nord</code>, <code>midnight</code>, <code>dracula</code>, <code>mocha</code>
+  (Catppuccin Mocha).</li>
+</ul>
+<p>Token families (documented in the CSS header): surfaces (<code>--bg</code>,
+<code>--bg-elev</code>, <code>--bg-sunken</code>, <code>--bg-hover</code>), ink (<code>--text</code>, <code>--text-muted</code>),
+lines (<code>--border</code>), chrome (<code>--sidebar-bg</code>, <code>--topbar-bg</code>, <code>--code-bg</code>),
+brand (<code>--accent</code>, <code>--accent-contrast</code>, <code>--accent-2</code>), status (<code>--success</code>,
+<code>--warning</code>, <code>--danger</code>), depth (<code>--shadow-sm|lg</code>, <code>--backdrop</code>) and shape
+(<code>--radius*</code>). Components never hardcode colours — they consume the tokens,
+so a theme is purely a variable swap. Some themes tweak shape too (e.g.
+<code>paper</code> and <code>mono</code> reduce radii).</p>
+<p>Quality rules every theme follows:</p>
+<ul>
+<li><strong>Tinted surfaces, no raw white</strong> — light themes derive <code>--bg</code>, <code>--bg-elev</code>,
+  <code>--sidebar-bg</code>, <code>--topbar-bg</code> and <code>--code-bg</code> from their own hue (cards are
+  near-white with a tint, never <code>#ffffff</code> on a coloured page), so each theme
+  has an atmosphere instead of white cards floating on a tinted void.</li>
+<li><strong>Chromatic pairing</strong> — <code>--accent</code> and <code>--accent-2</code> (used together in the
+  brand-mark gradient) follow a deliberate colour-wheel harmony: complementary
+  (sunset ↔ teal, paper ↔ slate-blue), split-complementary (ocean ↔ coral,
+  forest ↔ ochre) or analogous (rose ↔ violet, grape ↔ magenta); <code>mono</code> is
+  strictly achromatic and <code>solarized</code> keeps its canonical complements.</li>
+<li><strong><code>color-scheme</code></strong> — dark themes set <code>color-scheme: dark</code> so native
+  controls (select dropdowns, scrollbars, number inputs) match the palette;
+  <code>system</code> flips it with the media query.</li>
+<li><strong>Full token coverage</strong> — each theme tunes shadows to its own hue (no
+  blue-tinted shadows on warm palettes) and adapts the status colors
+  (success/warning/danger, kept in the green/amber/red wheel sectors) for
+  readable contrast on its surfaces.</li>
+<li><strong>Shared polish</strong> — themed scrollbars (<code>scrollbar-color</code> +
+  <code>::-webkit-scrollbar</code>), accent-tinted <code>::selection</code>, <code>:focus-visible</code>
+  rings on buttons/links/nav, and a tokenized modal backdrop (<code>--backdrop</code>)
+  that darkens appropriately on dark themes.</li>
+</ul>
+<h2 id="7-adding-a-view-recipe">7. Adding a view (recipe)<a class="heading-anchor" href="#7-adding-a-view-recipe" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Add the route name to <code>ROUTES</code> in <code>app.js</code> and a nav button with
+   <code>data-route</code> in <code>index.html</code>.</li>
+<li>Write <code>async function myView(view, params)</code> in <code>views.js</code>, build UI with
+   <code>UI.el</code>, fetch through <code>API.*</code>, and export it on <code>window.Views</code>.</li>
+<li>Long work? <code>const job = await API.post(...); jobToast(job, "Label");
+   App.watchJob(job.id, refresh)</code> — progress and toasts come for free.</li>
+<li>Style with existing classes (<code>card</code>, <code>grid cols-3</code>, <code>toolbar</code>, <code>field</code>,
+   <code>pill</code>, <code>chip</code>, <code>job</code>) or add tokens-based CSS to <code>app.css</code>.</li>
+</ol>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="api.html"><span class="pager-label">Previous</span><span class="pager-title">HTTP API</span></a>
+<a class="pager-card next" href="storage.html"><span class="pager-label">Next</span><span class="pager-title">Data &amp; storage</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-the-shell-templatesindexhtml">1. The shell (templates/index.html)</a></li><li class="toc-l2"><a href="#2-apijs-the-http-client">2. api.js — the HTTP client</a></li><li class="toc-l2"><a href="#3-uijs-the-toolkit">3. ui.js — the toolkit</a></li><li class="toc-l2"><a href="#4-appjs-routing-lifecycle">4. app.js — routing &amp; lifecycle</a></li><li class="toc-l2"><a href="#5-the-views-viewsjs">5. The views (views.js)</a></li><li class="toc-l3"><a href="#dashboard">Dashboard</a></li><li class="toc-l3"><a href="#datasets">Datasets</a></li><li class="toc-l3"><a href="#entries">Entries</a></li><li class="toc-l3"><a href="#collections">Collections</a></li><li class="toc-l3"><a href="#documents">Documents</a></li><li class="toc-l3"><a href="#chat">Chat</a></li><li class="toc-l3"><a href="#graph">Graph</a></li><li class="toc-l3"><a href="#activity-jobs">Activity (jobs)</a></li><li class="toc-l3"><a href="#settings">Settings</a></li><li class="toc-l2"><a href="#6-theming">6. Theming</a></li><li class="toc-l2"><a href="#7-adding-a-view-recipe">7. Adding a view (recipe)</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

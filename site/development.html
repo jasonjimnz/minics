@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Dev environment, tests, fixtures, code style, schema migrations.">
+<title>Development · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html" class="active" aria-current="page">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Reference</p>
+          <h1>Development</h1>
+          <p class="page-blurb">Dev environment, tests, fixtures, code style, schema migrations.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/development.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>Everything you need to hack on MiniCS: environment setup, how the tests work,
+code style, how to extend the schema, and how the pieces are meant to evolve.</p>
+<hr />
+<h2 id="1-environment">1. Environment<a class="heading-anchor" href="#1-environment" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>git<span class="w"> </span>clone<span class="w"> </span>&lt;repo&gt;<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>minichat_studio
+python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+.venv<span class="se">\S</span>cripts<span class="se">\a</span>ctivate<span class="w">            </span><span class="c1"># Windows   (source .venv/bin/activate on Unix)</span>
+pip<span class="w"> </span>install<span class="w"> </span>-e<span class="w"> </span><span class="s2">".[dev]"</span>
+</code></pre></div>
+
+<ul>
+<li>Python <strong>≥ 3.10</strong> (developed on 3.13).</li>
+<li><code>pip install -e .</code> gives you the <code>minics</code> console script wired to
+  <code>minics.cli:main</code>.</li>
+<li>Dev extras: <code>pytest</code>, <code>pytest-cov</code>, <code>ruff</code>.</li>
+</ul>
+<p>Run the app from source:</p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>init<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>minics<span class="w"> </span>setup<span class="w">       </span><span class="c1"># point at any OpenAI-compatible endpoint</span>
+minics<span class="w"> </span>--debug<span class="w">                    </span><span class="c1"># desktop shell with debug tools</span>
+minics<span class="w"> </span>serve<span class="w"> </span>--port<span class="w"> </span><span class="m">8800</span><span class="w">          </span><span class="c1"># or browser-only</span>
+</code></pre></div>
+
+<p>Point the UI at your own servers (vLLM, llama.cpp, LM Studio, Ollama) or at
+OpenAI itself; the connection test verifies chat + embeddings before setup is
+marked complete.</p>
+<h2 id="2-running-the-tests">2. Running the tests<a class="heading-anchor" href="#2-running-the-tests" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>pytest<span class="w"> </span>-q<span class="w">                         </span><span class="c1"># the whole suite, no network required</span>
+pytest<span class="w"> </span>tests/test_llm.py<span class="w"> </span>-q<span class="w">       </span><span class="c1"># one module</span>
+pytest<span class="w"> </span>--cov<span class="o">=</span>minics<span class="w"> </span>--cov-report<span class="o">=</span>term-missing
+ruff<span class="w"> </span>check<span class="w"> </span>src<span class="w"> </span>tests<span class="w">              </span><span class="c1"># lint (must pass before commit)</span>
+</code></pre></div>
+
+<p>The suite needs <strong>no model server</strong>: <code>tests/conftest.py</code> fakes embeddings and
+isolates the home directory.</p>
+<h3 id="fixtures-testsconftestpy">Fixtures (<code>tests/conftest.py</code>)<a class="heading-anchor" href="#fixtures-testsconftestpy" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>Fixture</th>
+<th>What it provides</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>fake_embed</code></td>
+<td>Deterministic 8-dimensional embeddings monkeypatched into <code>minics.rag.indexer</code> and <code>minics.rag.retriever</code>, so indexing and retrieval run offline.</td>
+</tr>
+<tr>
+<td><code>home</code></td>
+<td>Sets <code>MINICS_HOME</code> to a fresh <code>tmp_path</code> — every test gets an isolated <code>~/.minics</code>.</td>
+</tr>
+<tr>
+<td><code>ctx</code></td>
+<td>A fully wired <code>AppContext</code> (config manager, migrated database, event bus) on that home; closed afterwards.</td>
+</tr>
+<tr>
+<td><code>client</code></td>
+<td>A Flask test client built from <code>create_app(ctx)</code> with <code>TESTING=True</code>.</td>
+</tr>
+<tr>
+<td><code>_cleanup_managers</code> (autouse)</td>
+<td>Resets the global job manager and <code>MINICS_HOME</code> after each test.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="test-modules">Test modules<a class="heading-anchor" href="#test-modules" title="Permanent link">&para;</a></h3>
+<table>
+<thead>
+<tr>
+<th>File</th>
+<th>Covers</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>test_core.py</code></td>
+<td>Config manager (masking, deep merge, atomic writes), paths, utils, repository mapping, database writer/transactions.</td>
+</tr>
+<tr>
+<td><code>test_services.py</code></td>
+<td>Dataset/entry/collection/document services, versioning, export formats.</td>
+</tr>
+<tr>
+<td><code>test_rag.py</code></td>
+<td>Chunking, entity extraction, fusion maths, vector store, graph store, retriever (with fake embeddings).</td>
+</tr>
+<tr>
+<td><code>test_llm.py</code></td>
+<td>Model discovery/splitting, structured-output truncation handling, markdown-cleanup retry.</td>
+</tr>
+<tr>
+<td><code>test_api.py</code></td>
+<td>HTTP endpoints through the Flask test client.</td>
+</tr>
+<tr>
+<td><code>test_cli.py</code></td>
+<td>CLI commands.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="writing-tests">Writing tests<a class="heading-anchor" href="#writing-tests" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Use the <code>ctx</code> fixture for service-level work and <code>client</code> for HTTP; both
+  share the same isolated home.</li>
+<li>LLM-touching code should be monkeypatched (see the <code>_FakeChat</code> pattern in
+  <code>test_llm.py</code>, which replaces <code>minics.llm.structured.build_chat_model</code>).</li>
+<li>Never depend on the real <code>~/.minics</code>; the <code>home</code> fixture guarantees
+  isolation.</li>
+</ul>
+<h2 id="3-code-style">3. Code style<a class="heading-anchor" href="#3-code-style" title="Permanent link">&para;</a></h2>
+<p>Ruff enforces the rules (<code>pyproject.toml</code>): <code>line-length = 100</code>,
+<code>target-version = "py310"</code>, rule sets <code>E, F, I, W, UP, B</code> with <code>B008</code> ignored
+(Flask dependency injection). Conventions used throughout:</p>
+<ul>
+<li><strong>Type hints everywhere</strong>, <code>from __future__ import annotations</code> at the top.</li>
+<li><strong>Module docstrings explain the <em>why</em></strong> — each module opens with the design
+  rationale, not just a description.</li>
+<li>Services are stateless façades; business rules live there, raw SQL stays in
+  repositories/migrations.</li>
+<li>Errors are typed exceptions (<code>LLMError</code>, <code>NotFoundError</code>, <code>DatabaseError</code>,
+  <code>VectorStoreError</code>, <code>GraphStoreError</code>, <code>StructuredOutputError</code>) mapped once
+  in <code>server/deps.py</code>.</li>
+<li>Events for anything a user can observe: services <code>emit(...)</code>; jobs report
+  progress via <code>JobContext</code>.</li>
+<li><code># noqa: BLE001</code> marks deliberate broad excepts in graceful-degradation
+  paths.</li>
+</ul>
+<h2 id="4-schema-migrations">4. Schema migrations<a class="heading-anchor" href="#4-schema-migrations" title="Permanent link">&para;</a></h2>
+<p>The database shape lives in <code>core/schema.py</code> as an ordered list. To change it:</p>
+<ol>
+<li><strong>Never edit a released migration</strong> — SQLite files in the wild already
+   applied it.</li>
+<li>Append <code>Migration(version=N+1, name="describe_change", statements=(...))</code>
+   with idempotent statements (<code>CREATE TABLE IF NOT EXISTS</code>, <code>ALTER TABLE ...</code>).</li>
+<li>If a domain entity changed, mirror it in <code>domain/entities.py</code> — the
+   generic repository maps columns automatically (annotations decide JSON vs
+   bool vs scalar; <code>column_map</code> renames like <code>index → idx</code>).</li>
+<li>Bump nothing else; <code>Database.migrate()</code> applies the new version on next
+   start and logs it in <code>schema_log</code>.</li>
+</ol>
+<h2 id="5-common-change-recipes">5. Common change recipes<a class="heading-anchor" href="#5-common-change-recipes" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Task</th>
+<th>Touch points</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>New config key</td>
+<td><code>core/config.py</code> (pydantic field) → Settings card in <code>views.js</code> → document it in <a href="configuration.html">configuration.md</a>.</td>
+</tr>
+<tr>
+<td>New REST endpoint</td>
+<td>New/edited blueprint in <code>server/api/</code> → service method → tests in <code>test_api.py</code> → <a href="api.html">api.md</a>.</td>
+</tr>
+<tr>
+<td>New LLM feature</td>
+<td>Prompt in <code>llm/prompts.py</code> → pydantic schema + helper in <code>llm/enhance.py</code> → service method in <code>services/authoring.py</code> → endpoint + UI action (background job).</td>
+</tr>
+<tr>
+<td>New document format</td>
+<td><code>SUPPORTED_EXTENSIONS</code> + converter in <code>documents/convert.py</code>; add a dev dependency only if unavoidable.</td>
+</tr>
+<tr>
+<td>New event type</td>
+<td>Publish via <code>ctx.bus.publish(...)</code> (services) or <code>JobContext.log/update</code>; it reaches SSE and the Activity log automatically.</td>
+</tr>
+<tr>
+<td>New theme</td>
+<td>One <code>[data-theme="..."]</code> block of CSS variables in <code>app.css</code> + entry in <code>UI.THEMES</code> (<code>ui.js</code>).</td>
+</tr>
+<tr>
+<td>New graph query</td>
+<td><code>GraphStore</code> read method using <code>rows(...)</code> → expose via <code>GraphIndexer</code> → endpoint in <code>api/retrieval.py</code> if the UI needs it.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="6-project-conventions-worth-knowing">6. Project conventions worth knowing<a class="heading-anchor" href="#6-project-conventions-worth-knowing" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Everything through the context.</strong> Never construct services with raw
+  dependencies; pull them from <code>AppContext</code> so caching, config epochs and
+  shutdown stay correct.</li>
+<li><strong>Deterministic ids for vectors.</strong> <code>vector_id_for(document_id, index)</code> is
+  the contract between SQLite chunks, Chroma and the graph — re-indexing
+  relies on it being stable.</li>
+<li><strong>Truncation-aware LLM calls.</strong> Any helper that echoes large input back
+  should pass an explicit <code>max_tokens</code> and react to <code>OutputTruncatedError</code>
+  (see <code>clean_markdown</code> for the split-and-retry pattern).</li>
+<li><strong>Progress spans.</strong> Indexing maps embedding progress into 10%–85% of a job;
+  imports give each file an equal span and the indexer a 40% slice. Keep new
+  jobs composable the same way.</li>
+<li><strong>The bus is the UI contract.</strong> If the frontend should react to something,
+  publish an event rather than inventing a poll.</li>
+</ul>
+<h2 id="7-release-notes-workflow">7. Release notes workflow<a class="heading-anchor" href="#7-release-notes-workflow" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Version lives in <code>pyproject.toml</code> and is read
+  by <code>minics/__init__.py</code> for the UI badge, <code>/healthz</code> and cache busting.</li>
+<li>The project moves in small, versioned increments; <code>git log</code> is the changelog.</li>
+<li>Before committing:</li>
+</ul>
+<div class="highlight"><pre><span></span><code>pytest<span class="w"> </span>-q
+ruff<span class="w"> </span>check<span class="w"> </span>src<span class="w"> </span>tests
+</code></pre></div>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="storage.html"><span class="pager-label">Previous</span><span class="pager-title">Data &amp; storage</span></a>
+<div></div>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-environment">1. Environment</a></li><li class="toc-l2"><a href="#2-running-the-tests">2. Running the tests</a></li><li class="toc-l3"><a href="#fixtures-testsconftestpy">Fixtures (tests/conftest.py)</a></li><li class="toc-l3"><a href="#test-modules">Test modules</a></li><li class="toc-l3"><a href="#writing-tests">Writing tests</a></li><li class="toc-l2"><a href="#3-code-style">3. Code style</a></li><li class="toc-l2"><a href="#4-schema-migrations">4. Schema migrations</a></li><li class="toc-l2"><a href="#5-common-change-recipes">5. Common change recipes</a></li><li class="toc-l2"><a href="#6-project-conventions-worth-knowing">6. Project conventions worth knowing</a></li><li class="toc-l2"><a href="#7-release-notes-workflow">7. Release notes workflow</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

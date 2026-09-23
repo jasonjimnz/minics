@@ -1,0 +1,18 @@
+# MiniCS Lite — server stack with a persistent named volume.
+#
+#   docker compose up -d --build
+#   open http://localhost:8765
+#
+services:
+  minics:
+    build: .
+    image: minics-lite
+    container_name: minics-lite
+    ports:
+      - "8765:8765"
+    volumes:
+      - minics-data:/data
+    restart: unless-stopped
+
+volumes:
+  minics-data:

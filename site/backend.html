@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="SQLite writer thread, event bus, job manager, entities, services, CLI.">
+<title>Core & backend · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minichat_studio</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.0</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minichat_studio" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html" class="active" aria-current="page">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Core</p>
+          <h1>Core &amp; backend</h1>
+          <p class="page-blurb">SQLite writer thread, event bus, job manager, entities, services, CLI.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minichat_studio/edit/main/docs/backend.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>This document covers the infrastructure modules in <code>minics/core</code>, the domain
+entities, the service layer, and the two entry points (CLI and desktop shell).
+The LLM layer and RAG engine have their own documents.</p>
+<hr />
+<h2 id="1-corepathspy-the-filesystem-contract">1. <code>core/paths.py</code> — the filesystem contract<a class="heading-anchor" href="#1-corepathspy-the-filesystem-contract" title="Permanent link">&para;</a></h2>
+<p><code>MinicsPaths</code> is a frozen dataclass rooted at one directory:</p>
+<ul>
+<li><code>~/.minics</code> by default, or <code>$MINICS_HOME</code> when set (<code>default_home()</code>).</li>
+<li>Sub-directories created on <code>ensure()</code>: <code>documents/</code>, <code>documents/markdown/</code>,
+  <code>documents/originals/</code>, <code>vectordb/</code>, <code>graphdb/</code>, <code>logs/</code>, <code>cache/</code>.</li>
+<li>Key files: <code>config_file</code> (<code>config.json</code>), <code>database</code> (<code>minics.sqlite3</code>),
+  <code>graph_file</code> (<code>graphdb/minics.graph</code>).</li>
+</ul>
+<p>Every other module asks <code>get_paths()</code> for paths; nothing builds them by hand.
+Tests simply point <code>MINICS_HOME</code> at a temp dir.</p>
+<h2 id="2-coredbpy-concurrency-safe-sqlite">2. <code>core/db.py</code> — concurrency-safe SQLite<a class="heading-anchor" href="#2-coredbpy-concurrency-safe-sqlite" title="Permanent link">&para;</a></h2>
+<p>SQLite gives WAL (many concurrent readers + one writer) but not parallel
+writers, and a connection cannot cross threads. MiniCS therefore funnels <strong>all
+writes through a single dedicated writer thread</strong>:</p>
+<div class="highlight"><pre><span></span><code>caller thread                    _WriterThread ("minics-sqlite-writer")
+     │  submit(fn)                      owns the only writable connection
+     │  ── queue ──►  run fn(conn) ──►  conn.commit() / rollback
+     │  ◄── _Future ──  result or exception
+</code></pre></div>
+
+<ul>
+<li><strong><code>_WriterThread</code></strong> creates its connection <em>inside</em> <code>run()</code> (sqlite3
+  enforces same-thread usage), sets <code>journal_mode=WAL</code> and
+  <code>synchronous=NORMAL</code>, then loops over a job queue. Each submitted callable
+  runs and commits atomically; exceptions propagate through a minimal
+  <code>_Future</code> back to the caller.</li>
+<li><strong>Reads</strong> use short-lived per-thread connections opened <strong>read-only</strong>
+  (<code>file:…?mode=ro</code>) via <code>threading.local</code> — safe to use concurrently from
+  Flask request threads and job workers alike.</li>
+<li><strong><code>busy_timeout</code></strong> (default 5 s, configurable) guards the rare case of an
+  external process holding the lock.</li>
+<li><strong>API surface</strong>: <code>query / query_one / scalar</code> (reads), <code>execute / insert /
+  update / execute_many / run_write / transaction</code> (writes, serialised),
+  <code>get_state / set_state</code> (key/value table).</li>
+<li><strong><code>migrate()</code></strong> applies pending migrations on <code>initialize()</code>, inside the
+  writer, and records each applied version in <code>schema_log</code>.</li>
+</ul>
+<h2 id="3-coreschemapy-migrations">3. <code>core/schema.py</code> — migrations<a class="heading-anchor" href="#3-coreschemapy-migrations" title="Permanent link">&para;</a></h2>
+<p>Migrations are ordered <code>Migration(version, name, statements)</code> records applied
+exactly once, ascending, in the writer thread. Current set:</p>
+<ol>
+<li><code>core_kv_store</code> — <code>app_state</code> key/value table + <code>schema_log</code>.</li>
+<li><code>datasets_entries_collections_documents</code> — the full relational model:</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>Table</th>
+<th>Holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>datasets</code></td>
+<td>name, slug, description, tags, source, metadata, settings</td>
+</tr>
+<tr>
+<td><code>entries</code></td>
+<td>dataset_id, status, messages (JSON), tags, notes, quality, evaluation (JSON), source, position, version</td>
+</tr>
+<tr>
+<td><code>entry_versions</code></td>
+<td>per-entry immutable snapshots with a reason (<code>UNIQUE(entry_id, version)</code>)</td>
+</tr>
+<tr>
+<td><code>collections</code></td>
+<td>name, slug, description, optional dataset_id, tags</td>
+</tr>
+<tr>
+<td><code>collection_entries</code></td>
+<td>ordered membership (<code>PRIMARY KEY(collection_id, entry_id)</code>)</td>
+</tr>
+<tr>
+<td><code>documents</code></td>
+<td>title, source, kind, original/markdown paths, size, sha256, status, error, chunk_count, tags</td>
+</tr>
+<tr>
+<td><code>document_chunks</code></td>
+<td>canonical chunk text per document (<code>UNIQUE(document_id, idx)</code>), vector_id, heading</td>
+</tr>
+<tr>
+<td><code>conversations</code></td>
+<td>title, system_prompt, the three use_* switches, optional dataset_id</td>
+</tr>
+<tr>
+<td><code>conversation_messages</code></td>
+<td>ordered messages with citations (JSON), model, usage</td>
+</tr>
+</tbody>
+</table>
+<p>Rules: <strong>never edit a released migration</strong> — add a new one. Indexes are
+created alongside the tables.</p>
+<h2 id="4-coreeventspy-the-event-bus">4. <code>core/events.py</code> — the event bus<a class="heading-anchor" href="#4-coreeventspy-the-event-bus" title="Permanent link">&para;</a></h2>
+<p><code>EventBus</code> is a thread-safe pub/sub hub with a bounded, replayable history:</p>
+<ul>
+<li><code>publish(event_or_kwargs)</code> stamps a monotonic <code>id</code>, appends to the history
+  deque (500 events) and pushes to every subscriber queue (max 1000 items; a
+  slow consumer drops its oldest item instead of blocking producers).</li>
+<li><code>subscribe()/unsubscribe()</code> manage per-consumer <code>queue.Queue</code>s.</li>
+<li><code>stream(after_id, timeout, stop)</code> yields history first, then live events,
+  yielding <code>None</code> as a keep-alive heartbeat when idle. The SSE endpoint
+  (<code>/api/events</code>) is the main consumer; the UI's <code>EventSource</code> reconnects with
+  <code>?after=&lt;last id&gt;</code> to catch up.</li>
+</ul>
+<p>Event fields: <code>type, message, level (debug|info|success|warning|error),
+progress, source, data, id, ts, job_id</code>.</p>
+<h2 id="5-corejobspy-background-jobs">5. <code>core/jobs.py</code> — background jobs<a class="heading-anchor" href="#5-corejobspy-background-jobs" title="Permanent link">&para;</a></h2>
+<p><code>JobManager</code> runs callables on a <code>ThreadPoolExecutor</code> (<code>app.max_workers</code>) and
+reports through the bus. Jobs are <strong>handles, not durable records</strong> — they live
+in memory with 200-item history.</p>
+<p>Lifecycle: <code>submit()</code> → <code>job.queued</code> → <code>job.started</code> → <code>job.progress</code>* →
+<code>job.finished</code> (or <code>job.error</code> with a full traceback in <code>data.traceback</code>).</p>
+<ul>
+<li><strong><code>Job</code></strong> carries status (<code>queued/running/success/error/cancelled</code>),
+  progress 0–1, message, result, metadata, timings, <code>cancel_event</code>.</li>
+<li><strong><code>JobContext</code></strong> is the handle passed to the callable:</li>
+<li><code>update(progress, message)</code> publishes <code>job.progress</code> and <strong>raises
+    <code>JobCancelled</code> if cancellation was requested</strong>,</li>
+<li><code>step(i, total)</code> for loops,</li>
+<li><code>log(message, level, **data)</code> for <code>job.log</code> events,</li>
+<li><code>check_cancelled()</code> for cooperative cancellation between units of work.</li>
+<li><strong><code>call()</code></strong> submits and waits (CLI/tests). <strong><code>cancel()</code></strong> sets the cancel
+  event and un-queues queued jobs.</li>
+<li>Results are converted to JSON-safe data by <code>_jsonable</code> (pydantic models →
+  dicts, non-serialisables → strings).</li>
+</ul>
+<h2 id="6-corerepositorypy-servicesrepositoriespy-persistence">6. <code>core/repository.py</code> + <code>services/repositories.py</code> — persistence<a class="heading-anchor" href="#6-corerepositorypy-servicesrepositoriespy-persistence" title="Permanent link">&para;</a></h2>
+<p><code>ModelRepository[M]</code> is generic CRUD derived from the pydantic model:</p>
+<ul>
+<li>scalars → native columns,</li>
+<li><code>bool</code> → <code>0</code>/<code>1</code>,</li>
+<li>lists / dicts / nested models → compact JSON text (<code>json_dumps</code>),</li>
+<li><code>column_map</code> renames a field (<code>index</code> → <code>idx</code> for chunks/messages),</li>
+<li><code>exclude</code> drops computed fields (<code>Collection.entry_ids</code> is stored via the
+  join table, not a column),</li>
+<li><code>__init_subclass__</code> computes <code>json_columns</code> / <code>bool_columns</code> once per
+  subclass.</li>
+</ul>
+<p>Provides <code>get / get_by_public_id / list(where, params, limit, offset) / count
+/ exists / insert / update (touch() included) / save / delete /
+delete_by_public_id / transaction</code>.</p>
+<p>Concrete repositories add domain queries: <code>EntryRepository.add_version()</code>
+(snapshot + reason), <code>CollectionRepository.add_entries/remove_entries/
+entries_for/collections_for_entry</code>, <code>DocumentRepository.by_sha256/set_status</code>,
+<code>DocumentChunkRepository.by_vector_ids</code> (used by retrieval enrichment),
+<code>ConversationMessageRepository.next_index</code>, slug lookups, etc.</p>
+<h2 id="7-domainentitiespy-the-vocabulary">7. <code>domain/entities.py</code> — the vocabulary<a class="heading-anchor" href="#7-domainentitiespy-the-vocabulary" title="Permanent link">&para;</a></h2>
+<ul>
+<li><strong>Enums</strong>: <code>Role</code> (system/user/assistant/tool/developer), <code>EntryStatus</code>
+  (draft/in_review/approved/rejected), <code>DocumentStatus</code>
+  (pending/converting/indexing/ready/error), <code>SourceKind</code>.</li>
+<li><strong><code>Entity</code></strong> base: <code>id</code>, <code>public_id</code> (16-hex), timestamps, <code>touch()</code>.</li>
+<li><strong><code>ChatMessage</code></strong>: role + content (coerced to string) + optional name.</li>
+<li><strong><code>Entry</code></strong>: dataset_id, status, messages, tags, notes, quality,
+  evaluation (<code>Evaluation</code>: score, per-dimension scores, summary, strengths,
+  issues, suggestions, evaluator, model), source, position, version.
+  Helpers: <code>first(role)</code>, <code>system/user/assistant</code> properties,
+  <code>validate_chatml()</code> (structural problems list), <code>to_chatml()</code>.</li>
+<li><strong><code>Dataset</code></strong> / <strong><code>Collection</code></strong> (auto-slug), <strong><code>Document</code></strong> /
+  <strong><code>DocumentChunk</code></strong>, <strong><code>Conversation</code></strong> / <strong><code>ConversationMessage</code></strong>
+  (with <code>Citation</code>: kind vector/graph/document, ref, title, snippet, score).</li>
+<li><strong><code>ExportRequest</code></strong>: format + metadata + status filters.</li>
+</ul>
+<h2 id="8-the-service-layer">8. The service layer<a class="heading-anchor" href="#8-the-service-layer" title="Permanent link">&para;</a></h2>
+<p><code>Service</code> (services/base.py) is the base façade: holds <code>ctx</code>, exposes
+<code>db</code>/<code>config</code> shortcuts, <code>emit()</code> (publishes events with the service name as
+source), <code>resolve_id()</code> (int or public-id → numeric id) and
+<code>unique_slug()</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Service</th>
+<th>Responsibility (highlights)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>DatasetService</code></td>
+<td>CRUD + per-status stats; name/description/tag filters.</td>
+</tr>
+<tr>
+<td><code>EntryService</code></td>
+<td>CRUD with <code>build_messages()</code> normalisation (messages list or system/user/assistant strings); <strong>auto-versioning</strong> — message changes bump <code>version</code> and snapshot into <code>entry_versions</code>; status/evaluation/tag helpers; <code>bulk_create</code> for ChatML imports; search across messages/notes.</td>
+</tr>
+<tr>
+<td><code>CollectionService</code></td>
+<td>CRUD, ordered membership (add/remove/set), stats, and export delegation.</td>
+</tr>
+<tr>
+<td><code>DocumentService</code></td>
+<td>Import (file or bytes) with <strong>sha256 dedupe</strong>, original storage, conversion, heuristic + optional LLM cleaning, markdown persistence and status tracking; markdown read/write; stats.</td>
+</tr>
+<tr>
+<td><code>AuthoringService</code></td>
+<td>LLM features over entries/documents: enhance fields (optionally grounded, optionally persisted), suggest tags (optionally applied), evaluate (persists <code>Evaluation</code>), generate entries (grounded), clean document markdown, enrich the graph with LLM entities.</td>
+</tr>
+<tr>
+<td><code>ChatService</code></td>
+<td>Conversations with the three switches; non-streaming <code>send()</code> and SSE <code>stream()</code>; grounding block built from retrieval; last-16-message prompt window; auto-titling; persisted citations and token usage.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="appcontext-servicescontextpy"><code>AppContext</code> (services/context.py)<a class="heading-anchor" href="#appcontext-servicescontextpy" title="Permanent link">&para;</a></h3>
+<p>One object wiring everything, created lazily and cached:</p>
+<ul>
+<li><code>config</code> / <code>update_config()</code> (bumps <code>llm_epoch</code>, evicts the vector store),</li>
+<li><code>db</code> (opens + migrates on first touch), <code>jobs</code>,</li>
+<li>lazy properties for every repository-backed service, <code>vectorstore</code>
+  (rebuilt when the embedding settings change), <code>graph</code>, <code>graph_indexer</code>,
+  <code>indexer</code>, <code>retriever</code>, <code>authoring</code>, <code>chat</code>,</li>
+<li><code>get_context()</code> returns the process singleton; <code>set_context()</code> /
+  <code>reset_context()</code> support tests and alternate entry points;</li>
+<li><code>close()</code> closes the vector store, graph and database.</li>
+</ul>
+<h2 id="9-clipy-the-command-line">9. <code>cli.py</code> — the command line<a class="heading-anchor" href="#9-clipy-the-command-line" title="Permanent link">&para;</a></h2>
+<p><code>minics</code> with no subcommand launches the desktop app. Commands (all accept
+<code>--home</code>):</p>
+<blockquote>
+<p><strong>First-run auto-initialisation</strong> — every command that needs the store
+(<code>setup</code>, <code>datasets</code>, <code>entries</code>, <code>documents</code>, <code>reindex</code>, <code>export</code>, <code>search</code>,
+<code>serve</code>, <code>app</code>) creates the home directory structure and applies SQLite
+migrations before doing anything else. A brand-new machine only needs
+<code>minics serve</code> to get a working, empty studio; <code>init</code> exists for users who
+want to create the folder explicitly.</p>
+</blockquote>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>init</code></td>
+<td>Create the home structure and run migrations.</td>
+</tr>
+<tr>
+<td><code>setup</code></td>
+<td>Interactive or flag-driven endpoint wizard; probes embedding dimension; connection test; marks setup complete.</td>
+</tr>
+<tr>
+<td><code>config</code></td>
+<td>Print the (masked) config; <code>--set JSON</code> deep-merges a patch.</td>
+</tr>
+<tr>
+<td><code>models</code></td>
+<td>List chat/embedding models from the endpoint.</td>
+</tr>
+<tr>
+<td><code>app</code></td>
+<td>Launch the desktop app (<code>--port</code>, <code>--debug</code>).</td>
+</tr>
+<tr>
+<td><code>serve</code></td>
+<td>Run the web server (<code>--host</code>, <code>--port</code>, <code>--no-browser</code>).</td>
+</tr>
+<tr>
+<td><code>datasets</code></td>
+<td>List datasets (with stats) or <code>--create NAME</code>.</td>
+</tr>
+<tr>
+<td><code>entries</code></td>
+<td>List entries (<code>--dataset</code>, <code>--status</code>, <code>--search</code>, <code>--limit</code>).</td>
+</tr>
+<tr>
+<td><code>documents</code></td>
+<td><code>--import PATH…</code> (optionally indexing + graph), <code>--index-ref</code>, or list with <code>--search</code>.</td>
+</tr>
+<tr>
+<td><code>reindex</code></td>
+<td>Re-index every document (vectors + graph).</td>
+</tr>
+<tr>
+<td><code>export</code></td>
+<td>Export a collection (<code>--format</code>, <code>-o</code>, <code>--include-metadata</code>, <code>--approved</code>).</td>
+</tr>
+<tr>
+<td><code>search</code></td>
+<td>Hybrid retrieval from the terminal (<code>--top-k</code>, <code>--no-rag</code>, <code>--no-graph</code>).</td>
+</tr>
+<tr>
+<td><code>version</code>, <code>info</code></td>
+<td>Version; resolved paths and init state.</td>
+</tr>
+</tbody>
+</table>
+<p>Output is JSON everywhere (<code>_print</code>), so commands compose with <code>jq</code>.</p>
+<h2 id="10-desktoppy-the-desktop-shell">10. <code>desktop.py</code> — the desktop shell<a class="heading-anchor" href="#10-desktoppy-the-desktop-shell" title="Permanent link">&para;</a></h2>
+<p><code>run_app()</code>:</p>
+<ol>
+<li>resolves/ensures the context and config,</li>
+<li>picks a free port (<code>find_free_port</code> starting at <code>app.port</code>),</li>
+<li>starts <code>ServerThread</code> — a <code>werkzeug.serving.make_server(host, port, app,
+   threaded=True)</code> on a daemon thread,</li>
+<li>opens a PyWebView window (<code>webview.create_window</code>, min size 900×600,
+   text-selectable) pointed at <code>http://127.0.0.1:&lt;port&gt;/</code>,</li>
+<li>on exit stops the server and closes the context.</li>
+</ol>
+<p>If <code>webview</code> cannot import (headless Linux, missing GTK/Qt backend), it falls
+back to <code>webbrowser.open()</code> and serves until interrupted — the app is never
+unusable. <code>run_browser()</code> is the plain-server variant used by <code>minics serve</code>.</p>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="configuration.html"><span class="pager-label">Previous</span><span class="pager-title">Configuration</span></a>
+<a class="pager-card next" href="llm.html"><span class="pager-label">Next</span><span class="pager-title">LLM layer</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#1-corepathspy-the-filesystem-contract">1. core/paths.py — the filesystem contract</a></li><li class="toc-l2"><a href="#2-coredbpy-concurrency-safe-sqlite">2. core/db.py — concurrency-safe SQLite</a></li><li class="toc-l2"><a href="#3-coreschemapy-migrations">3. core/schema.py — migrations</a></li><li class="toc-l2"><a href="#4-coreeventspy-the-event-bus">4. core/events.py — the event bus</a></li><li class="toc-l2"><a href="#5-corejobspy-background-jobs">5. core/jobs.py — background jobs</a></li><li class="toc-l2"><a href="#6-corerepositorypy-servicesrepositoriespy-persistence">6. core/repository.py + services/repositories.py — persistence</a></li><li class="toc-l2"><a href="#7-domainentitiespy-the-vocabulary">7. domain/entities.py — the vocabulary</a></li><li class="toc-l2"><a href="#8-the-service-layer">8. The service layer</a></li><li class="toc-l3"><a href="#appcontext-servicescontextpy">AppContext (services/context.py)</a></li><li class="toc-l2"><a href="#9-clipy-the-command-line">9. cli.py — the command line</a></li><li class="toc-l2"><a href="#10-desktoppy-the-desktop-shell">10. desktop.py — the desktop shell</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minichat_studio/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minichat_studio/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

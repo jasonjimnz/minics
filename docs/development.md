@@ -8,7 +8,7 @@ code style, how to extend the schema, and how the pieces are meant to evolve.
 ## 1. Environment
 
 ```bash
-git clone <repo> && cd minics
+git clone https://github.com/jasonjimnz/minics && cd minics
 python -m venv .venv
 .venv\Scripts\activate            # Windows   (source .venv/bin/activate on Unix)
 pip install -e ".[dev]"

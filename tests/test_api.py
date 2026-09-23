@@ -13,6 +13,18 @@ def test_health_and_overview(client):
     assert client.get("/").status_code == 200
 
 
+def test_about_and_open_allowlist(client):
+    about = client.get("/api/about").get_json()["data"]
+    assert about["stage"] == "beta"
+    assert about["repo"] == "https://github.com/jasonjimnz/minics"
+    assert about["docs"].startswith("https://jasonjimnz.github.io/")
+
+    # Only project-owned https hosts may be opened in the system browser.
+    blocked = client.post("/api/about/open", json={"url": "https://evil.example.com"})
+    assert blocked.status_code == 403
+    assert client.post("/api/about/open", json={"url": "http://github.com/jasonjimnz/minics"}).status_code == 403
+
+
 def test_dataset_and_entry_endpoints(client):
     created = client.post("/api/datasets", json={"name": "Support QA"}).get_json()["data"]
     dataset_ref = created["public_id"]

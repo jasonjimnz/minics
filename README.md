@@ -189,7 +189,7 @@ A prebuilt server image is published on **GHCR** for every release — pull it
 directly instead of building:
 
 ```bash
-docker pull ghcr.io/jasonjimnz/minics:0.3.0   # or :latest
+docker pull ghcr.io/jasonjimnz/minics:0.3.2   # or :latest
 ```
 
 The container keeps the whole store in a volume and
@@ -337,7 +337,7 @@ and style conventions.
 
 ## Status
 
-**Version 0.3.1 is ready.** The project is still a **beta** and intentionally
+**Version 0.3.2 is ready.** The project is still a **beta** and intentionally
 a **small project** — a lite blend of ChatML Studio and Tyness — built in
 small, versioned increments (see `git log`).
 

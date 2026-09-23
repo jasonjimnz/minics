@@ -2,6 +2,9 @@
 
 from __future__ import annotations
 
+import webbrowser
+from urllib.parse import urlparse
+
 from flask import Blueprint, request
 
 from minics import __version__
@@ -17,6 +20,30 @@ from minics.server.deps import fail, get_ctx, json_body, ok
 
 bp = Blueprint("system", __name__, url_prefix="/api")
 
+# Canonical project links surfaced in the About view.
+REPO_URL = "https://github.com/jasonjimnz/minics"
+ABOUT = {
+    "app": "MiniCS Lite (Mini ChatML Studio Lite)",
+    "version": __version__,
+    "stage": "beta",
+    "repo": REPO_URL,
+    "docs": "https://jasonjimnz.github.io/minics/",
+    "author_github": "https://github.com/jasonjimnz",
+    "author_x": "https://x.com/cangri2k5",
+    "issues": f"{REPO_URL}/issues",
+    "new_issue": f"{REPO_URL}/issues/new",
+}
+
+# Only https URLs on these hosts may be opened in the system browser.
+OPENABLE_HOSTS = {
+    "github.com",
+    "gist.github.com",
+    "jasonjimnz.github.io",
+    "x.com",
+    "twitter.com",
+    "pypi.org",
+}
+
 
 @bp.get("/health")
 def health():
@@ -30,6 +57,28 @@ def health():
             "missing": ctx.config.missing_requirements(),
         }
     )
+
+
+@bp.get("/about")
+def about():
+    """Project metadata and links for the About view."""
+    return ok({**ABOUT, "version": __version__})
+
+
+@bp.post("/about/open")
+def about_open():
+    """Open an allow-listed https URL in the system browser.
+
+    Used by the About view so links escape the PyWebView window reliably on
+    every OS. Only hosts belonging to the project are permitted.
+    """
+    payload = json_body()
+    url = str(payload.get("url") or "").strip()
+    parsed = urlparse(url)
+    if parsed.scheme != "https" or parsed.netloc.lower() not in OPENABLE_HOSTS:
+        return fail("URL is not in the allow-list", 403)
+    webbrowser.open(url)
+    return ok({"opened": url})
 
 
 @bp.get("/config")

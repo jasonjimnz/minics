@@ -468,6 +468,9 @@ textarea { resize: vertical; min-height: 90px; font-family: var(--font-mono); fo
 .job.error .bar > span { background: var(--danger); }
 .job.success .bar > span { background: var(--success); }
 
+/* About ------------------------------------------------------------------- */
+.about-link { display: flex; gap: 12px; align-items: center; }
+
 /* Graph ------------------------------------------------------------------ */
 .graph-canvas { width: 100%; height: 520px; border: 1px solid var(--border); border-radius: var(--radius); background: var(--bg-elev); }
 .graph-node { cursor: pointer; }

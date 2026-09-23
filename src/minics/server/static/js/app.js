@@ -2,7 +2,7 @@
 (function () {
   "use strict";
 
-  const ROUTES = ["dashboard", "datasets", "entries", "collections", "documents", "chat", "graph", "jobs", "settings"];
+  const ROUTES = ["dashboard", "datasets", "entries", "collections", "documents", "chat", "graph", "jobs", "settings", "about"];
   const trackedJobs = new Map();
 
   function parseHash() {

@@ -1182,5 +1182,52 @@
     };
   }
 
-  window.Views = { dashboard, datasets, entries, collections, documents, chat, graph, jobs, settings };
+  /* -- about --------------------------------------------------------------- */
+  async function about(view) {
+    const info = await API.get("/api/about");
+    view.appendChild(head("About", "Project info, links and feedback"));
+
+    view.appendChild(el("div", { class: "card about-card" },
+      el("div", { style: { display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" } },
+        el("strong", { text: info.app }),
+        el("span", { class: "pill warn", text: info.stage }),
+        el("span", { class: "pill", text: `v${info.version}` })
+      ),
+      el("div", { class: "muted", style: { marginTop: "8px" }, text:
+        "MiniCS is a mixed project combining ChatML Studio (datasets and entries) and Tyness (a tiny documental harness for LLM capabilities with embed databases). " +
+        "The application is still in early phases: expect rough edges, and please report anything you find." })
+    ));
+
+    const openLink = (url) => API.post("/api/about/open", { url });
+
+    const linkRow = (label, hint, url, cta) => el("div", { class: "card about-link" },
+      el("div", { style: { flex: "1", minWidth: "200px" } },
+        el("div", { text: label }),
+        el("div", { class: "muted tiny", text: hint })
+      ),
+      el("button", { class: "btn small", text: cta, onclick: () => openLink(url).catch((e) => UI.toast("Could not open link", "error", e.message)) })
+    );
+
+    view.appendChild(el("div", { class: "section-title", text: "Links" }));
+    const links = el("div", { class: "grid" });
+    links.appendChild(linkRow("GitHub repository", "Source code, releases and README", info.repo, "Open repo"));
+    links.appendChild(linkRow("Documentation", "Guides, API reference and architecture", info.docs, "Open docs"));
+    links.appendChild(linkRow("Author on GitHub", "github.com/jasonjimnz", info.author_github, "Open profile"));
+    links.appendChild(linkRow("Author on X", "x.com/cangri2k5", info.author_x, "Open X"));
+    view.appendChild(links);
+
+    view.appendChild(el("div", { class: "section-title", text: "Feedback" }));
+    view.appendChild(el("div", { class: "card" },
+      el("div", { text: "Suggestions, bugs and feature requests go through GitHub issues." }),
+      el("div", { class: "muted", style: { marginTop: "4px" }, text:
+        "Opening an issue keeps everything in one place and helps track what lands in the next release. " +
+        "Everything here is free and open — no telemetry, no accounts." }),
+      el("div", { style: { marginTop: "10px", display: "flex", gap: "8px", flexWrap: "wrap" } },
+        el("button", { class: "btn", text: "Open an issue", onclick: () => openLink(info.new_issue).catch((e) => UI.toast("Could not open link", "error", e.message)) }),
+        el("button", { class: "btn ghost", text: "Browse existing issues", onclick: () => openLink(info.issues).catch((e) => UI.toast("Could not open link", "error", e.message)) })
+      )
+    ));
+  }
+
+  window.Views = { dashboard, datasets, entries, collections, documents, chat, graph, jobs, settings, about };
 })();

@@ -26,7 +26,7 @@ from pygments.formatters import HtmlFormatter
 
 ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
-REPO_URL = "https://github.com/jasonjimnz/minichat_studio"
+REPO_URL = "https://github.com/jasonjimnz/minics"
 
 # (slug, title, blurb, group) — order defines sidebar and prev/next pager.
 PAGES: list[tuple[str, str, str, str]] = [

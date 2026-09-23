@@ -45,11 +45,11 @@ If you want the latest code on `main`, or you plan to contribute:
 
 ```bash
 # straight from GitHub
-pip install git+https://github.com/jasonjimnz/minichat_studio.git
+pip install git+https://github.com/jasonjimnz/minics.git
 
 # or clone and install in editable mode with the dev toolchain
-git clone git@github.com:jasonjimnz/minichat_studio.git
-cd minichat_studio
+git clone git@github.com:jasonjimnz/minics.git
+cd minics
 pip install -e ".[dev]"
 ```
 

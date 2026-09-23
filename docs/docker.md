@@ -52,7 +52,7 @@ writable for it: `chown -R 1000:1000 /srv/minics` (or run with
 
 ## 3. Docker Compose (recommended)
 
-A ready-made [`docker-compose.yml`](https://github.com/jasonjimnz/minichat_studio/blob/main/docker-compose.yml) ships in the repo:
+A ready-made [`docker-compose.yml`](https://github.com/jasonjimnz/minics/blob/main/docker-compose.yml) ships in the repo:
 
 ```yaml
 services:

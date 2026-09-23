@@ -4,10 +4,10 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "minichat-studio"
-version = "0.3.0"
+version = "0.3.1"
 description = "MiniCS Lite (Mini ChatML Studio Lite) — a local-first studio for building high quality LLM datasets with RAG + graph grounding."
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.12"
 license = { text = "MIT" }
 authors = [{ name = "Jason Jimenez Cruz", email = "jasonjimenezcruz@gmail.com" }]
 keywords = ["llm", "dataset", "rag", "graph", "chromadb", "ladybug", "flask", "pywebview"]

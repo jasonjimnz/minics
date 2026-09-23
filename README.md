@@ -36,7 +36,7 @@ inside your own `~/.minics` folder — no cloud, no accounts, no lock-in.
 
 ## A walkthrough of the web app
 
-The screenshots below (from [`docs/screenshots/`](docs/screenshots/)) follow a
+The screenshots below (from [`docs/screenshots/`](https://raw.githubusercontent.com/jasonjimnz/minics/main/docs/screenshots/)) follow a
 real end-to-end session against two local model servers: a **llama.cpp
 `llama-server`** instance serving the chat model and an **Ollama** instance
 serving the embedding model — exactly the split-endpoint setup MiniCS is
@@ -44,7 +44,7 @@ designed for.
 
 ### 1. Home / Dashboard
 
-![Dashboard](docs/screenshots/01_home.png)
+![Dashboard](https://raw.githubusercontent.com/jasonjimnz/minics/main/docs/screenshots/01_home.png)
 
 The landing screen. Live counters for datasets, entries, approved entries,
 documents, indexed chunks and graph entities, a *Getting started* checklist
@@ -54,7 +54,7 @@ Graph, Activity, Settings — is one click away.
 
 ### 2. Settings — wiring up the endpoints
 
-![Settings](docs/screenshots/02_settings.png)
+![Settings](https://raw.githubusercontent.com/jasonjimnz/minics/main/docs/screenshots/02_settings.png)
 
 Here the app is pointed at the two local servers: the **LLM endpoint** is a
 `llama-server` instance (`qwen-3-8` on `:8000/v1`) and the **embeddings
@@ -67,14 +67,14 @@ endpoints before *Finish setup* locks them in.
 
 ### 3. Creating a dataset
 
-![New dataset](docs/screenshots/03_new_dataset.png)
+![New dataset](https://raw.githubusercontent.com/jasonjimnz/minics/main/docs/screenshots/03_new_dataset.png)
 
 Datasets are the top-level containers for training examples. Give one a name,
 a short description and optional comma-separated tags — that's all it takes.
 
 ### 4. Creating an entry
 
-![New entry](docs/screenshots/04_new_entry.png)
+![New entry](https://raw.githubusercontent.com/jasonjimnz/minics/main/docs/screenshots/04_new_entry.png)
 
 Each entry is a ChatML conversation: **system**, **user** and **assistant**
 messages. Fill them by hand, or type a topic into *Generate with LLM
@@ -83,7 +83,7 @@ documents as context.
 
 ### 5. The entry editor
 
-![Entry editor](docs/screenshots/05_created_entry.png)
+![Entry editor](https://raw.githubusercontent.com/jasonjimnz/minics/main/docs/screenshots/05_created_entry.png)
 
 The generated entry lands in the editor. Messages can be reordered, deleted
 and switched between roles; a *Valid ChatML* banner confirms the structure in
@@ -93,7 +93,7 @@ and every message edit bumps the entry version automatically.
 
 ### 6. Importing a markdown document
 
-![Document viewer](docs/screenshots/06_adding_document.png)
+![Document viewer](https://raw.githubusercontent.com/jasonjimnz/minics/main/docs/screenshots/06_adding_document.png)
 
 Dropping a markdown file (or PDF/DOCX/TXT/LaTeX — it gets converted) opens the
 document viewer: a split-pane markdown editor with live preview and formatting
@@ -103,7 +103,7 @@ the dialog.
 
 ### 7. Querying the knowledge graph
 
-![Graph](docs/screenshots/07_searching_graph.png)
+![Graph](https://raw.githubusercontent.com/jasonjimnz/minics/main/docs/screenshots/07_searching_graph.png)
 
 The Graph screen shows the entity topology extracted from your documents —
 923 entities, 1492 mentions and 4779 co-occurrences from a single import.
@@ -112,7 +112,7 @@ sub-graph; *Rebuild* regenerates the whole topology from the index.
 
 ### 8. Testing the LLM
 
-![Chat](docs/screenshots/08_chat_with_model.png)
+![Chat](https://raw.githubusercontent.com/jasonjimnz/minics/main/docs/screenshots/08_chat_with_model.png)
 
 Chat is where the model gets smoke-tested. Each conversation carries its own
 **RAG**, **Graph** and **Grounding** toggles — you can preview what retrieval
@@ -121,14 +121,14 @@ sanity-check prompt with all toggles off.
 
 ### 9. Creating a collection
 
-![New collection](docs/screenshots/09_new_collection.png)
+![New collection](https://raw.githubusercontent.com/jasonjimnz/minics/main/docs/screenshots/09_new_collection.png)
 
 Collections are curated sets of entries destined for export — a name and a
 description and you're in.
 
 ### 10. Curating and exporting
 
-![Collection](docs/screenshots/10_adding_entries.png)
+![Collection](https://raw.githubusercontent.com/jasonjimnz/minics/main/docs/screenshots/10_adding_entries.png)
 
 Search your entries and *Add* them to the collection, then download the whole
 set in one click — **ChatML, JSONL, Alpaca, ShareGPT or Markdown** —
@@ -337,7 +337,7 @@ and style conventions.
 
 ## Status
 
-**Version 0.3.0 is ready.** The project is still a **beta** and intentionally
+**Version 0.3.1 is ready.** The project is still a **beta** and intentionally
 a **small project** — a lite blend of ChatML Studio and Tyness — built in
 small, versioned increments (see `git log`).
 

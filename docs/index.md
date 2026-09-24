@@ -28,6 +28,7 @@ theme picker in the browser.
 | 13 | [Frontend](frontend.md) | The no-build SPA: module layout, hash routing, SSE consumption, theming, the markdown renderer, the graph canvas and every screen. |
 | 14 | [Data & storage](storage.md) | The `~/.minics` store, the three embedded databases, backups, portability and privacy. |
 | 15 | [Development](development.md) | Setting up a dev environment, running tests, fixtures, code style, schema migrations and contribution workflow. |
+| 16 | [Colab + vLLM example](colab-example.md) | Running the whole MiniCS library programmatically on a free Google Colab T4 GPU, with vLLM serving the chat + embedding models in the background. |
 
 ## Cheat sheet
 

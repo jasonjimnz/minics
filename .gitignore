@@ -44,3 +44,7 @@ Thumbs.db
 # Local runtime data (the real store lives in ~/.minics)
 .minics/
 *.log
+
+# Examples not part of a release yet (planned for a later version)
+examples/mcp-knowledge-base/
+examples/README.md

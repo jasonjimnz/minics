@@ -171,6 +171,16 @@ Point the wizard at any OpenAI-compatible chat endpoint and any embedding
 endpoint (they may be different servers). The embedding dimension is detected
 automatically and required — Chroma collections are created with it.
 
+### Example notebook: MiniCS + vLLM on Google Colab
+
+Prefer to see the library in action before installing anything? The
+[`examples/colab-vllm`](https://github.com/jasonjimnz/minics/tree/main/examples/colab-vllm)
+notebook runs the whole MiniCS library programmatically on a **free Colab T4
+GPU** — vLLM serves a small chat LLM and an embedding model in the
+background, and the notebook builds a knowledge base end to end (documents →
+hybrid retrieval → grounded chat → dataset authoring → JSONL export). See
+[docs/colab-example.md](docs/colab-example.md).
+
 Other entry points:
 
 ```bash
@@ -189,7 +199,7 @@ A prebuilt server image is published on **GHCR** for every release — pull it
 directly instead of building:
 
 ```bash
-docker pull ghcr.io/jasonjimnz/minics:0.3.2   # or :latest
+docker pull ghcr.io/jasonjimnz/minics:0.3.3   # or :latest
 ```
 
 The container keeps the whole store in a volume and
@@ -280,6 +290,7 @@ Every layer is documented in depth in [`docs/`](docs/index.md):
 | [Docker](docs/docker.md) | Server container: build, run, Compose, volumes, first-run setup, troubleshooting. |
 | [Frontend](docs/frontend.md) | The no-build SPA: modules, hash routing, SSE, themes, markdown, graph view, every screen. |
 | [Development](docs/development.md) | Environment, tests, fixtures, style, migrations, how to contribute. |
+| [Colab + vLLM example](docs/colab-example.md) | Run the whole MiniCS library programmatically on a free Google Colab T4 GPU with vLLM serving the models — the `examples/colab-vllm` notebook. |
 
 ---
 
@@ -337,7 +348,7 @@ and style conventions.
 
 ## Status
 
-**Version 0.3.2 is ready.** The project is still a **beta** and intentionally
+**Version 0.3.3 is ready.** The project is still a **beta** and intentionally
 a **small project** — a lite blend of ChatML Studio and Tyness — built in
 small, versioned increments (see `git log`).
 

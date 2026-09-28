@@ -18,7 +18,8 @@ theme picker in the browser.
 | 3 | [Features](features.md) | The full feature tour across library, grounding, retrieval and UI. |
 | 4 | [CLI reference](cli.md) | Every `minics` subcommand: setup, `minics scan`, documents, search, export, and the skills installer. |
 | 5 | [Agent skills](skills.md) | The bundled MiniCS skillset for Pi, OpenCode and Codex: installation and the full catalogue. |
-| 6 | [Architecture](architecture.md) | How the layers fit together, the request lifecycle, the concurrency model and the reasoning behind each big decision. |
+| 6 | [Skill usage examples](skill-examples.md) | Deep, worked examples for every skill — terminal sessions, Python scripts and multi-skill playbooks. |
+| 7 | [Architecture](architecture.md) | How the layers fit together, the request lifecycle, the concurrency model and the reasoning behind each big decision. |
 | 7 | [Libraries](libraries.md) | What every dependency in `pyproject.toml` does, where it is used, and why it was chosen. |
 | 8 | [Configuration](configuration.md) | Every config key, the setup wizard, `MINICS_HOME`, API-key masking and how config changes propagate. |
 | 9 | [Core & backend](backend.md) | The SQLite writer thread, event bus, job manager, generic repository, domain entities, services, CLI and desktop shell. |

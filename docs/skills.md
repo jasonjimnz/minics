@@ -26,7 +26,8 @@ minics skills list                   # see what is bundled / installed
 
 Each skill is a directory containing a `SKILL.md` with YAML frontmatter
 (`name` + `description`) — the format agents use to decide when to load a
-skill. Your agent will pick them up on its next session.
+skill. Your agent will pick them up on its next session. For worked sessions
+per skill, see [Skill usage examples](skill-examples.md).
 
 ## The skillset
 

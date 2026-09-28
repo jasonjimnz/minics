@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Deep, worked examples for every skill — plus multi-skill playbooks.">
+<title>Skill usage examples · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minics</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.2</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minics" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li><li><a href="cli.html">CLI reference</a></li><li><a href="skills.html">Agent skills</a></li><li><a href="skill-examples.html" class="active" aria-current="page">Skill usage examples</a></li></ul></div><div class="nav-group"><h3>Examples</h3><ul><li><a href="colab-example.html">Colab + vLLM example</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Getting started</p>
+          <h1>Skill usage examples</h1>
+          <p class="page-blurb">Deep, worked examples for every skill — plus multi-skill playbooks.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minics/edit/main/docs/skill-examples.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>The <a href="skills.html">Agent skills</a> page describes <em>what each skill knows</em>; this page
+shows <em>how an agent actually uses it</em>. Every example below is a realistic,
+reproducible session — real commands, real flags, expected output — organised
+by skill, and finished with three end-to-end <strong>playbooks</strong> that combine several
+skills at once.</p>
+<p>Agents: load the matching sub-skill before executing an example, and prefer the
+smallest example that solves the task. All examples assume a store at
+<code>~/.minics</code> (or <code>MINICS_HOME</code>) and at least one configured OpenAI-compatible
+endpoint pair (<code>minics setup</code>).</p>
+<blockquote>
+<p>The prompts in "Agent task" quotes are what a user might type; the blocks
+underneath are what the agent should run.</p>
+</blockquote>
+<hr />
+<h2 id="minics-the-parent-skill"><code>minics</code> — the parent skill<a class="heading-anchor" href="#minics-the-parent-skill" title="Permanent link">&para;</a></h2>
+<h3 id="example-1-first-contact-with-an-existing-store">Example 1 — First contact with an existing store<a class="heading-anchor" href="#example-1-first-contact-with-an-existing-store" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"I inherited a machine with MiniCS already installed — what's in it?"</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>version
+minics<span class="w"> </span>info
+minics<span class="w"> </span>datasets
+minics<span class="w"> </span>documents
+</code></pre></div>
+
+<p><code>info</code> is the safe first call — it reports paths and the <code>initialized</code> flag
+without writing anything. If <code>initialized</code> is <code>false</code>, everything else is a
+no-op; bootstrap with <code>minics init</code> first.</p>
+<div class="highlight"><pre><span></span><code><span class="p">{</span>
+<span class="w">  </span><span class="nt">&quot;version&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;0.4.0&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;home&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C:\\Users\\jason\\.minics&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;initialized&quot;</span><span class="p">:</span><span class="w"> </span><span class="kc">true</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;config&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C:\\Users\\jason\\.minics\\config.json&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;database&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C:\\Users\\jason\\.minics\\minics.sqlite3&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;vectordb&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C:\\Users\\jason\\.minics\\vectordb&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;graphdb&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C:\\Users\\jason\\.minics\\graphdb&quot;</span><span class="p">,</span>
+<span class="w">  </span><span class="nt">&quot;documents&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;C:\\Users\\jason\\.minics\\documents&quot;</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<h3 id="example-2-health-check-before-any-heavy-operation">Example 2 — Health check before any heavy operation<a class="heading-anchor" href="#example-2-health-check-before-any-heavy-operation" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Before scanning 400 PDFs, check the setup is healthy."</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>info<span class="w">                                   </span><span class="c1"># store exists?</span>
+minics<span class="w"> </span>config<span class="w">                                 </span><span class="c1"># endpoints configured? (secrets masked)</span>
+minics<span class="w"> </span>models<span class="w">                                 </span><span class="c1"># endpoint reachable, models listed</span>
+minics<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;connection smoke test&quot;</span><span class="w"> </span>--top-k<span class="w"> </span><span class="m">1</span><span class="w">   </span><span class="c1"># retrieval pipeline alive</span>
+</code></pre></div>
+
+<p>The parent skill's rule of thumb: <code>info → config → models → search</code> proves
+store, config, endpoints and index in four read-only calls. Only then start
+writing operations.</p>
+<hr />
+<h2 id="minics-setup-endpoint-configuration"><code>minics-setup</code> — endpoint configuration<a class="heading-anchor" href="#minics-setup-endpoint-configuration" title="Permanent link">&para;</a></h2>
+<h3 id="example-3-split-endpoints-llamacpp-for-chat-ollama-for-embeddings">Example 3 — Split endpoints: llama.cpp for chat, Ollama for embeddings<a class="heading-anchor" href="#example-3-split-endpoints-llamacpp-for-chat-ollama-for-embeddings" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Set up MiniCS with llama-server on :8000 and Ollama on :11434."</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>setup<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--base-url<span class="w"> </span>http://localhost:8000/v1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--api-key<span class="w"> </span>none<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--model<span class="w"> </span>qwen3-8b<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embedding-base-url<span class="w"> </span>http://localhost:11434/v1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embedding-api-key<span class="w"> </span>ollama<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embedding-model<span class="w"> </span>bge-m3<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--test
+</code></pre></div>
+
+<p>Watch for two lines in the output:</p>
+<div class="highlight"><pre><span></span><code>Detected embedding dimension: 1024
+...
+&quot;ok&quot;: true
+</code></pre></div>
+
+<p>The dimension line matters: it is baked into the Chroma collection. If it is
+missing, the embeddings endpoint is wrong even if the chat endpoint answers.</p>
+<h3 id="example-4-switching-the-embedding-model-safely">Example 4 — Switching the embedding model safely<a class="heading-anchor" href="#example-4-switching-the-embedding-model-safely" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Move from bge-m3 to nomic-embed-text without breaking search."</em></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Verify the new model + its dimension BEFORE touching config</span>
+minics<span class="w"> </span>models<span class="w"> </span>--base-url<span class="w"> </span>http://localhost:11434/v1<span class="w"> </span>--api-key<span class="w"> </span>ollama
+
+<span class="c1"># 2. Point the config at the new model and re-detect the dimension</span>
+minics<span class="w"> </span>setup<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embedding-base-url<span class="w"> </span>http://localhost:11434/v1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embedding-model<span class="w"> </span>nomic-embed-text<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--test
+
+<span class="c1"># 3. The old vectors are in the old dimension — rebuild everything</span>
+minics<span class="w"> </span>reindex
+</code></pre></div>
+
+<p>The skill's rule: <strong>never change the embedding model without <code>minics
+reindex</code></strong> — Chroma collections are created with a fixed dimension, and mixing
+dimensions corrupts retrieval.</p>
+<h3 id="example-5-diagnosing-a-failed-connection">Example 5 — Diagnosing a failed connection<a class="heading-anchor" href="#example-5-diagnosing-a-failed-connection" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"<code>minics setup --test</code> fails — find out why."</em></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Read what&#39;s actually configured (secrets are masked in output)</span>
+minics<span class="w"> </span>config
+
+<span class="c1"># Probe the endpoint directly, exactly as MiniCS would</span>
+curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8000/v1/models<span class="w"> </span><span class="p">|</span><span class="w"> </span>head<span class="w"> </span>-c<span class="w"> </span><span class="m">400</span>
+</code></pre></div>
+
+<p>The skill's troubleshooting table, in order of how often it bites:</p>
+<table>
+<thead>
+<tr>
+<th>Check</th>
+<th>Fix</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Base URL missing <code>/v1</code></td>
+<td>Use <code>http://host:8000/v1</code>, not <code>http://host:8000</code>.</td>
+</tr>
+<tr>
+<td>Model list empty</td>
+<td>Gateways without <code>/v1/models</code>: pass the model name explicitly with <code>--model</code>.</td>
+</tr>
+<tr>
+<td>Chat OK, embeddings fail</td>
+<td>Split endpoints: set <code>--embedding-base-url</code> separately.</td>
+</tr>
+<tr>
+<td>Wrong store</td>
+<td>An env var <code>MINICS_HOME</code> may be redirecting everything — confirm with <code>minics info</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-6-scripting-config-without-the-wizard">Example 6 — Scripting config without the wizard<a class="heading-anchor" href="#example-6-scripting-config-without-the-wizard" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Just lower the temperature, don't touch anything else."</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>config<span class="w"> </span>--set<span class="w"> </span><span class="s1">&#39;{&quot;llm&quot;: {&quot;temperature&quot;: 0.2}}&#39;</span>
+minics<span class="w"> </span>config<span class="w"> </span><span class="p">|</span><span class="w"> </span>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import json,sys; c=json.load(sys.stdin); print(c[&#39;llm&#39;][&#39;temperature&#39;])&quot;</span>
+<span class="c1"># 0.2</span>
+</code></pre></div>
+
+<p><code>--set</code> is a deep merge: only the provided keys change. This is the agent's
+preferred way to make surgical, non-interactive edits.</p>
+<hr />
+<h2 id="minics-documents-ingestion-and-indexing"><code>minics-documents</code> — ingestion and indexing<a class="heading-anchor" href="#minics-documents-ingestion-and-indexing" title="Permanent link">&para;</a></h2>
+<h3 id="example-7-building-a-knowledge-base-from-a-docs-tree">Example 7 — Building a knowledge base from a docs tree<a class="heading-anchor" href="#example-7-building-a-knowledge-base-from-a-docs-tree" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Ingest everything under ./company-docs and make it searchable."</em></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># 1. Preview — always dry-run a large, unknown tree first</span>
+minics<span class="w"> </span>scan<span class="w"> </span>./company-docs<span class="w"> </span>--dry-run
+
+<span class="c1"># 2. Ingest with live progress (convert → embed → graph, one file at a time)</span>
+minics<span class="w"> </span>scan<span class="w"> </span>./company-docs
+</code></pre></div>
+
+<p>Typical session output:</p>
+<div class="highlight"><pre><span></span><code>Scanning ./company-docs — 214 document(s) [docx, latex, markdown, pdf, text]
+
+[  1/214] OK      handbook/onboarding.md — indexed (38 chunks + graph)
+[  2/214] OK      handbook/security.pdf — indexed (212 chunks + graph)
+[  3/214] SKIP    handbook/security.pdf.bak (duplicate of &#39;security&#39;)
+...
+[214/214] FAILED  legacy/scan_2003.doc — Docx file is corrupted
+
+Done: 210 imported, 3 duplicate(s) skipped, 1 failed, 214 total.
+</code></pre></div>
+
+<ol start="3">
+<li>Verify retrieval immediately:</li>
+</ol>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;what is the password rotation policy?&quot;</span><span class="w"> </span>--top-k<span class="w"> </span><span class="m">5</span>
+</code></pre></div>
+
+<h3 id="example-8-format-targeted-ingest-with-tags">Example 8 — Format-targeted ingest with tags<a class="heading-anchor" href="#example-8-format-targeted-ingest-with-tags" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Only the PDFs from the archive, tag them so we can tell them apart later."</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>scan<span class="w"> </span>/data/archive-2024<span class="w"> </span>--pdf<span class="w"> </span>--tags<span class="w"> </span>archive,2024
+</code></pre></div>
+
+<p>Tags land on every imported document and surface in the vector-store metadata,
+which makes filtered analysis possible later (e.g. by title/source search via
+<code>minics documents --search</code>).</p>
+<h3 id="example-9-the-incremental-re-scan-idempotent-ingest">Example 9 — The incremental re-scan (idempotent ingest)<a class="heading-anchor" href="#example-9-the-incremental-re-scan-idempotent-ingest" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"More files were added to ./company-docs since yesterday."</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>scan<span class="w"> </span>./company-docs
+</code></pre></div>
+
+<p>That's the whole command — the skill's key insight is that <code>scan</code> is
+<strong>idempotent</strong>: files already in the store (same SHA-256) are reported as
+<code>SKIP (duplicate of ...)</code> and cost nothing, so re-running after every batch of
+new documents is the intended workflow, not a mistake.</p>
+<div class="highlight"><pre><span></span><code>[  1/31] SKIP    handbook/onboarding.md (duplicate of &#39;onboarding&#39;)
+[  2/31] OK      handbook/travel-policy.md — indexed (19 chunks + graph)
+...
+</code></pre></div>
+
+<h3 id="example-10-offline-batch-import-now-index-once">Example 10 — Offline batch: import now, index once<a class="heading-anchor" href="#example-10-offline-batch-import-now-index-once" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Import 2 GB of PDFs but don't hammer the embedding server yet."</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>scan<span class="w"> </span>/data/big-archive<span class="w"> </span>--pdf<span class="w"> </span>--no-index
+<span class="c1"># ... later, in one pass, while the embedding endpoint is idle:</span>
+minics<span class="w"> </span>reindex
+</code></pre></div>
+
+<p><code>--no-index</code> stores and converts only. <code>reindex</code> then chunks + embeds +
+graph-extracts every document in one deterministic pass — useful when the
+embedding server is slow, rate-limited, or not yet configured.</p>
+<h3 id="example-11-handling-unsupported-and-broken-files">Example 11 — Handling unsupported and broken files<a class="heading-anchor" href="#example-11-handling-unsupported-and-broken-files" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"The scan reports failures — clean them up."</em></p>
+<p>The skill's rule: <code>scan</code> never stops on a bad file — it reports and continues.
+After the run:</p>
+<div class="highlight"><pre><span></span><code><span class="c1"># What formats are supported again?</span>
+<span class="c1"># .pdf .txt .text .md .markdown .docx .tex .latex .ltx  — nothing else.</span>
+
+<span class="c1"># Convert the stragglers, then re-scan (duplicates are skipped for free)</span>
+pandoc<span class="w"> </span>notes.rtf<span class="w"> </span>-o<span class="w"> </span>notes.md
+minics<span class="w"> </span>scan<span class="w"> </span>./company-docs
+</code></pre></div>
+
+<p>A file that fails repeatedly (corrupt PDF, password-protected DOCX) should be
+moved out of the tree or repaired — <code>scan</code> will keep reporting it otherwise.</p>
+<hr />
+<h2 id="minics-datasets-datasets-and-entries"><code>minics-datasets</code> — datasets and entries<a class="heading-anchor" href="#minics-datasets-datasets-and-entries" title="Permanent link">&para;</a></h2>
+<h3 id="example-12-dataset-creation-and-inventory">Example 12 — Dataset creation and inventory<a class="heading-anchor" href="#example-12-dataset-creation-and-inventory" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Create a dataset for the support fine-tune and show me what we have."</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>datasets<span class="w"> </span>--create<span class="w"> </span><span class="s2">&quot;Support QA&quot;</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;Ticket answers grounded in the handbook&quot;</span>
+minics<span class="w"> </span>datasets
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code><span class="p">[</span>
+<span class="w">  </span><span class="p">{</span>
+<span class="w">    </span><span class="nt">&quot;id&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">1</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;name&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Support QA&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;description&quot;</span><span class="p">:</span><span class="w"> </span><span class="s2">&quot;Ticket answers grounded in the handbook&quot;</span><span class="p">,</span>
+<span class="w">    </span><span class="nt">&quot;stats&quot;</span><span class="p">:</span><span class="w"> </span><span class="p">{</span><span class="nt">&quot;entries&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">,</span><span class="w"> </span><span class="nt">&quot;approved&quot;</span><span class="p">:</span><span class="w"> </span><span class="mi">0</span><span class="p">}</span>
+<span class="w">  </span><span class="p">}</span>
+<span class="p">]</span>
+</code></pre></div>
+
+<h3 id="example-13-working-the-review-queue">Example 13 — Working the review queue<a class="heading-anchor" href="#example-13-working-the-review-queue" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"How many entries are still drafts? Push the good ones to approved."</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>entries<span class="w"> </span>--dataset<span class="w"> </span><span class="m">1</span><span class="w"> </span>--status<span class="w"> </span>draft
+minics<span class="w"> </span>entries<span class="w"> </span>--dataset<span class="w"> </span><span class="m">1</span><span class="w"> </span>--status<span class="w"> </span>review
+minics<span class="w"> </span>entries<span class="w"> </span>--dataset<span class="w"> </span><span class="m">1</span><span class="w"> </span>--status<span class="w"> </span>approved
+</code></pre></div>
+
+<p>The lifecycle is <code>draft → review → approved</code>. The skill's guidance for agents:
+treat <code>--status review</code> as the queue to triage, and only promote to <code>approved</code>
+entries that would survive the quality gates from the <code>minics-authoring</code>
+skill (evaluate first — see Example 16).</p>
+<h3 id="example-14-programmatic-dataset-seeding">Example 14 — Programmatic dataset seeding<a class="heading-anchor" href="#example-14-programmatic-dataset-seeding" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Create 20 FAQ entries from this YAML file."</em></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">minics.services.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">yaml</span>
+
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">()</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">ensure_ready</span><span class="p">()</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;FAQ&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Seeded from faq.yaml&quot;</span><span class="p">)</span>
+
+<span class="k">for</span> <span class="n">item</span> <span class="ow">in</span> <span class="n">yaml</span><span class="o">.</span><span class="n">safe_load</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="s2">&quot;faq.yaml&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)):</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">entries</span><span class="o">.</span><span class="n">create</span><span class="p">(</span>
+        <span class="n">dataset</span><span class="o">.</span><span class="n">id</span><span class="p">,</span>
+        <span class="n">system</span><span class="o">=</span><span class="s2">&quot;You are a precise FAQ assistant. Answer from the handbook.&quot;</span><span class="p">,</span>
+        <span class="n">user</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;question&quot;</span><span class="p">],</span>
+        <span class="n">assistant</span><span class="o">=</span><span class="n">item</span><span class="p">[</span><span class="s2">&quot;answer&quot;</span><span class="p">],</span>
+    <span class="p">)</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Entries created this way start as drafts — the workflow (Example 13) applies to
+them exactly like hand-written ones, and every later edit bumps the version.</p>
+<hr />
+<h2 id="minics-authoring-llm-assisted-authoring"><code>minics-authoring</code> — LLM-assisted authoring<a class="heading-anchor" href="#minics-authoring-llm-assisted-authoring" title="Permanent link">&para;</a></h2>
+<h3 id="example-15-the-grounded-generation-loop">Example 15 — The grounded generation loop<a class="heading-anchor" href="#example-15-the-grounded-generation-loop" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Generate an entry about the vacation policy, grounded in our docs."</em></p>
+<p>Prerequisite (the skill insists on this ordering): knowledge first, generation
+second.</p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>scan<span class="w"> </span>./company-docs<span class="w">          </span><span class="c1"># 1. corpus in</span>
+</code></pre></div>
+
+<p>Then, in the app's entry editor — or programmatically:</p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">minics.services.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>
+
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">()</span>
+<span class="n">draft</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">authoring</span><span class="o">.</span><span class="n">generate_entry</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="s2">&quot;vacation carry-over policy&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">draft</span><span class="o">.</span><span class="n">messages</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">content</span><span class="p">[:</span><span class="mi">400</span><span class="p">])</span>   <span class="c1"># answer cites retrieved chunks as [n]</span>
+</code></pre></div>
+
+<p>Grounded drafts cite <code>[n]</code> chunks from the indexed documents (<code>use_grounding</code>
+is on by default). The skill's verification step: follow at least one citation
+before trusting the draft.</p>
+<h3 id="example-16-evaluate-before-you-promote">Example 16 — Evaluate before you promote<a class="heading-anchor" href="#example-16-evaluate-before-you-promote" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Score every draft entry and tell me which ones are worth approving."</em></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">minics.services.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>
+
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">entries</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s2">&quot;draft&quot;</span><span class="p">):</span>
+    <span class="n">report</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">authoring</span><span class="o">.</span><span class="n">evaluate_entry</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">report</span><span class="o">.</span><span class="n">score</span><span class="p">,</span> <span class="n">report</span><span class="o">.</span><span class="n">summary</span><span class="p">)</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Six dimensions come back per entry: <strong>accuracy, completeness, clarity,
+grounding, format, safety</strong>. The skill's policy: promote to approved only
+entries with no grounding or accuracy flags; rewrite the rest with
+<code>ctx.authoring.enhance_entry_fields(entry.id, persist=True)</code> and re-evaluate.</p>
+<h3 id="example-17-enhance-re-evaluate-tags">Example 17 — Enhance → re-evaluate → tags<a class="heading-anchor" href="#example-17-enhance-re-evaluate-tags" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Improve the weak entries and make the dataset navigable."</em></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">minics.services.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>
+
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">()</span>
+<span class="k">for</span> <span class="n">entry</span> <span class="ow">in</span> <span class="n">ctx</span><span class="o">.</span><span class="n">entries</span><span class="o">.</span><span class="n">list</span><span class="p">(</span><span class="n">dataset</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">status</span><span class="o">=</span><span class="s2">&quot;review&quot;</span><span class="p">):</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">authoring</span><span class="o">.</span><span class="n">enhance_entry_fields</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">use_grounding</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">persist</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">suggested</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">authoring</span><span class="o">.</span><span class="n">suggest_tags</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="n">add</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">entry</span><span class="o">.</span><span class="n">id</span><span class="p">,</span> <span class="s2">&quot;enhanced, tags:&quot;</span><span class="p">,</span> <span class="n">suggested</span><span class="p">[</span><span class="s2">&quot;tags&quot;</span><span class="p">])</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<p>Two kwargs matter here: <code>enhance_entry_fields</code> <strong>does not save by default</strong>
+(<code>persist=True</code> required), and <code>suggest_tags</code> only applies the tags when
+<code>add=True</code> — otherwise it just proposes them. With <code>use_grounding=True</code> the
+enhancement retrieves before rewriting, so improvements stay anchored to the
+corpus instead of drifting.</p>
+<hr />
+<h2 id="minics-retrieval-hybrid-search"><code>minics-retrieval</code> — hybrid search<a class="heading-anchor" href="#minics-retrieval-hybrid-search" title="Permanent link">&para;</a></h2>
+<h3 id="example-18-vector-only-vs-hybrid-side-by-side">Example 18 — Vector-only vs hybrid, side by side<a class="heading-anchor" href="#example-18-vector-only-vs-hybrid-side-by-side" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Is the graph actually helping?"</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;who owns the incident response process&quot;</span><span class="w"> </span>--no-graph<span class="w"> </span>--top-k<span class="w"> </span><span class="m">5</span>
+minics<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;who owns the incident response process&quot;</span><span class="w"> </span>--top-k<span class="w"> </span><span class="m">5</span>
+</code></pre></div>
+
+<p>Run both, diff the top hits. Ownership-style questions ("who", "which team")
+usually rank better <strong>with</strong> the graph, because the entity walk connects
+<code>Incident Response</code> → <code>Team: Platform</code>; wording-similarity questions barely
+differ. That's the skill's heuristic for when to bother tuning graph hops.</p>
+<h3 id="example-19-tuning-rrf">Example 19 — Tuning RRF<a class="heading-anchor" href="#example-19-tuning-rrf" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"The right chunk is at position 6 — make it rank first."</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>config<span class="w"> </span>--set<span class="w"> </span><span class="s1">&#39;{&quot;retrieval&quot;: {&quot;rrf_k&quot;: 30}}&#39;</span>
+minics<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;vacation carry-over&quot;</span><span class="w"> </span>--top-k<span class="w"> </span><span class="m">3</span>
+</code></pre></div>
+
+<p>Lower <code>rrf_k</code> sharpens the fusion: a chunk that ranks high on <em>both</em> sides
+(vector + graph) climbs faster. The skill's tuning table:</p>
+<table>
+<thead>
+<tr>
+<th>Symptom</th>
+<th>Knob</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Correct chunk present but low</td>
+<td>lower <code>rrf_k</code> (60 → 30 → 10)</td>
+</tr>
+<tr>
+<td>Too few chunks in context</td>
+<td>raise <code>top_k</code></td>
+</tr>
+<tr>
+<td>Context is broad and noisy</td>
+<td>fewer graph hops / lower <code>top_k</code></td>
+</tr>
+<tr>
+<td>Results look stale</td>
+<td><code>minics reindex</code></td>
+</tr>
+</tbody>
+</table>
+<h3 id="example-20-proving-an-index-is-stale">Example 20 — Proving an index is stale<a class="heading-anchor" href="#example-20-proving-an-index-is-stale" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Search used to find this, now it doesn't."</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;q3 revenue table&quot;</span><span class="w"> </span>--no-graph<span class="w"> </span>--top-k<span class="w"> </span><span class="m">3</span><span class="w">   </span><span class="c1"># empty or weak</span>
+minics<span class="w"> </span>documents<span class="w"> </span>--search<span class="w"> </span><span class="s2">&quot;q3&quot;</span><span class="w">                          </span><span class="c1"># is the doc even in?</span>
+minics<span class="w"> </span>reindex<span class="w">                                          </span><span class="c1"># rebuild vectors + graph</span>
+</code></pre></div>
+
+<p>The skill's diagnostic order: corpus → config → index. If <code>documents</code> shows
+the file but search is empty, the index (or embedding endpoint at index time)
+is the culprit, and <code>reindex</code> is the fix.</p>
+<hr />
+<h2 id="minics-chat-grounded-chat"><code>minics-chat</code> — grounded chat<a class="heading-anchor" href="#minics-chat-grounded-chat" title="Permanent link">&para;</a></h2>
+<h3 id="example-21-the-retrieval-vs-model-separation-test">Example 21 — The retrieval-vs-model separation test<a class="heading-anchor" href="#example-21-the-retrieval-vs-model-separation-test" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Answers are bad — is it the index or the model?"</em></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># Step 1: ask the index directly, no model involved</span>
+minics<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;what ports does the firewall allow?&quot;</span><span class="w"> </span>--top-k<span class="w"> </span><span class="m">3</span>
+</code></pre></div>
+
+<p>Good chunks? Then the index is fine and the problem is prompting — go to the
+app's Chat screen with <strong>RAG + Grounding</strong> on and re-ask. Bad chunks? Back to
+the <code>minics-documents</code> / <code>minics-retrieval</code> skills; do not touch the prompt.</p>
+<h3 id="example-22-preview-without-injecting">Example 22 — Preview without injecting<a class="heading-anchor" href="#example-22-preview-without-injecting" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Show me what would be sent to the model, without sending it."</em></p>
+<p>In the Chat screen, toggle <strong>RAG</strong> on but <strong>Grounding</strong> off: retrieval runs and
+the context panel shows exactly which chunks <em>would</em> be injected, with their
+scores — the conversation itself stays clean. The skill's rule: preview first
+when validating a new corpus, inject only when the preview looks right.</p>
+<h3 id="example-23-trusting-the-answer-via-citations">Example 23 — Trusting the answer via citations<a class="heading-anchor" href="#example-23-trusting-the-answer-via-citations" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"The bot gave a policy number — verify it."</em></p>
+<p>With grounding on, answers cite <code>[n]</code> references. Each <code>[n]</code> maps to a chunk
+traceable to its source document in <code>~/.minics/documents/markdown/</code>. The
+agent's verification move: open the cited document, confirm the claim, <em>then</em>
+report the answer as trustworthy. Cited-but-wrong is a model problem;
+uncited is usually a retrieval problem.</p>
+<hr />
+<h2 id="minics-export-collections-and-formats"><code>minics-export</code> — collections and formats<a class="heading-anchor" href="#minics-export-collections-and-formats" title="Permanent link">&para;</a></h2>
+<h3 id="example-24-a-clean-fine-tuning-export">Example 24 — A clean fine-tuning export<a class="heading-anchor" href="#example-24-a-clean-fine-tuning-export" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Export the Support QA dataset for OpenAI fine-tuning."</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="s2">&quot;Support QA&quot;</span><span class="w"> </span>-o<span class="w"> </span>train.jsonl<span class="w"> </span>--format<span class="w"> </span>jsonl<span class="w"> </span>--approved
+</code></pre></div>
+
+<p><code>--approved</code> is the whole point: drafts and review copies never reach the
+training file. Verify the shape before shipping:</p>
+<div class="highlight"><pre><span></span><code>python<span class="w"> </span>-c<span class="w"> </span><span class="s2">&quot;import json; rows=[json.loads(l) for l in open(&#39;train.jsonl&#39;, encoding=&#39;utf-8&#39;)]; print(len(rows), &#39;rows&#39;); print(rows[0][&#39;messages&#39;][0][&#39;role&#39;])&quot;</span>
+</code></pre></div>
+
+<h3 id="example-25-format-matrix-for-one-collection">Example 25 — Format matrix for one collection<a class="heading-anchor" href="#example-25-format-matrix-for-one-collection" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"We need the same data in every format MiniCS supports."</em></p>
+<div class="highlight"><pre><span></span><code><span class="k">for</span><span class="w"> </span>fmt<span class="w"> </span><span class="k">in</span><span class="w"> </span>chatml<span class="w"> </span>jsonl<span class="w"> </span>alpaca<span class="w"> </span>sharegpt<span class="w"> </span>markdown<span class="p">;</span><span class="w"> </span><span class="k">do</span>
+<span class="w">  </span>minics<span class="w"> </span><span class="nb">export</span><span class="w"> </span><span class="s2">&quot;Support QA&quot;</span><span class="w"> </span>-o<span class="w"> </span><span class="s2">&quot;support_qa.</span><span class="nv">$fmt</span><span class="s2">&quot;</span><span class="w"> </span>--format<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$fmt</span><span class="s2">&quot;</span><span class="w"> </span>--approved
+<span class="k">done</span>
+</code></pre></div>
+
+<p>All five files are byte-identical snapshots of the same query — the skill's
+multi-turn caveat applies: ChatML and ShareGPT keep full conversations, while
+JSONL and Alpaca flatten deterministically to one instruction/response pair per
+record, so prefer ChatML/ShareGPT for multi-turn data.</p>
+<h3 id="example-26-metadata-rich-review-export">Example 26 — Metadata-rich review export<a class="heading-anchor" href="#example-26-metadata-rich-review-export" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Give the reviewers a readable file that still says where each entry came from."</em></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">minics.services.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>
+
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">()</span>
+<span class="n">content</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">collections</span><span class="o">.</span><span class="n">export</span><span class="p">(</span>
+    <span class="s2">&quot;Support QA&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;markdown&quot;</span><span class="p">,</span> <span class="n">include_metadata</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">only_approved</span><span class="o">=</span><span class="kc">True</span>
+<span class="p">)</span>
+<span class="nb">open</span><span class="p">(</span><span class="s2">&quot;review.md&quot;</span><span class="p">,</span> <span class="s2">&quot;w&quot;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s2">&quot;utf-8&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="n">content</span><span class="p">)</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<hr />
+<h2 id="minics-python-library-usage"><code>minics-python</code> — library usage<a class="heading-anchor" href="#minics-python-library-usage" title="Permanent link">&para;</a></h2>
+<h3 id="example-27-full-pipeline-in-twenty-lines-notebook-style">Example 27 — Full pipeline in twenty lines (notebook-style)<a class="heading-anchor" href="#example-27-full-pipeline-in-twenty-lines-notebook-style" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Script the whole loop: ingest, retrieve, draft, export."</em></p>
+<div class="highlight"><pre><span></span><code><span class="kn">from</span><span class="w"> </span><span class="nn">minics.services.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>
+
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">()</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">ensure_ready</span><span class="p">()</span>
+
+<span class="c1"># 1. dataset</span>
+<span class="n">dataset</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">create</span><span class="p">(</span><span class="s2">&quot;Colab KB&quot;</span><span class="p">,</span> <span class="n">description</span><span class="o">=</span><span class="s2">&quot;Built in one script&quot;</span><span class="p">)</span>
+
+<span class="c1"># 2. ingest + index one document</span>
+<span class="n">doc</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">documents</span><span class="o">.</span><span class="n">import_file</span><span class="p">(</span><span class="s2">&quot;handbook.pdf&quot;</span><span class="p">)</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">indexer</span><span class="o">.</span><span class="n">index_document</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">ctx</span><span class="o">.</span><span class="n">graph</span><span class="o">.</span><span class="n">is_available</span><span class="p">():</span>
+    <span class="n">ctx</span><span class="o">.</span><span class="n">graph_indexer</span><span class="o">.</span><span class="n">index_document</span><span class="p">(</span><span class="n">doc</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+
+<span class="c1"># 3. retrieval check</span>
+<span class="n">result</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">retriever</span><span class="o">.</span><span class="n">retrieve</span><span class="p">(</span><span class="s2">&quot;how does fusion work?&quot;</span><span class="p">,</span> <span class="n">top_k</span><span class="o">=</span><span class="mi">6</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">context_text</span><span class="p">()[:</span><span class="mi">500</span><span class="p">])</span>
+
+<span class="c1"># 4. grounded draft + quality gate</span>
+<span class="n">draft</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">authoring</span><span class="o">.</span><span class="n">generate_entry</span><span class="p">(</span><span class="n">topic</span><span class="o">=</span><span class="s2">&quot;RRF vs reranking&quot;</span><span class="p">,</span> <span class="n">dataset</span><span class="o">=</span><span class="n">dataset</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<span class="n">report</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">authoring</span><span class="o">.</span><span class="n">evaluate_entry</span><span class="p">(</span><span class="n">draft</span><span class="o">.</span><span class="n">id</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;score:&quot;</span><span class="p">,</span> <span class="n">report</span><span class="o">.</span><span class="n">score</span><span class="p">)</span>
+
+<span class="c1"># 5. export</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ctx</span><span class="o">.</span><span class="n">collections</span><span class="o">.</span><span class="n">export</span><span class="p">(</span><span class="s2">&quot;Colab KB&quot;</span><span class="p">,</span> <span class="n">fmt</span><span class="o">=</span><span class="s2">&quot;jsonl&quot;</span><span class="p">,</span> <span class="n">only_approved</span><span class="o">=</span><span class="kc">True</span><span class="p">)[:</span><span class="mi">200</span><span class="p">])</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<p>This is the <code>examples/colab-vllm</code> notebook pattern in miniature — the same
+service API the UI calls, usable from any script or notebook.</p>
+<h3 id="example-28-incremental-nightly-ingest-cron-friendly">Example 28 — Incremental nightly ingest (cron-friendly)<a class="heading-anchor" href="#example-28-incremental-nightly-ingest-cron-friendly" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Every night: ingest new files, report what changed."</em></p>
+<div class="highlight"><pre><span></span><code><span class="c1"># nightly_ingest.py — run via cron/Task Scheduler</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">subprocess</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">sys</span>
+
+<span class="c1"># 1. scan is idempotent — duplicates are skipped by SHA-256, so just re-run it</span>
+<span class="n">subprocess</span><span class="o">.</span><span class="n">run</span><span class="p">([</span><span class="n">sys</span><span class="o">.</span><span class="n">executable</span><span class="p">,</span> <span class="s2">&quot;-m&quot;</span><span class="p">,</span> <span class="s2">&quot;minics&quot;</span><span class="p">,</span> <span class="s2">&quot;scan&quot;</span><span class="p">,</span> <span class="s2">&quot;./company-docs&quot;</span><span class="p">],</span> <span class="n">check</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+<span class="c1"># 2. report what the store holds now</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">minics.services.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>
+
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">()</span>
+<span class="n">stats</span> <span class="o">=</span> <span class="n">ctx</span><span class="o">.</span><span class="n">documents</span><span class="o">.</span><span class="n">stats</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;documents=</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;documents&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> chunks=</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;chunks&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2"> bytes=</span><span class="si">{</span><span class="n">stats</span><span class="p">[</span><span class="s1">&#39;bytes&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+</code></pre></div>
+
+<p>The pattern to remember: shell out to <code>minics scan</code> for the resilient,
+progress-printing path; use the context API only for reads and reporting.</p>
+<h3 id="example-29-isolated-stores-for-tests-and-experiments">Example 29 — Isolated stores for tests and experiments<a class="heading-anchor" href="#example-29-isolated-stores-for-tests-and-experiments" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Experiment without touching my real dataset."</em></p>
+<div class="highlight"><pre><span></span><code><span class="kn">import</span><span class="w"> </span><span class="nn">os</span><span class="o">,</span><span class="w"> </span><span class="nn">tempfile</span>
+<span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="p">[</span><span class="s2">&quot;MINICS_HOME&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">tempfile</span><span class="o">.</span><span class="n">mkdtemp</span><span class="p">(</span><span class="n">prefix</span><span class="o">=</span><span class="s2">&quot;minics-lab-&quot;</span><span class="p">)</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">minics.services.context</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_context</span>   <span class="c1"># read AFTER setting the env var</span>
+<span class="n">ctx</span> <span class="o">=</span> <span class="n">get_context</span><span class="p">()</span>
+<span class="n">ctx</span><span class="o">.</span><span class="n">ensure_ready</span><span class="p">()</span>
+<span class="c1"># throwaway store: experiment freely, delete the folder when done</span>
+</code></pre></div>
+
+<p>The skill's warning: read <code>MINICS_HOME</code> <strong>before</strong> importing the context, and
+never share one store across processes for concurrent writes — SQLite runs a
+single writer thread by design.</p>
+<hr />
+<h2 id="minics-server-headless-serving"><code>minics-server</code> — headless serving<a class="heading-anchor" href="#minics-server-headless-serving" title="Permanent link">&para;</a></h2>
+<h3 id="example-30-deploy-the-ghcr-image">Example 30 — Deploy the GHCR image<a class="heading-anchor" href="#example-30-deploy-the-ghcr-image" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Stand MiniCS up on this box, persistent storage, no build."</em></p>
+<div class="highlight"><pre><span></span><code>docker<span class="w"> </span>pull<span class="w"> </span>ghcr.io/jasonjimnz/minics:0.4.0
+docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>minics<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-p<span class="w"> </span><span class="m">8765</span>:8765<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>-v<span class="w"> </span>minics-data:/data<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>ghcr.io/jasonjimnz/minics:0.4.0
+
+curl<span class="w"> </span>-s<span class="w"> </span>http://localhost:8765/api/health<span class="w">   </span><span class="c1"># verify</span>
+</code></pre></div>
+
+<p>First open of <code>http://localhost:8765</code> finishes setup in the UI; the store
+persists in the <code>minics-data</code> volume across restarts and upgrades.</p>
+<h3 id="example-31-behind-nginx-with-sse">Example 31 — Behind nginx with SSE<a class="heading-anchor" href="#example-31-behind-nginx-with-sse" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"The UI works directly but hangs behind our proxy."</em></p>
+<div class="highlight"><pre><span></span><code><span class="k">location</span><span class="w"> </span><span class="s">/</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://127.0.0.1:8765</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_set_header</span><span class="w"> </span><span class="s">Host</span><span class="w"> </span><span class="nv">$host</span><span class="p">;</span>
+<span class="p">}</span>
+<span class="k">location</span><span class="w"> </span><span class="s">/api/events</span><span class="w"> </span><span class="p">{</span>
+<span class="w">    </span><span class="kn">proxy_pass</span><span class="w"> </span><span class="s">http://127.0.0.1:8765</span><span class="p">;</span>
+<span class="w">    </span><span class="kn">proxy_buffering</span><span class="w"> </span><span class="no">off</span><span class="p">;</span><span class="w">        </span><span class="c1"># SSE needs this — buffering stalls the stream</span>
+<span class="p">}</span>
+</code></pre></div>
+
+<p>The skill's tell-tale symptom: progress bars and activity updates freeze while
+plain requests work — that's SSE buffering, every time.</p>
+<hr />
+<h2 id="minics-skills-the-installer"><code>minics-skills</code> — the installer<a class="heading-anchor" href="#minics-skills-the-installer" title="Permanent link">&para;</a></h2>
+<h3 id="example-32-team-onboarding-committed-local-skills">Example 32 — Team onboarding: committed, local skills<a class="heading-anchor" href="#example-32-team-onboarding-committed-local-skills" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Every agent working in this repo should know MiniCS."</em></p>
+<div class="highlight"><pre><span></span><code><span class="nb">cd</span><span class="w"> </span>./our-project
+minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w">            </span><span class="c1"># writes ./.agents/skills/</span>
+git<span class="w"> </span>add<span class="w"> </span>.agents<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span>git<span class="w"> </span>commit<span class="w"> </span>-m<span class="w"> </span><span class="s2">&quot;Add MiniCS agent skillset&quot;</span>
+</code></pre></div>
+
+<p>Because the folder is committed, every teammate (and their agents) gets the
+same skillset on clone — no per-machine step. This is the default for a reason.</p>
+<h3 id="example-33-minimal-personal-install">Example 33 — Minimal personal install<a class="heading-anchor" href="#example-33-minimal-personal-install" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"I only author datasets — just install what I need."</em></p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w"> </span>--global<span class="w"> </span>--interactive
+</code></pre></div>
+
+<div class="highlight"><pre><span></span><code>Select the skills to install (Enter = all, comma-separated numbers or names):
+
+   1. minics             Use MiniCS (minichat-studio) — ...
+   2. minics-setup       Configure MiniCS LLM and embedding endpoints ...
+   ...
+
+Skills: 1 4 5
+
+Installing MiniCS skills into ~/.agents/skills
+
+  + minics
+  + minics-datasets
+  + minics-authoring
+
+Done: 3 installed, 0 skipped.
+</code></pre></div>
+
+<h3 id="example-34-upgrade-day">Example 34 — Upgrade day<a class="heading-anchor" href="#example-34-upgrade-day" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"We updated minichat-studio — refresh the skills."</em></p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>-U<span class="w"> </span>minichat-studio
+minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w"> </span>--global<span class="w"> </span>--force<span class="w">   </span><span class="c1"># overwrite the stale copies</span>
+</code></pre></div>
+
+<p>The skill's rule: skills document the CLI/API of the installed package —
+reinstall with <code>--force</code> after every upgrade, and <code>minics skills list</code> shows
+what's bundled vs installed.</p>
+<hr />
+<h2 id="playbooks-several-skills-in-one-session">Playbooks — several skills in one session<a class="heading-anchor" href="#playbooks-several-skills-in-one-session" title="Permanent link">&para;</a></h2>
+<h3 id="playbook-a-paper-archive-fine-tuning-dataset">Playbook A — "Paper archive → fine-tuning dataset"<a class="heading-anchor" href="#playbook-a-paper-archive-fine-tuning-dataset" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Turn our 200 research PDFs into a fine-tuning dataset."</em></p>
+<ol>
+<li><strong><code>minics-setup</code></strong> — verify endpoints: <code>minics models</code> (embedding model
+   present? dimension detected?).</li>
+<li><strong><code>minics-documents</code></strong> — <code>minics scan ./papers --dry-run</code>, then
+   <code>minics scan ./papers --pdf --tags papers</code>; confirm a probe search hits.</li>
+<li><strong><code>minics-retrieval</code></strong> — <code>minics search "&lt;core topic&gt;" --top-k 5</code>; tune
+   <code>rrf_k</code> if the obvious chunk ranks low.</li>
+<li><strong><code>minics-chat</code></strong> — validate 3–4 questions in Chat with grounding on;
+   follow the <code>[n]</code> citations once.</li>
+<li><strong><code>minics-authoring</code></strong> — generate grounded entries per topic; evaluate each;
+   enhance the keepers; suggest tags.</li>
+<li><strong><code>minics-datasets</code></strong> — work the review queue, promote to approved.</li>
+<li><strong><code>minics-export</code></strong> — <code>minics export papers -o train.jsonl --format jsonl
+   --approved</code>.</li>
+</ol>
+<h3 id="playbook-b-nightly-knowledge-refresh">Playbook B — "Nightly knowledge refresh"<a class="heading-anchor" href="#playbook-b-nightly-knowledge-refresh" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Keep the KB current and tell me if anything got worse."</em></p>
+<div class="highlight"><pre><span></span><code><span class="ch">#!/usr/bin/env bash</span>
+<span class="nb">set</span><span class="w"> </span>-euo<span class="w"> </span>pipefail
+minics<span class="w"> </span>scan<span class="w"> </span>./company-docs<span class="w">                      </span><span class="c1"># idempotent — only new files land</span>
+minics<span class="w"> </span>reindex<span class="w">                                  </span><span class="c1"># fold new docs into vectors + graph</span>
+minics<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;smoke test query&quot;</span><span class="w"> </span>--top-k<span class="w"> </span><span class="m">1</span><span class="w">      </span><span class="c1"># retrieval still alive?</span>
+curl<span class="w"> </span>-fsS<span class="w"> </span>http://localhost:8765/api/health<span class="w">      </span><span class="c1"># server still up?</span>
+</code></pre></div>
+
+<p>Wrap that in cron/Task Scheduler; on failure, the <code>minics-retrieval</code>
+stale-index diagnostic (Example 20) is the first follow-up.</p>
+<h3 id="playbook-c-new-teammate-new-machine">Playbook C — "New teammate, new machine"<a class="heading-anchor" href="#playbook-c-new-teammate-new-machine" title="Permanent link">&para;</a></h3>
+<p><strong>Agent task:</strong> <em>"Set up a fresh laptop to work on the project."</em></p>
+<div class="highlight"><pre><span></span><code>pip<span class="w"> </span>install<span class="w"> </span>minichat-studio<span class="w">        </span><span class="c1"># 1. package</span>
+minics<span class="w"> </span>init<span class="w">                        </span><span class="c1"># 2. store</span>
+minics<span class="w"> </span>setup<span class="w">                       </span><span class="c1"># 3. interactive wizard (models, dimension, test)</span>
+git<span class="w"> </span>clone<span class="w"> </span>our-project<span class="w"> </span><span class="o">&amp;&amp;</span><span class="w"> </span><span class="nb">cd</span><span class="w"> </span>our-project
+minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w">              </span><span class="c1"># 4. skills (already committed to the repo)</span>
+minics<span class="w">                             </span><span class="c1"># 5. desktop app</span>
+</code></pre></div>
+
+<p>Four commands and a clone — the parent skill's workflow, end to end.</p>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="skills.html"><span class="pager-label">Previous</span><span class="pager-title">Agent skills</span></a>
+<a class="pager-card next" href="colab-example.html"><span class="pager-label">Next</span><span class="pager-title">Colab + vLLM example</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#minics-the-parent-skill">minics — the parent skill</a></li><li class="toc-l3"><a href="#example-1-first-contact-with-an-existing-store">Example 1 — First contact with an existing store</a></li><li class="toc-l3"><a href="#example-2-health-check-before-any-heavy-operation">Example 2 — Health check before any heavy operation</a></li><li class="toc-l2"><a href="#minics-setup-endpoint-configuration">minics-setup — endpoint configuration</a></li><li class="toc-l3"><a href="#example-3-split-endpoints-llamacpp-for-chat-ollama-for-embeddings">Example 3 — Split endpoints: llama.cpp for chat, Ollama for embeddings</a></li><li class="toc-l3"><a href="#example-4-switching-the-embedding-model-safely">Example 4 — Switching the embedding model safely</a></li><li class="toc-l3"><a href="#example-5-diagnosing-a-failed-connection">Example 5 — Diagnosing a failed connection</a></li><li class="toc-l3"><a href="#example-6-scripting-config-without-the-wizard">Example 6 — Scripting config without the wizard</a></li><li class="toc-l2"><a href="#minics-documents-ingestion-and-indexing">minics-documents — ingestion and indexing</a></li><li class="toc-l3"><a href="#example-7-building-a-knowledge-base-from-a-docs-tree">Example 7 — Building a knowledge base from a docs tree</a></li><li class="toc-l3"><a href="#example-8-format-targeted-ingest-with-tags">Example 8 — Format-targeted ingest with tags</a></li><li class="toc-l3"><a href="#example-9-the-incremental-re-scan-idempotent-ingest">Example 9 — The incremental re-scan (idempotent ingest)</a></li><li class="toc-l3"><a href="#example-10-offline-batch-import-now-index-once">Example 10 — Offline batch: import now, index once</a></li><li class="toc-l3"><a href="#example-11-handling-unsupported-and-broken-files">Example 11 — Handling unsupported and broken files</a></li><li class="toc-l2"><a href="#minics-datasets-datasets-and-entries">minics-datasets — datasets and entries</a></li><li class="toc-l3"><a href="#example-12-dataset-creation-and-inventory">Example 12 — Dataset creation and inventory</a></li><li class="toc-l3"><a href="#example-13-working-the-review-queue">Example 13 — Working the review queue</a></li><li class="toc-l3"><a href="#example-14-programmatic-dataset-seeding">Example 14 — Programmatic dataset seeding</a></li><li class="toc-l2"><a href="#minics-authoring-llm-assisted-authoring">minics-authoring — LLM-assisted authoring</a></li><li class="toc-l3"><a href="#example-15-the-grounded-generation-loop">Example 15 — The grounded generation loop</a></li><li class="toc-l3"><a href="#example-16-evaluate-before-you-promote">Example 16 — Evaluate before you promote</a></li><li class="toc-l3"><a href="#example-17-enhance-re-evaluate-tags">Example 17 — Enhance → re-evaluate → tags</a></li><li class="toc-l2"><a href="#minics-retrieval-hybrid-search">minics-retrieval — hybrid search</a></li><li class="toc-l3"><a href="#example-18-vector-only-vs-hybrid-side-by-side">Example 18 — Vector-only vs hybrid, side by side</a></li><li class="toc-l3"><a href="#example-19-tuning-rrf">Example 19 — Tuning RRF</a></li><li class="toc-l3"><a href="#example-20-proving-an-index-is-stale">Example 20 — Proving an index is stale</a></li><li class="toc-l2"><a href="#minics-chat-grounded-chat">minics-chat — grounded chat</a></li><li class="toc-l3"><a href="#example-21-the-retrieval-vs-model-separation-test">Example 21 — The retrieval-vs-model separation test</a></li><li class="toc-l3"><a href="#example-22-preview-without-injecting">Example 22 — Preview without injecting</a></li><li class="toc-l3"><a href="#example-23-trusting-the-answer-via-citations">Example 23 — Trusting the answer via citations</a></li><li class="toc-l2"><a href="#minics-export-collections-and-formats">minics-export — collections and formats</a></li><li class="toc-l3"><a href="#example-24-a-clean-fine-tuning-export">Example 24 — A clean fine-tuning export</a></li><li class="toc-l3"><a href="#example-25-format-matrix-for-one-collection">Example 25 — Format matrix for one collection</a></li><li class="toc-l3"><a href="#example-26-metadata-rich-review-export">Example 26 — Metadata-rich review export</a></li><li class="toc-l2"><a href="#minics-python-library-usage">minics-python — library usage</a></li><li class="toc-l3"><a href="#example-27-full-pipeline-in-twenty-lines-notebook-style">Example 27 — Full pipeline in twenty lines (notebook-style)</a></li><li class="toc-l3"><a href="#example-28-incremental-nightly-ingest-cron-friendly">Example 28 — Incremental nightly ingest (cron-friendly)</a></li><li class="toc-l3"><a href="#example-29-isolated-stores-for-tests-and-experiments">Example 29 — Isolated stores for tests and experiments</a></li><li class="toc-l2"><a href="#minics-server-headless-serving">minics-server — headless serving</a></li><li class="toc-l3"><a href="#example-30-deploy-the-ghcr-image">Example 30 — Deploy the GHCR image</a></li><li class="toc-l3"><a href="#example-31-behind-nginx-with-sse">Example 31 — Behind nginx with SSE</a></li><li class="toc-l2"><a href="#minics-skills-the-installer">minics-skills — the installer</a></li><li class="toc-l3"><a href="#example-32-team-onboarding-committed-local-skills">Example 32 — Team onboarding: committed, local skills</a></li><li class="toc-l3"><a href="#example-33-minimal-personal-install">Example 33 — Minimal personal install</a></li><li class="toc-l3"><a href="#example-34-upgrade-day">Example 34 — Upgrade day</a></li><li class="toc-l2"><a href="#playbooks-several-skills-in-one-session">Playbooks — several skills in one session</a></li><li class="toc-l3"><a href="#playbook-a-paper-archive-fine-tuning-dataset">Playbook A — "Paper archive → fine-tuning dataset"</a></li><li class="toc-l3"><a href="#playbook-b-nightly-knowledge-refresh">Playbook B — "Nightly knowledge refresh"</a></li><li class="toc-l3"><a href="#playbook-c-new-teammate-new-machine">Playbook C — "New teammate, new machine"</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minics/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minics/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

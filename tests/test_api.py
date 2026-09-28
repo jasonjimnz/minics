@@ -22,7 +22,8 @@ def test_about_and_open_allowlist(client):
     # Only project-owned https hosts may be opened in the system browser.
     blocked = client.post("/api/about/open", json={"url": "https://evil.example.com"})
     assert blocked.status_code == 403
-    assert client.post("/api/about/open", json={"url": "http://github.com/jasonjimnz/minics"}).status_code == 403
+    response = client.post("/api/about/open", json={"url": "http://github.com/jasonjimnz/minics"})
+    assert response.status_code == 403
 
 
 def test_dataset_and_entry_endpoints(client):

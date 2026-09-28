@@ -42,7 +42,7 @@
 
 <div class="layout">
   <aside class="sidebar" id="sidebar">
-    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html" class="active" aria-current="page">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html" class="active" aria-current="page">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li><li><a href="cli.html">CLI reference</a></li><li><a href="skills.html">Agent skills</a></li></ul></div><div class="nav-group"><h3>Examples</h3><ul><li><a href="colab-example.html">Colab + vLLM example</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
   </aside>
   <main class="content" id="content">
     <article class="markdown-body">
@@ -91,63 +91,78 @@ theme picker in the browser.</p>
 </tr>
 <tr>
 <td>4</td>
+<td><a href="cli.html">CLI reference</a></td>
+<td>Every <code>minics</code> subcommand: setup, <code>minics scan</code>, documents, search, export, and the skills installer.</td>
+</tr>
+<tr>
+<td>5</td>
+<td><a href="skills.html">Agent skills</a></td>
+<td>The bundled MiniCS skillset for Pi, OpenCode and Codex: installation and the full catalogue.</td>
+</tr>
+<tr>
+<td>6</td>
 <td><a href="architecture.html">Architecture</a></td>
 <td>How the layers fit together, the request lifecycle, the concurrency model and the reasoning behind each big decision.</td>
 </tr>
 <tr>
-<td>5</td>
+<td>7</td>
 <td><a href="libraries.html">Libraries</a></td>
 <td>What every dependency in <code>pyproject.toml</code> does, where it is used, and why it was chosen.</td>
 </tr>
 <tr>
-<td>6</td>
+<td>8</td>
 <td><a href="configuration.html">Configuration</a></td>
 <td>Every config key, the setup wizard, <code>MINICS_HOME</code>, API-key masking and how config changes propagate.</td>
 </tr>
 <tr>
-<td>7</td>
+<td>9</td>
 <td><a href="backend.html">Core &amp; backend</a></td>
 <td>The SQLite writer thread, event bus, job manager, generic repository, domain entities, services, CLI and desktop shell.</td>
 </tr>
 <tr>
-<td>8</td>
+<td>10</td>
 <td><a href="llm.html">LLM layer</a></td>
 <td>The OpenAI-protocol client, embeddings, structured output with fallbacks + truncation handling, the prompt library and the authoring helpers.</td>
 </tr>
 <tr>
-<td>9</td>
+<td>11</td>
 <td><a href="rag.html">RAG &amp; graph</a></td>
 <td>Document conversion, markdown-aware chunking, entity extraction, the Ladybug graph schema, ChromaDB, the indexing pipeline and RRF hybrid retrieval.</td>
 </tr>
 <tr>
-<td>10</td>
+<td>12</td>
 <td><a href="serving.html">Serving with Flask</a></td>
 <td><code>minics serve</code>, the Flask app factory, reverse proxies, security and WSGI notes.</td>
 </tr>
 <tr>
-<td>11</td>
+<td>13</td>
 <td><a href="docker.html">Docker</a></td>
 <td>Running MiniCS as a server container: build, volumes, first-run setup, operations.</td>
 </tr>
 <tr>
-<td>12</td>
+<td>14</td>
 <td><a href="api.html">HTTP API</a></td>
 <td>Every REST endpoint, the SSE event stream, the background-job workflow and error mapping.</td>
 </tr>
 <tr>
-<td>13</td>
+<td>15</td>
 <td><a href="frontend.html">Frontend</a></td>
 <td>The no-build SPA: module layout, hash routing, SSE consumption, theming, the markdown renderer, the graph canvas and every screen.</td>
 </tr>
 <tr>
-<td>14</td>
+<td>16</td>
 <td><a href="storage.html">Data &amp; storage</a></td>
 <td>The <code>~/.minics</code> store, the three embedded databases, backups, portability and privacy.</td>
 </tr>
 <tr>
-<td>15</td>
+<td>17</td>
 <td><a href="development.html">Development</a></td>
 <td>Setting up a dev environment, running tests, fixtures, code style, schema migrations and contribution workflow.</td>
+</tr>
+<tr>
+<td>18</td>
+<td><a href="colab-example.html">Colab + vLLM example</a></td>
+<td>Running the whole MiniCS library programmatically on a free Google Colab T4 GPU, with vLLM serving the chat + embedding models in the background.</td>
 </tr>
 </tbody>
 </table>
@@ -163,6 +178,11 @@ docker<span class="w"> </span>compose<span class="w"> </span>up<span class="w"> 
 curl<span class="w"> </span>http://127.0.0.1:8765/api/overview
 curl<span class="w"> </span>-X<span class="w"> </span>POST<span class="w"> </span>http://127.0.0.1:8765/api/retrieval/search<span class="w"> </span><span class="se">\</span>
 <span class="w">     </span>-H<span class="w"> </span><span class="s2">&quot;Content-Type: application/json&quot;</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">&#39;{&quot;query&quot;: &quot;what is RRF?&quot;}&#39;</span>
+</code></pre></div>
+
+<h3 id="bulk-import-a-directory-install-agent-skills">Bulk-import a directory + install agent skills<a class="heading-anchor" href="#bulk-import-a-directory-install-agent-skills" title="Permanent link">&para;</a></h3>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>scan<span class="w"> </span>./docs<span class="w"> </span>--tags<span class="w"> </span>kb<span class="w">          </span><span class="c1"># every compatible document, indexed one by one</span>
+minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w"> </span>--global<span class="w">        </span><span class="c1"># install the MiniCS skillset for your agents</span>
 </code></pre></div>
 
 <h3 id="use-as-a-python-library">Use as a Python library<a class="heading-anchor" href="#use-as-a-python-library" title="Permanent link">&para;</a></h3>
@@ -247,7 +267,7 @@ ruff<span class="w"> </span>check<span class="w"> </span>src<span class="w"> </s
     </nav>
   </main>
   <aside class="toc-rail">
-<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#reading-order">Reading order</a></li><li class="toc-l2"><a href="#cheat-sheet">Cheat sheet</a></li><li class="toc-l3"><a href="#start-the-app">Start the app</a></li><li class="toc-l3"><a href="#talk-to-the-api">Talk to the API</a></li><li class="toc-l3"><a href="#use-as-a-python-library">Use as a Python library</a></li><li class="toc-l3"><a href="#run-the-tests">Run the tests</a></li><li class="toc-l2"><a href="#where-the-code-lives">Where the code lives</a></li><li class="toc-l2"><a href="#glossary">Glossary</a></li></ul></nav>
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#reading-order">Reading order</a></li><li class="toc-l2"><a href="#cheat-sheet">Cheat sheet</a></li><li class="toc-l3"><a href="#start-the-app">Start the app</a></li><li class="toc-l3"><a href="#talk-to-the-api">Talk to the API</a></li><li class="toc-l3"><a href="#bulk-import-a-directory-install-agent-skills">Bulk-import a directory + install agent skills</a></li><li class="toc-l3"><a href="#use-as-a-python-library">Use as a Python library</a></li><li class="toc-l3"><a href="#run-the-tests">Run the tests</a></li><li class="toc-l2"><a href="#where-the-code-lives">Where the code lives</a></li><li class="toc-l2"><a href="#glossary">Glossary</a></li></ul></nav>
   </aside>
 </div>
 

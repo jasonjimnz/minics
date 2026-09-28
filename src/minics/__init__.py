@@ -19,9 +19,9 @@ try:  # pragma: no cover - trivial metadata lookup
     try:
         __version__ = _version("minichat-studio")
     except PackageNotFoundError:
-        __version__ = "0.3.3"
+        __version__ = "0.4.0"
 except Exception:  # pragma: no cover
-    __version__ = "0.3.3"
+    __version__ = "0.4.0"
 
 
 from minics.core.paths import MinicsPaths, get_paths

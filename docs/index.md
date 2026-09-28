@@ -16,19 +16,21 @@ theme picker in the browser.
 | 1 | [Installation](installation.md) | Installing from PyPI or source, requirements, verifying and upgrading. |
 | 2 | [Getting started](getting-started.md) | Creating the store, the setup wizard, your first dataset and export. |
 | 3 | [Features](features.md) | The full feature tour across library, grounding, retrieval and UI. |
-| 4 | [Architecture](architecture.md) | How the layers fit together, the request lifecycle, the concurrency model and the reasoning behind each big decision. |
-| 5 | [Libraries](libraries.md) | What every dependency in `pyproject.toml` does, where it is used, and why it was chosen. |
-| 6 | [Configuration](configuration.md) | Every config key, the setup wizard, `MINICS_HOME`, API-key masking and how config changes propagate. |
-| 7 | [Core & backend](backend.md) | The SQLite writer thread, event bus, job manager, generic repository, domain entities, services, CLI and desktop shell. |
-| 8 | [LLM layer](llm.md) | The OpenAI-protocol client, embeddings, structured output with fallbacks + truncation handling, the prompt library and the authoring helpers. |
-| 9 | [RAG & graph](rag.md) | Document conversion, markdown-aware chunking, entity extraction, the Ladybug graph schema, ChromaDB, the indexing pipeline and RRF hybrid retrieval. |
-| 10 | [Serving with Flask](serving.md) | `minics serve`, the Flask app factory, reverse proxies, security and WSGI notes. |
-| 11 | [Docker](docker.md) | Running MiniCS as a server container: build, volumes, first-run setup, operations. |
-| 12 | [HTTP API](api.md) | Every REST endpoint, the SSE event stream, the background-job workflow and error mapping. |
-| 13 | [Frontend](frontend.md) | The no-build SPA: module layout, hash routing, SSE consumption, theming, the markdown renderer, the graph canvas and every screen. |
-| 14 | [Data & storage](storage.md) | The `~/.minics` store, the three embedded databases, backups, portability and privacy. |
-| 15 | [Development](development.md) | Setting up a dev environment, running tests, fixtures, code style, schema migrations and contribution workflow. |
-| 16 | [Colab + vLLM example](colab-example.md) | Running the whole MiniCS library programmatically on a free Google Colab T4 GPU, with vLLM serving the chat + embedding models in the background. |
+| 4 | [CLI reference](cli.md) | Every `minics` subcommand: setup, `minics scan`, documents, search, export, and the skills installer. |
+| 5 | [Agent skills](skills.md) | The bundled MiniCS skillset for Pi, OpenCode and Codex: installation and the full catalogue. |
+| 6 | [Architecture](architecture.md) | How the layers fit together, the request lifecycle, the concurrency model and the reasoning behind each big decision. |
+| 7 | [Libraries](libraries.md) | What every dependency in `pyproject.toml` does, where it is used, and why it was chosen. |
+| 8 | [Configuration](configuration.md) | Every config key, the setup wizard, `MINICS_HOME`, API-key masking and how config changes propagate. |
+| 9 | [Core & backend](backend.md) | The SQLite writer thread, event bus, job manager, generic repository, domain entities, services, CLI and desktop shell. |
+| 10 | [LLM layer](llm.md) | The OpenAI-protocol client, embeddings, structured output with fallbacks + truncation handling, the prompt library and the authoring helpers. |
+| 11 | [RAG & graph](rag.md) | Document conversion, markdown-aware chunking, entity extraction, the Ladybug graph schema, ChromaDB, the indexing pipeline and RRF hybrid retrieval. |
+| 12 | [Serving with Flask](serving.md) | `minics serve`, the Flask app factory, reverse proxies, security and WSGI notes. |
+| 13 | [Docker](docker.md) | Running MiniCS as a server container: build, volumes, first-run setup, operations. |
+| 14 | [HTTP API](api.md) | Every REST endpoint, the SSE event stream, the background-job workflow and error mapping. |
+| 15 | [Frontend](frontend.md) | The no-build SPA: module layout, hash routing, SSE consumption, theming, the markdown renderer, the graph canvas and every screen. |
+| 16 | [Data & storage](storage.md) | The `~/.minics` store, the three embedded databases, backups, portability and privacy. |
+| 17 | [Development](development.md) | Setting up a dev environment, running tests, fixtures, code style, schema migrations and contribution workflow. |
+| 18 | [Colab + vLLM example](colab-example.md) | Running the whole MiniCS library programmatically on a free Google Colab T4 GPU, with vLLM serving the chat + embedding models in the background. |
 
 ## Cheat sheet
 
@@ -47,6 +49,13 @@ curl http://127.0.0.1:8765/api/health
 curl http://127.0.0.1:8765/api/overview
 curl -X POST http://127.0.0.1:8765/api/retrieval/search \
      -H "Content-Type: application/json" -d '{"query": "what is RRF?"}'
+```
+
+### Bulk-import a directory + install agent skills
+
+```bash
+minics scan ./docs --tags kb          # every compatible document, indexed one by one
+minics skills install --global        # install the MiniCS skillset for your agents
 ```
 
 ### Use as a Python library

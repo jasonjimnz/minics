@@ -11,6 +11,7 @@ import argparse
 import json
 import sys
 from collections.abc import Callable
+from pathlib import Path
 
 from minics import __version__
 from minics.core.config import get_config_manager
@@ -242,6 +243,183 @@ def cmd_documents(args: argparse.Namespace) -> int:
     return 0
 
 
+def cmd_scan(args: argparse.Namespace) -> int:
+    """Bulk-import every compatible document under a directory, one by one."""
+    from minics.core.utils import sha256_bytes
+    from minics.documents.convert import SUPPORTED_EXTENSIONS
+
+    ctx = _ctx(args)
+    ctx.ensure_ready()
+    tags: list[str] | None = None
+    if args.tags:
+        tags = [t for raw in args.tags for t in raw.split(",") if t.strip()]
+
+    root = Path(args.directory).expanduser()
+    if not root.is_absolute():
+        root = Path.cwd() / root
+    root = root.resolve()
+    if not root.is_dir():
+        print(f"Error: '{root}' is not a directory.", file=sys.stderr)
+        return 1
+
+    # Format selection: no flag = every compatible format.
+    kinds = {kind for ext, kind in SUPPORTED_EXTENSIONS.items()}
+    selected: set[str] = set()
+    for flag, kind in (
+        ("markdown", "markdown"),
+        ("txt", "text"),
+        ("pdf", "pdf"),
+        ("docx", "docx"),
+        ("latex", "latex"),
+    ):
+        if getattr(args, flag):
+            selected.add(kind)
+    if not selected:
+        selected = kinds
+    extensions = {ext for ext, kind in SUPPORTED_EXTENSIONS.items() if kind in selected}
+
+    _SKIP_DIRS = {
+        ".git", ".hg", ".svn", ".venv", "venv", "node_modules", "__pycache__",
+        ".pytest_cache", ".mypy_cache", ".ruff_cache", "dist", "build",
+        ".agents", ".idea", ".vscode",
+    }
+    files: list[Path] = []
+    for path in sorted(root.rglob("*")):
+        if path.is_dir():
+            continue
+        parts = path.relative_to(root).parts[:-1]
+        if any(part in _SKIP_DIRS or part.startswith(".") for part in parts):
+            continue
+        if path.suffix.lower() in extensions:
+            files.append(path)
+
+    if not files:
+        print(
+            f"No compatible documents found under {root} "
+            f"(looking for {', '.join(sorted(extensions))})."
+        )
+        ctx.close()
+        return 0
+
+    print(
+        f"Scanning {root} — {len(files)} document(s) "
+        f"[{', '.join(sorted(selected))}]\n"
+    )
+    if args.dry_run:
+        for path in files:
+            print(f"  would import {path.relative_to(root)}")
+        print(f"\nDry run: {len(files)} file(s) would be imported.")
+        ctx.close()
+        return 0
+
+    imported, duplicates, failed = 0, 0, 0
+    for position, path in enumerate(files, start=1):
+        prefix = f"[{position:>3}/{len(files)}]"
+        label = str(path.relative_to(root))
+        try:
+            existing = ctx.documents.repo.by_sha256(sha256_bytes(path.read_bytes()))
+            if existing is not None and Path(existing.markdown_path).exists():
+                duplicates += 1
+                print(f"{prefix} SKIP    {label} (duplicate of '{existing.title}')")
+                continue
+            document = ctx.documents.import_file(
+                path, tags=tags, source="scan", progress=lambda f, msg: None
+            )
+        except Exception as exc:  # noqa: BLE001 - keep scanning after failures
+            failed += 1
+            print(f"{prefix} FAILED  {label}: {exc}")
+            continue
+        if args.index:
+            try:
+                result = ctx.indexer.index_document(document.id)
+                chunks = result.get("chunks", 0)
+                graph_note = ""
+                if ctx.graph.is_available():
+                    try:
+                        ctx.graph_indexer.index_document(document.id)
+                        graph_note = " + graph"
+                    except Exception as exc:  # noqa: BLE001
+                        graph_note = f" (graph indexing failed: {exc})"
+                print(f"{prefix} OK      {label} — indexed ({chunks} chunks{graph_note})")
+            except Exception as exc:  # noqa: BLE001
+                print(f"{prefix} PARTIAL {label} — imported but not indexed: {exc}")
+        else:
+            print(f"{prefix} OK      {label} — imported (not indexed)")
+        imported += 1
+
+    print(
+        f"\nDone: {imported} imported, {duplicates} duplicate(s) skipped, "
+        f"{failed} failed, {len(files)} total."
+    )
+    if failed:
+        print("Tip: fix the failed files and re-run — duplicates are skipped automatically.")
+    ctx.close()
+    return 0 if failed == 0 else 1
+
+
+def cmd_skills(args: argparse.Namespace) -> int:
+    """Install or list the MiniCS agent skillset bundled with the package."""
+    from minics.skills_install import (
+        bundled_skills,
+        default_target,
+        install_skills,
+        installed_version,
+    )
+
+    if args.action == "list" or args.list:
+        target = default_target(args.global_)
+        print("Bundled MiniCS skills:\n")
+        for skill in bundled_skills():
+            status = "installed" if installed_version(target, skill.name) else "not installed"
+            print(f"  {skill.name:<18} [{status}] {skill.description}")
+        print(f"\nDefault target: {target}")
+        return 0
+
+    target = Path(args.dir).expanduser() if args.dir else default_target(args.global_)
+    names: list[str] | None = None
+    if args.interactive:
+        skills = bundled_skills()
+        print("Select the skills to install (Enter = all, comma-separated numbers or names):\n")
+        for index, skill in enumerate(skills, start=1):
+            print(f"  {index:>2}. {skill.name:<18} {skill.description}")
+        try:
+            answer = input("\nSkills: ").strip()
+        except EOFError:
+            answer = ""
+        if answer:
+            chosen: set[str] = set()
+            for token in answer.replace(",", " ").split():
+                if token.isdigit() and 1 <= int(token) <= len(skills):
+                    chosen.add(skills[int(token) - 1].name)
+                else:
+                    chosen.add(token)
+            names = sorted(chosen)
+
+    try:
+        installed, skipped = install_skills(
+            target,
+            names=names,
+            force=args.force,
+        )
+    except KeyError as exc:
+        print(f"Error: {exc.args[0]}", file=sys.stderr)
+        return 1
+
+    if not installed and not skipped:
+        print("Nothing to install.")
+        return 0
+    print(f"Installing MiniCS skills into {target}\n")
+    for name in installed:
+        print(f"  + {name}")
+    for name in skipped:
+        print(f"  = {name} (already installed, use --force to overwrite)")
+    print(
+        f"\nDone: {len(installed)} installed, {len(skipped)} skipped.\n"
+        "Restart your agent so it picks up the new skills."
+    )
+    return 0
+
+
 def cmd_reindex(args: argparse.Namespace) -> int:
     """Re-index every document for the vector store and graph."""
     ctx = _ctx(args)
@@ -381,6 +559,44 @@ def build_parser() -> argparse.ArgumentParser:
         "--no-index", dest="index", action="store_false", help="Skip indexing on import."
     )
 
+    sp = add("scan", cmd_scan, "Bulk-import every compatible document in a directory tree.")
+    sp.add_argument("directory", help="Directory to scan (absolute or relative to cwd).")
+    sp.add_argument("--markdown", action="store_true", help="Include Markdown files.")
+    sp.add_argument("--txt", action="store_true", help="Include plain text files.")
+    sp.add_argument("--pdf", action="store_true", help="Include PDF files.")
+    sp.add_argument("--docx", action="store_true", help="Include DOCX files.")
+    sp.add_argument("--latex", action="store_true", help="Include LaTeX files.")
+    sp.add_argument("--tags", nargs="*", default=None, help="Tags applied to every import.")
+    sp.add_argument(
+        "--no-index", dest="index", action="store_false", help="Import without indexing."
+    )
+    sp.add_argument(
+        "--dry-run", action="store_true", help="List what would be imported, change nothing."
+    )
+
+    sp = add("skills", cmd_skills, "Install the bundled MiniCS agent skillset (.agents/skills).")
+    sp.add_argument(
+        "action",
+        nargs="?",
+        default="install",
+        choices=["install", "list"],
+        help="'install' (default) copies the bundled skills; 'list' shows them.",
+    )
+    sp.add_argument(
+        "--global",
+        dest="global_",
+        action="store_true",
+        help="Install to ~/.agents/skills instead of ./.agents/skills.",
+    )
+    sp.add_argument(
+        "--interactive",
+        action="store_true",
+        help="Interactively pick which skills to install.",
+    )
+    sp.add_argument("--force", action="store_true", help="Overwrite already-installed skills.")
+    sp.add_argument("--dir", metavar="PATH", help="Install into a custom directory.")
+    sp.add_argument("--list", action="store_true", help="List bundled skills and exit.")
+
     add("reindex", cmd_reindex, "Re-index all documents.")
 
     sp = add("export", cmd_export, "Export a collection.")
@@ -400,6 +616,14 @@ def build_parser() -> argparse.ArgumentParser:
 
 
 def main(argv: list[str] | None = None) -> int:
+    # Windows consoles default to a legacy codepage (cp1252); keep the CLI
+    # output encoding-safe instead of crashing on arrows and dashes.
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            try:
+                stream.reconfigure(errors="replace")
+            except Exception:  # noqa: BLE001 - best effort only
+                pass
     parser = build_parser()
     args = parser.parse_args(argv)
     func = getattr(args, "func", None)

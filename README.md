@@ -26,6 +26,7 @@ inside your own `~/.minics` folder — no cloud, no accounts, no lock-in.
 | **Dataset library** | Datasets, ChatML entries with system/user/assistant roles, draft → review → approved workflow, automatic versioning on every message edit, structural ChatML validation. |
 | **Grounding engine** | Import **PDF, DOCX, TXT, Markdown, LaTeX** — every file is converted to cleaned markdown (optionally repaired by the LLM), then chunked and indexed. |
 | **Hybrid retrieval** | ChromaDB vector search **plus** Ladybug graph topology, fused with Reciprocal Rank Fusion (RRF). Each side degrades gracefully when the other is unavailable. |
+| **Agent skillset** | A complete, precise skillset ships **inside the package** — one parent skill plus ten sub-skills that teach agents (Pi, OpenCode, Codex…) how to drive MiniCS. `minics skills install` drops them into `.agents/skills` locally or `~/.agents/skills` globally. |
 | **LLM everywhere** | Enhance fields, suggest tags, evaluate entries against 6 quality dimensions, generate grounded new entries, clean markdown, extract graph entities. Structured output with 3 fallback strategies. |
 | **Background-first** | Long operations (import, indexing, evaluation) run on a worker thread pool with live progress streamed to the UI over **Server-Sent Events**, backed by a concurrency-safe SQLite writer thread. |
 | **Chat with switches** | Per-conversation toggles for RAG, graph and grounding — retrieval and injection are separate, so you can *preview* what would be used without forcing it into the prompt. |
@@ -148,6 +149,8 @@ pip install minichat-studio      # from PyPI: https://pypi.org/project/minichat-
 
 minics init                      # create ~/.minics
 minics setup                     # interactive LLM + embedding wizard
+minics scan ./my-docs            # bulk-import every compatible document in a tree
+minics skills install            # install the agent skillset into ./.agents/skills
 minics                           # launch the desktop app (default command)
 ```
 
@@ -186,9 +189,12 @@ Other entry points:
 ```bash
 minics serve --port 8800        # Flask only, opened in a browser
 minics models                   # list models from the endpoint
+minics scan ./docs --pdf --txt  # bulk-import a directory (one-by-one, live progress)
+minics scan ./docs --dry-run    # preview what a scan would import
 minics search "what is RRF?"    # hybrid retrieval from the terminal
 minics export <collection> -o out.jsonl --format jsonl
 minics documents --import paper.pdf --index
+minics skills install --global  # agent skills into ~/.agents/skills
 minics reindex                  # rebuild the vector index + graph
 python -m minics --help         # everything else
 ```
@@ -199,7 +205,7 @@ A prebuilt server image is published on **GHCR** for every release — pull it
 directly instead of building:
 
 ```bash
-docker pull ghcr.io/jasonjimnz/minics:0.3.3   # or :latest
+docker pull ghcr.io/jasonjimnz/minics:0.4.0   # or :latest
 ```
 
 The container keeps the whole store in a volume and
@@ -283,6 +289,8 @@ Every layer is documented in depth in [`docs/`](docs/index.md):
 | [Architecture](docs/architecture.md) | Layers, request lifecycle, threading model, design decisions. |
 | [Libraries](docs/libraries.md) | Every dependency, why it's there and where it's used. |
 | [Configuration](docs/configuration.md) | Every config key, the setup wizard, `MINICS_HOME`, secrets masking. |
+| [CLI reference](docs/cli.md) | Every `minics` subcommand — setup, `minics scan`, documents, search, export, skills. |
+| [Agent skills](docs/skills.md) | The bundled MiniCS skillset for Pi, OpenCode and Codex: installation and the full catalogue. |
 | [Core & backend](docs/backend.md) | SQLite writer, event bus, job manager, repositories, services, CLI, desktop shell. |
 | [LLM layer](docs/llm.md) | OpenAI protocol client, embeddings, structured output + truncation handling, prompts, authoring helpers. |
 | [RAG & graph](docs/rag.md) | Conversion, chunking, entity extraction, Ladybug schema, Chroma, indexing pipeline, RRF hybrid retrieval. |
@@ -348,7 +356,7 @@ and style conventions.
 
 ## Status
 
-**Version 0.3.3 is ready.** The project is still a **beta** and intentionally
+**Version 0.4.0 is ready.** The project is still a **beta** and intentionally
 a **small project** — a lite blend of ChatML Studio and Tyness — built in
 small, versioned increments (see `git log`).
 

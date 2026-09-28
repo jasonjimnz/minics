@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="Every minics subcommand: setup, scan, documents, search, export, skills.">
+<title>CLI reference · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minics</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.2</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minics" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li><li><a href="cli.html" class="active" aria-current="page">CLI reference</a></li><li><a href="skills.html">Agent skills</a></li></ul></div><div class="nav-group"><h3>Examples</h3><ul><li><a href="colab-example.html">Colab + vLLM example</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Getting started</p>
+          <h1>CLI reference</h1>
+          <p class="page-blurb">Every minics subcommand: setup, scan, documents, search, export, skills.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minics/edit/main/docs/cli.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>The <code>minics</code> command is the fastest way to drive the studio from a terminal.
+Every subcommand works against the same <code>~/.minics</code> store (override with
+<code>MINICS_HOME</code> or the global <code>--home PATH</code> flag), so the CLI, the desktop app
+and the Python library always see the same data.</p>
+<p>Run <code>minics --help</code> or <code>minics &lt;command&gt; --help</code> for the full, live reference.</p>
+<h2 id="at-a-glance">At a glance<a class="heading-anchor" href="#at-a-glance" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Command</th>
+<th>What it does</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>minics</code></td>
+<td>Launch the desktop app (default, PyWebView shell).</td>
+</tr>
+<tr>
+<td><code>minics serve</code></td>
+<td>Run the web server in a browser.</td>
+</tr>
+<tr>
+<td><code>minics init</code></td>
+<td>Create the <code>~/.minics</code> structure and run migrations.</td>
+</tr>
+<tr>
+<td><code>minics setup</code></td>
+<td>Configure LLM + embedding endpoints (wizard or flags).</td>
+</tr>
+<tr>
+<td><code>minics models</code></td>
+<td>List chat / embedding models from the endpoint.</td>
+</tr>
+<tr>
+<td><code>minics scan</code></td>
+<td><strong>Bulk-import every compatible document in a directory tree.</strong></td>
+</tr>
+<tr>
+<td><code>minics documents</code></td>
+<td>Import, list or index single documents.</td>
+</tr>
+<tr>
+<td><code>minics reindex</code></td>
+<td>Rebuild the vector index + graph for all documents.</td>
+</tr>
+<tr>
+<td><code>minics search</code></td>
+<td>Hybrid retrieval (vector + graph, RRF fusion).</td>
+</tr>
+<tr>
+<td><code>minics datasets</code></td>
+<td>List or create datasets.</td>
+</tr>
+<tr>
+<td><code>minics entries</code></td>
+<td>List entries (filter by dataset, status, text).</td>
+</tr>
+<tr>
+<td><code>minics export</code></td>
+<td>Export a collection (ChatML / JSONL / Alpaca / ShareGPT / Markdown).</td>
+</tr>
+<tr>
+<td><code>minics skills</code></td>
+<td>Install the bundled MiniCS agent skillset.</td>
+</tr>
+<tr>
+<td><code>minics config</code></td>
+<td>Show or patch the configuration (secrets masked).</td>
+</tr>
+<tr>
+<td><code>minics info</code></td>
+<td>Show resolved paths and initialisation state.</td>
+</tr>
+<tr>
+<td><code>minics version</code></td>
+<td>Print the installed version.</td>
+</tr>
+</tbody>
+</table>
+<h2 id="minics-setup"><code>minics setup</code><a class="heading-anchor" href="#minics-setup" title="Permanent link">&para;</a></h2>
+<p>Interactive wizard when called with no flags; fully scriptable with flags:</p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>setup<span class="w">                                  </span><span class="c1"># wizard</span>
+minics<span class="w"> </span>setup<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--base-url<span class="w"> </span>http://localhost:8000/v1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--model<span class="w"> </span>qwen3-8b<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embedding-base-url<span class="w"> </span>http://localhost:11434/v1<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--embedding-model<span class="w"> </span>bge-m3<span class="w"> </span><span class="se">\</span>
+<span class="w">  </span>--test
+</code></pre></div>
+
+<p>It lists available models, auto-detects the embedding dimension (required to
+create the Chroma collection), runs a connection test with <code>--test</code> and marks
+setup complete. Extra flags: <code>--api-key</code>, <code>--embedding-api-key</code>,
+<code>--embedding-dimension N</code>, <code>--temperature</code>, <code>--max-tokens</code>.</p>
+<h2 id="minics-scan-bulk-document-import"><code>minics scan</code> — bulk document import<a class="heading-anchor" href="#minics-scan-bulk-document-import" title="Permanent link">&para;</a></h2>
+<p>Scans a directory (absolute, or relative to the current working directory),
+converts every compatible document to markdown, and adds them <strong>one by one</strong>
+to the store with live terminal progress (import → vector index → graph):</p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>scan<span class="w"> </span>./docs<span class="w">                     </span><span class="c1"># every compatible format, recursive</span>
+minics<span class="w"> </span>scan<span class="w"> </span>/data/papers<span class="w"> </span>--pdf<span class="w">         </span><span class="c1"># only PDFs</span>
+minics<span class="w"> </span>scan<span class="w"> </span>./notes<span class="w"> </span>--markdown<span class="w"> </span>--txt<span class="w">   </span><span class="c1"># only Markdown and plain text</span>
+minics<span class="w"> </span>scan<span class="w"> </span>./docs<span class="w"> </span>--tags<span class="w"> </span>manuals,v2<span class="w">   </span><span class="c1"># tag every imported document</span>
+minics<span class="w"> </span>scan<span class="w"> </span>./docs<span class="w"> </span>--dry-run<span class="w">           </span><span class="c1"># preview what would be imported</span>
+minics<span class="w"> </span>scan<span class="w"> </span>./docs<span class="w"> </span>--no-index<span class="w">          </span><span class="c1"># import only; index later via reindex</span>
+</code></pre></div>
+
+<p>Details:</p>
+<ul>
+<li><strong>Format flags</strong> <code>--markdown</code>, <code>--txt</code>, <code>--pdf</code>, <code>--docx</code>, <code>--latex</code> — with
+  <em>no</em> format flag, <strong>all compatible formats</strong> are used.</li>
+<li>Supported extensions: <code>.pdf</code>, <code>.txt</code>/<code>.text</code>, <code>.md</code>/<code>.markdown</code>,
+  <code>.docx</code>, <code>.tex</code>/<code>.latex</code>/<code>.ltx</code>.</li>
+<li>Hidden folders and vendor directories (<code>node_modules</code>, <code>.venv</code>, <code>__pycache__</code>,
+  <code>dist</code>, …) are skipped automatically.</li>
+<li><strong>Duplicates are skipped</strong> — files whose SHA-256 already exists in the store
+  are reported and left untouched, so re-running a scan is always safe.</li>
+<li>Per-file failures are printed and the scan continues; a summary
+  (<code>imported / duplicates skipped / failed / total</code>) is printed at the end.</li>
+</ul>
+<p>Example output:</p>
+<div class="highlight"><pre><span></span><code>Scanning ./docs — 3 document(s) [docx, latex, markdown, pdf, text]
+
+[  1/3] OK      handbook.md — indexed (127 chunks + graph)
+[  2/3] SKIP    old/handbook.md (duplicate of &#39;handbook&#39;)
+[  3/3] FAILED  broken.pdf: Unsupported file type &#39;&#39;
+
+Done: 1 imported, 1 duplicate(s) skipped, 1 failed, 3 total.
+</code></pre></div>
+
+<h2 id="minics-documents"><code>minics documents</code><a class="heading-anchor" href="#minics-documents" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>documents<span class="w"> </span>--import<span class="w"> </span>paper.pdf<span class="w"> </span>handbook.md<span class="w"> </span>--index
+minics<span class="w"> </span>documents<span class="w">                     </span><span class="c1"># list documents</span>
+minics<span class="w"> </span>documents<span class="w"> </span>--search<span class="w"> </span><span class="s2">&quot;fusion&quot;</span><span class="w">   </span><span class="c1"># filter by title/source</span>
+</code></pre></div>
+
+<p><code>--index</code> performs vector + graph indexing right after import. Without it, run
+<code>minics reindex</code> later.</p>
+<h2 id="minics-search"><code>minics search</code><a class="heading-anchor" href="#minics-search" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;how does RRF fusion work?&quot;</span>
+minics<span class="w"> </span>search<span class="w"> </span><span class="s2">&quot;sorting&quot;</span><span class="w"> </span>--top-k<span class="w"> </span><span class="m">10</span><span class="w"> </span>--no-graph
+</code></pre></div>
+
+<p>Prints JSON with the fused chunks, scores and ready-to-inject context text.</p>
+<h2 id="minics-skills-install-the-agent-skillset"><code>minics skills</code> — install the agent skillset<a class="heading-anchor" href="#minics-skills-install-the-agent-skillset" title="Permanent link">&para;</a></h2>
+<p>Copies the MiniCS skillset <strong>bundled inside the package</strong> (never fetched from
+GitHub) into an agent skills directory readable by Pi, OpenCode, Codex and any
+skill-compatible agent. See <a href="skills.html">Skills</a> for the full skill catalogue.</p>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w">                </span><span class="c1"># project-local: ./.agents/skills/</span>
+minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w"> </span>--global<span class="w">       </span><span class="c1"># user-wide:     ~/.agents/skills/</span>
+minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w"> </span>--interactive<span class="w">  </span><span class="c1"># choose which skills to install</span>
+minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w"> </span>--force<span class="w">        </span><span class="c1"># overwrite existing skills</span>
+minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w"> </span>--dir<span class="w"> </span>PATH<span class="w">     </span><span class="c1"># custom target directory</span>
+minics<span class="w"> </span>skills<span class="w"> </span>list<span class="w">                   </span><span class="c1"># show bundled skills + install status</span>
+</code></pre></div>
+
+<p>Local installs (the default) live next to your project — commit them to share
+with the team; global installs live in your home directory. Existing skills
+are never overwritten unless <code>--force</code> is passed.</p>
+<h2 id="minics-datasets-minics-entries"><code>minics datasets</code> / <code>minics entries</code><a class="heading-anchor" href="#minics-datasets-minics-entries" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>datasets<span class="w"> </span>--create<span class="w"> </span><span class="s2">&quot;Support QA&quot;</span><span class="w"> </span>--description<span class="w"> </span><span class="s2">&quot;Ticket answers&quot;</span>
+minics<span class="w"> </span>entries<span class="w"> </span>--dataset<span class="w"> </span><span class="m">1</span><span class="w"> </span>--status<span class="w"> </span>approved<span class="w"> </span>--limit<span class="w"> </span><span class="m">20</span>
+</code></pre></div>
+
+<h2 id="minics-export"><code>minics export</code><a class="heading-anchor" href="#minics-export" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span><span class="nb">export</span><span class="w"> </span>my-collection<span class="w"> </span>-o<span class="w"> </span>train.jsonl<span class="w"> </span>--format<span class="w"> </span>jsonl<span class="w"> </span>--approved
+</code></pre></div>
+
+<p>Formats: <code>chatml</code> (default), <code>jsonl</code>, <code>alpaca</code>, <code>sharegpt</code>, <code>markdown</code>.
+<code>--approved</code> restricts the export to approved entries; <code>--include-metadata</code>
+adds entry metadata. Output is byte-identical to the UI and Python exports.</p>
+<h2 id="minics-config-minics-info"><code>minics config</code> / <code>minics info</code><a class="heading-anchor" href="#minics-config-minics-info" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>config<span class="w">                                  </span><span class="c1"># show (secrets masked)</span>
+minics<span class="w"> </span>config<span class="w"> </span>--set<span class="w"> </span><span class="s1">&#39;{&quot;llm&quot;: {&quot;temperature&quot;: 0.2}}&#39;</span>
+minics<span class="w"> </span>info<span class="w">                                    </span><span class="c1"># paths + initialised state</span>
+</code></pre></div>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="features.html"><span class="pager-label">Previous</span><span class="pager-title">Features</span></a>
+<a class="pager-card next" href="skills.html"><span class="pager-label">Next</span><span class="pager-title">Agent skills</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#at-a-glance">At a glance</a></li><li class="toc-l2"><a href="#minics-setup">minics setup</a></li><li class="toc-l2"><a href="#minics-scan-bulk-document-import">minics scan — bulk document import</a></li><li class="toc-l2"><a href="#minics-documents">minics documents</a></li><li class="toc-l2"><a href="#minics-search">minics search</a></li><li class="toc-l2"><a href="#minics-skills-install-the-agent-skillset">minics skills — install the agent skillset</a></li><li class="toc-l2"><a href="#minics-datasets-minics-entries">minics datasets / minics entries</a></li><li class="toc-l2"><a href="#minics-export">minics export</a></li><li class="toc-l2"><a href="#minics-config-minics-info">minics config / minics info</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minics/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minics/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

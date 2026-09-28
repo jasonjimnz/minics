@@ -34,6 +34,8 @@ PAGES: list[tuple[str, str, str, str]] = [
     ("installation", "Installation", "Install from PyPI or source, requirements, verify and upgrade.", "Getting started"),
     ("getting-started", "Getting started", "Create the store, run the wizard, build your first grounded dataset.", "Getting started"),
     ("features", "Features", "The full feature tour: library, grounding, retrieval, LLM tools, UI.", "Getting started"),
+    ("cli", "CLI reference", "Every minics subcommand: setup, scan, documents, search, export, skills.", "Getting started"),
+    ("skills", "Agent skills", "The bundled MiniCS skillset for Pi, OpenCode and Codex — install and catalogue.", "Getting started"),
     ("colab-example", "Colab + vLLM example", "Run the whole library programmatically on a free Colab T4 with vLLM.", "Examples"),
     ("architecture", "Architecture", "Layers, request lifecycle, concurrency model and design decisions.", "Core"),
     ("libraries", "Libraries", "Every dependency: what it does, where it is used, why it was chosen.", "Core"),

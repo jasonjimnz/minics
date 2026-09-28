@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "minichat-studio"
-version = "0.3.3"
+version = "0.4.0"
 description = "MiniCS Lite (Mini ChatML Studio Lite) — a local-first studio for building high quality LLM datasets with RAG + graph grounding."
 readme = "README.md"
 requires-python = ">=3.12"
@@ -68,7 +68,11 @@ package-dir = { "" = "src" }
 where = ["src"]
 
 [tool.setuptools.package-data]
-minics = ["server/templates/**/*", "server/static/**/*"]
+minics = [
+    "server/templates/**/*",
+    "server/static/**/*",
+    "skills/**/SKILL.md",
+]
 
 [tool.ruff]
 line-length = 100

@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en" data-color-mode="auto">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="description" content="The bundled MiniCS skillset for Pi, OpenCode and Codex — install and catalogue.">
+<title>Agent skills · MiniCS Docs</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'><path fill='%230969da' d='M4 1.75C4 .784 4.784 0 5.75 0h5.586c.464 0 .909.184 1.237.513l2.914 2.914c.329.328.513.773.513 1.237v9.586A1.75 1.75 0 0 1 14.25 16h-8.5A1.75 1.75 0 0 1 4 14.25Zm1.75-.25a.25.25 0 0 0-.25.25v12.5c0 .138.112.25.25.25h8.5a.25.25 0 0 0 .25-.25V4.664a.25.25 0 0 0-.073-.177l-2.914-2.914a.25.25 0 0 0-.177-.073ZM8.75 6a.75.75 0 0 1 1.5 0v4.19l1.22-1.22a.749.749 0 1 1 1.06 1.06l-2.5 2.5a.749.749 0 0 1-1.06 0l-2.5-2.5a.749.749 0 1 1 1.06-1.06l1.22 1.22Z'/></svg>">
+<link rel="stylesheet" href="assets/style.css">
+<link rel="stylesheet" href="assets/highlight.css">
+<script src="assets/site.js" defer></script>
+</head>
+<body>
+<a class="skip-link" href="#content">Skip to content</a>
+
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="index.html">
+      <svg class="octicon" viewBox="0 0 16 16" width="24" height="24" aria-hidden="true"><path fill="currentColor" d="M0 1.75A.75.75 0 0 1 .75 1h4.253c1.227 0 2.317.59 3 1.501A3.743 3.743 0 0 1 11.006 1h4.245a.75.75 0 0 1 .75.75v10.5a.75.75 0 0 1-.75.75h-4.507a2.25 2.25 0 0 0-1.591.659l-.622.621a.75.75 0 0 1-1.06 0l-.622-.621A2.25 2.25 0 0 0 5.258 13H.75a.75.75 0 0 1-.75-.75Zm7.251 10.324.004-5.073-.002-2.253A2.25 2.25 0 0 0 5.003 2.5H1.5v9h3.757a3.75 3.75 0 0 1 1.994.574ZM8.755 4.75l-.004 7.322a3.752 3.752 0 0 1 1.992-.572H14.5v-9h-3.495a2.25 2.25 0 0 0-2.25 2.25Z"/></svg>
+      <span class="brand-text">minics</span>
+      <span class="brand-divider">/</span>
+      <span class="brand-strong">Docs</span>
+      <span class="badge">v0.3.2</span>
+    </a>
+    <div class="header-actions">
+      <div class="search-box" id="search-box">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M10.68 11.74a6 6 0 0 1-7.922-8.982 6 6 0 0 1 8.982 7.922l3.04 3.04a.749.749 0 0 1-.326 1.275.749.749 0 0 1-.734-.215ZM11.5 7a4.499 4.499 0 1 0-8.997 0A4.499 4.499 0 0 0 11.5 7Z"/></svg>
+        <input type="search" id="search-input" placeholder="Search docs" autocomplete="off" spellcheck="false" aria-label="Search documentation">
+        <kbd>/</kbd>
+        <div class="search-results" id="search-results" hidden></div>
+      </div>
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">
+        <svg class="octicon theme-icon-light" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 12a4 4 0 1 1 0-8 4 4 0 0 1 0 8Zm0-1.5a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Zm5.657-8.157a.75.75 0 0 1 0 1.061l-1.061 1.06a.749.749 0 1 1-1.06-1.06l1.06-1.06a.75.75 0 0 1 1.06 0Zm-9.193 9.193a.75.75 0 0 1 0 1.06l-1.06 1.061a.75.75 0 1 1-1.061-1.06l1.06-1.061a.75.75 0 0 1 1.061 0ZM8 0a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0V.75A.75.75 0 0 1 8 0ZM3 8a.75.75 0 0 1-.75.75H.75a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 3 8Zm13 0a.75.75 0 0 1-.75.75h-1.5a.75.75 0 0 1 0-1.5h1.5A.75.75 0 0 1 16 8ZM8 13a.75.75 0 0 1 .75.75v1.5a.75.75 0 0 1-1.5 0v-1.5A.75.75 0 0 1 8 13Zm2.657-4.343a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Zm-9.193 9.193a.75.75 0 0 1 1.06 0l1.061-1.06a.75.75 0 1 1 1.061 1.06l-1.06 1.061a.75.75 0 0 1-1.061 0Zm0-9.193a.75.75 0 0 1 0-1.06L2.524 3.54a.75.75 0 0 1 1.06 1.06l-1.06 1.061a.75.75 0 0 1-1.06 0Zm9.193 9.193a.75.75 0 0 1 1.06 0l1.061 1.06a.75.75 0 1 1-1.06 1.061l-1.061-1.06a.75.75 0 0 1 0-1.061Z"/></svg>
+        <svg class="octicon theme-icon-dark" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M9.598 1.591a.749.749 0 0 1 .785-.175 7.001 7.001 0 1 1-8.967 8.967.75.75 0 0 1 .961-.96 5.5 5.5 0 0 0 7.046-7.046.75.75 0 0 1 .175-.786Zm1.616 1.945a7 7 0 0 1-7.678 7.678 5.499 5.499 0 1 0 7.678-7.678Z"/></svg>
+      </button>
+      <a class="icon-btn" href="https://github.com/jasonjimnz/minics" target="_blank" rel="noopener" aria-label="GitHub repository">
+        <svg class="octicon" viewBox="0 0 16 16" width="16" height="16" aria-hidden="true"><path fill="currentColor" d="M8 0c4.42 0 8 3.58 8 8a8.013 8.013 0 0 1-5.45 7.59c-.4.08-.55-.17-.55-.38 0-.27.01-1.13.01-2.2 0-.75-.25-1.23-.54-1.48 1.78-.2 3.65-.88 3.65-3.95 0-.88-.31-1.59-.82-2.15.08-.2.36-1.02-.08-2.12 0 0-.67-.22-2.2.82-.64-.18-1.32-.27-2-.27-.68 0-1.36.09-2 .27-1.53-1.03-2.2-.82-2.2-.82-.44 1.1-.16 1.92-.08 2.12-.51.56-.82 1.28-.82 2.15 0 3.06 1.86 3.75 3.64 3.95-.23.2-.44.55-.51 1.07-.46.21-1.61.55-2.33-.66-.15-.24-.6-.83-1.23-.82-.67.01-.27.38.01.53.34.19.73.9.82 1.13.16.45.68 1.31 2.69.94 0 .67.01 1.3.01 1.49 0 .21-.15.45-.55.38A7.995 7.995 0 0 1 0 8c0-4.42 3.58-8 8-8Z"/></svg>
+      </a>
+    </div>
+  </div>
+</header>
+
+<div class="layout">
+  <aside class="sidebar" id="sidebar">
+    <nav aria-label="Documentation"><div class="nav-group"><h3>Getting started</h3><ul><li><a href="index.html">Overview</a></li><li><a href="installation.html">Installation</a></li><li><a href="getting-started.html">Getting started</a></li><li><a href="features.html">Features</a></li><li><a href="cli.html">CLI reference</a></li><li><a href="skills.html" class="active" aria-current="page">Agent skills</a></li></ul></div><div class="nav-group"><h3>Examples</h3><ul><li><a href="colab-example.html">Colab + vLLM example</a></li></ul></div><div class="nav-group"><h3>Core</h3><ul><li><a href="architecture.html">Architecture</a></li><li><a href="libraries.html">Libraries</a></li><li><a href="configuration.html">Configuration</a></li><li><a href="backend.html">Core &amp; backend</a></li><li><a href="llm.html">LLM layer</a></li><li><a href="rag.html">RAG &amp; graph engine</a></li></ul></div><div class="nav-group"><h3>Running</h3><ul><li><a href="serving.html">Serving with Flask</a></li><li><a href="docker.html">Docker</a></li></ul></div><div class="nav-group"><h3>Reference</h3><ul><li><a href="api.html">HTTP API</a></li><li><a href="frontend.html">Frontend</a></li><li><a href="storage.html">Data &amp; storage</a></li><li><a href="development.html">Development</a></li></ul></div></nav>
+  </aside>
+  <main class="content" id="content">
+    <article class="markdown-body">
+      <div class="page-header">
+        <div class="page-header-text">
+          <p class="page-kicker">Getting started</p>
+          <h1>Agent skills</h1>
+          <p class="page-blurb">The bundled MiniCS skillset for Pi, OpenCode and Codex — install and catalogue.</p>
+        </div>
+        <a class="edit-link" href="https://github.com/jasonjimnz/minics/edit/main/docs/skills.md" target="_blank" rel="noopener">
+          <svg class="octicon" viewBox="0 0 16 16" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M11.013 1.427a1.75 1.75 0 0 1 2.474 0l1.086 1.086a1.75 1.75 0 0 1 0 2.474l-8.61 8.61c-.21.21-.47.364-.756.445l-3.251.93a.75.75 0 0 1-.927-.928l.929-3.25c.081-.286.235-.547.445-.758l8.61-8.61Zm.176 4.823L9.75 4.81l-6.286 6.287a.253.253 0 0 0-.064.108l-.558 1.953 1.953-.558a.253.253 0 0 0 .108-.064Zm1.238-3.763a.25.25 0 0 0-.354 0L10.811 3.75l1.439 1.44 1.263-1.263a.25.25 0 0 0 0-.354Z"/></svg>
+          Edit this page
+        </a>
+      </div>
+<p>MiniCS ships a complete <strong>agent skillset</strong> — precise, task-focused
+instructions that teach coding agents (Pi, OpenCode, Codex and any other
+skill-compatible agent) how to drive MiniCS from the CLI and the Python
+library. The skills are <strong>bundled inside the PyPI package</strong>: installation is a
+local file copy, no GitHub access needed.</p>
+<h2 id="installing">Installing<a class="heading-anchor" href="#installing" title="Permanent link">&para;</a></h2>
+<div class="highlight"><pre><span></span><code>minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w">                </span><span class="c1"># project-local: ./.agents/skills/</span>
+minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w"> </span>--global<span class="w">       </span><span class="c1"># user-wide:     ~/.agents/skills/</span>
+minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w"> </span>--interactive<span class="w">  </span><span class="c1"># pick individual skills</span>
+minics<span class="w"> </span>skills<span class="w"> </span>install<span class="w"> </span>--force<span class="w">        </span><span class="c1"># overwrite an existing installation</span>
+minics<span class="w"> </span>skills<span class="w"> </span>list<span class="w">                   </span><span class="c1"># see what is bundled / installed</span>
+</code></pre></div>
+
+<ul>
+<li><strong>Local (default)</strong> — installs into <code>./.agents/skills/</code> relative to the
+  current working directory. Commit the folder to your repository so the whole
+  team (and their agents) get the same skillset.</li>
+<li><strong>Global</strong> — installs into <code>~/.agents/skills/</code>, available in every project.</li>
+<li><code>--interactive</code> lets you install only the sub-skills you need.</li>
+<li>Skills are skipped when already present; use <code>--force</code> to update them after
+  upgrading MiniCS.</li>
+</ul>
+<p>Each skill is a directory containing a <code>SKILL.md</code> with YAML frontmatter
+(<code>name</code> + <code>description</code>) — the format agents use to decide when to load a
+skill. Your agent will pick them up on its next session.</p>
+<h2 id="the-skillset">The skillset<a class="heading-anchor" href="#the-skillset" title="Permanent link">&para;</a></h2>
+<p>One parent skill plus ten focused sub-skills:</p>
+<h3 id="minics-the-parent-skill"><code>minics</code> — the parent skill<a class="heading-anchor" href="#minics-the-parent-skill" title="Permanent link">&para;</a></h3>
+<p>The map of everything: what MiniCS is, the core concepts (datasets, entries,
+documents, collections, grounding), the standard workflow
+(<code>init → setup → scan → app</code>), the quick CLI reference, the <code>~/.minics</code> store
+layout and the project principles. It links to every sub-skill, so agents
+start here and drill down as needed.</p>
+<h3 id="minics-setup-endpoint-configuration"><code>minics-setup</code> — endpoint configuration<a class="heading-anchor" href="#minics-setup-endpoint-configuration" title="Permanent link">&para;</a></h3>
+<p>Wiring the LLM and embedding endpoints: the interactive wizard, the
+non-interactive flags, model discovery (<code>minics models</code>), config patching
+(<code>minics config --set</code>) and a troubleshooting table (missing <code>/v1</code>, embedding
+dimension changes, empty model lists, <code>MINICS_HOME</code>).</p>
+<h3 id="minics-documents-ingestion-and-indexing"><code>minics-documents</code> — ingestion and indexing<a class="heading-anchor" href="#minics-documents-ingestion-and-indexing" title="Permanent link">&para;</a></h3>
+<p>The document pipeline: supported formats, <strong><code>minics scan</code></strong> for bulk directory
+import (format flags, <code>--tags</code>, <code>--dry-run</code>, <code>--no-index</code>, duplicate skipping,
+failure tolerance), single-file imports (<code>minics documents --import</code>), and
+indexing/reindexing — plus what to do when scan skips a file or the graph
+stays empty.</p>
+<h3 id="minics-datasets-datasets-and-entries"><code>minics-datasets</code> — datasets and entries<a class="heading-anchor" href="#minics-datasets-datasets-and-entries" title="Permanent link">&para;</a></h3>
+<p>Datasets as containers, the ChatML entry shape (system/user/assistant), the
+draft → review → approved lifecycle, automatic versioning on message edits,
+real-time ChatML validation, and the recommended order: import knowledge
+<em>before</em> generating entries.</p>
+<h3 id="minics-authoring-llm-assisted-authoring"><code>minics-authoring</code> — LLM-assisted authoring<a class="heading-anchor" href="#minics-authoring-llm-assisted-authoring" title="Permanent link">&para;</a></h3>
+<p>The four structured-output helpers: <strong>enhance assistant</strong>, <strong>suggest tags</strong>,
+<strong>evaluate</strong> (six quality dimensions) and <strong>generate grounded</strong> (draft whole
+entries from topics, citing indexed chunks) — with the recommended
+evaluate-then-enhance loop.</p>
+<h3 id="minics-retrieval-hybrid-search"><code>minics-retrieval</code> — hybrid search<a class="heading-anchor" href="#minics-retrieval-hybrid-search" title="Permanent link">&para;</a></h3>
+<p>ChromaDB vectors + Ladybug graph topology fused with Reciprocal Rank Fusion:
+<code>minics search</code> usage, how the fusion pipeline works, the tuning knobs
+(<code>top_k</code>, <code>rrf_k</code>, graph hops) and the graceful-degradation guarantees.</p>
+<h3 id="minics-chat-grounded-chat"><code>minics-chat</code> — grounded chat<a class="heading-anchor" href="#minics-chat-grounded-chat" title="Permanent link">&para;</a></h3>
+<p>Per-conversation <strong>RAG / Graph / Grounding</strong> toggles, previewing what
+retrieval <em>would</em> inject without forcing it into the prompt, <code>[n]</code> citation
+references, and a validation loop that separates retrieval problems from
+model problems.</p>
+<h3 id="minics-export-collections-and-formats"><code>minics-export</code> — collections and formats<a class="heading-anchor" href="#minics-export-collections-and-formats" title="Permanent link">&para;</a></h3>
+<p>Curating approved entries into collections and exporting to <strong>ChatML, JSONL,
+Alpaca, ShareGPT and Markdown</strong> — byte-identical from UI, CLI or Python, with
+per-format guidance (multi-turn data, <code>--approved</code>, export versioning).</p>
+<h3 id="minics-python-library-usage"><code>minics-python</code> — library usage<a class="heading-anchor" href="#minics-python-library-usage" title="Permanent link">&para;</a></h3>
+<p>The <code>AppContext</code> service API for scripting and automation: <code>get_context()</code>,
+<code>ensure_ready()</code>, an end-to-end example (dataset → import → index → retrieve →
+export), the full service map and the local-first caveats (single SQLite
+writer, isolated homes via <code>MINICS_HOME</code>).</p>
+<h3 id="minics-server-headless-serving"><code>minics-server</code> — headless serving<a class="heading-anchor" href="#minics-server-headless-serving" title="Permanent link">&para;</a></h3>
+<p><code>minics serve</code> vs <code>minics app</code>, the prebuilt <strong>GHCR</strong> server image
+(<code>ghcr.io/jasonjimnz/minics</code>), volumes and first-run behaviour, health
+endpoints, and reverse-proxy notes (SSE buffering).</p>
+<h3 id="minics-skills-the-installer-itself"><code>minics-skills</code> — the installer itself<a class="heading-anchor" href="#minics-skills-the-installer-itself" title="Permanent link">&para;</a></h3>
+<p>How to install/update the skillset: local vs global targets, <code>--interactive</code>,
+<code>--force</code>, <code>--dir</code>, the list of bundled skills and when to reinstall (after
+upgrading <code>minichat-studio</code>).</p>
+<h2 id="agent-compatibility">Agent compatibility<a class="heading-anchor" href="#agent-compatibility" title="Permanent link">&para;</a></h2>
+<p>The <code>SKILL.md</code> + frontmatter format is the emerging cross-agent standard:</p>
+<table>
+<thead>
+<tr>
+<th>Agent</th>
+<th>Where it looks</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><strong>Pi</strong></td>
+<td><code>.agents/skills/</code> in the project or home directory.</td>
+</tr>
+<tr>
+<td><strong>OpenCode</strong></td>
+<td><code>.agents/skills/</code> (project) / <code>~/.agents/skills/</code> (global).</td>
+</tr>
+<tr>
+<td><strong>Codex</strong></td>
+<td><code>.agents/skills/</code> (project) / <code>~/.agents/skills/</code> (global).</td>
+</tr>
+<tr>
+<td>Others</td>
+<td>Any agent that reads the agent-skills format.</td>
+</tr>
+</tbody>
+</table>
+<p>That is exactly the layout <code>minics skills install</code> writes — install once and
+every compatible agent in the project benefits.</p>
+    </article>
+    <nav class="pager" aria-label="Pagination">
+<a class="pager-card previous" href="cli.html"><span class="pager-label">Previous</span><span class="pager-title">CLI reference</span></a>
+<a class="pager-card next" href="colab-example.html"><span class="pager-label">Next</span><span class="pager-title">Colab + vLLM example</span></a>
+    </nav>
+  </main>
+  <aside class="toc-rail">
+<nav class="toc"><h4>On this page</h4><ul><li class="toc-l2"><a href="#installing">Installing</a></li><li class="toc-l2"><a href="#the-skillset">The skillset</a></li><li class="toc-l3"><a href="#minics-the-parent-skill">minics — the parent skill</a></li><li class="toc-l3"><a href="#minics-setup-endpoint-configuration">minics-setup — endpoint configuration</a></li><li class="toc-l3"><a href="#minics-documents-ingestion-and-indexing">minics-documents — ingestion and indexing</a></li><li class="toc-l3"><a href="#minics-datasets-datasets-and-entries">minics-datasets — datasets and entries</a></li><li class="toc-l3"><a href="#minics-authoring-llm-assisted-authoring">minics-authoring — LLM-assisted authoring</a></li><li class="toc-l3"><a href="#minics-retrieval-hybrid-search">minics-retrieval — hybrid search</a></li><li class="toc-l3"><a href="#minics-chat-grounded-chat">minics-chat — grounded chat</a></li><li class="toc-l3"><a href="#minics-export-collections-and-formats">minics-export — collections and formats</a></li><li class="toc-l3"><a href="#minics-python-library-usage">minics-python — library usage</a></li><li class="toc-l3"><a href="#minics-server-headless-serving">minics-server — headless serving</a></li><li class="toc-l3"><a href="#minics-skills-the-installer-itself">minics-skills — the installer itself</a></li><li class="toc-l2"><a href="#agent-compatibility">Agent compatibility</a></li></ul></nav>
+  </aside>
+</div>
+
+<footer class="site-footer">
+  <div class="footer-inner">
+    <span>© 2026 MiniCS Lite · Built from <a href="https://github.com/jasonjimnz/minics/tree/main/docs">docs/</a> · <a href="https://github.com/jasonjimnz/minics/issues">Report an issue</a></span>
+  </div>
+</footer>
+</body>
+</html>

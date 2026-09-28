@@ -17,6 +17,7 @@ import argparse
 import json
 import re
 import shutil
+import tomllib
 from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
@@ -27,6 +28,25 @@ from pygments.formatters import HtmlFormatter
 ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 REPO_URL = "https://github.com/jasonjimnz/minics"
+
+#: TOCs longer than this many links collapse behind a <details> toggle.
+TOC_COLLAPSE_THRESHOLD = 14
+
+
+def project_version() -> str:
+    """Read the project version from pyproject.toml (fallback: installed metadata)."""
+    try:
+        with open(ROOT / "pyproject.toml", "rb") as handle:
+            return tomllib.load(handle)["project"]["version"]
+    except Exception:  # noqa: BLE001 - fall back to the installed distribution
+        from importlib.metadata import PackageNotFoundError
+        from importlib.metadata import version as _version
+
+        try:
+            return _version("minichat-studio")
+        except PackageNotFoundError:
+            return "unknown"
+
 
 # (slug, title, blurb, group) — order defines sidebar and prev/next pager.
 PAGES: list[tuple[str, str, str, str]] = [
@@ -172,6 +192,7 @@ def render_page(slug: str, meta: tuple[str, str, str, str], body: str, toc_items
         next=pager(next_page, "next"),
         repo_url=REPO_URL,
         year=datetime.now(timezone.utc).year,
+        version_badge=project_version(),
     )
 
 
@@ -194,18 +215,26 @@ def build_nav(active: str) -> str:
 def build_toc(toc_tokens) -> str:
     if not toc_tokens:
         return ""
-    out = ['<nav class="toc"><h4>On this page</h4><ul>']
+    items: list[str] = []
 
     def walk(tokens):
         for tok in tokens:
             level, tid, name, children = tok["level"], tok["id"], tok["name"], tok["children"]
-            out.append(f'<li class="toc-l{level}"><a href="#{tid}">{name}</a></li>')
+            items.append(f'<li class="toc-l{level}"><a href="#{tid}">{name}</a></li>')
             if children:
                 walk(children)
 
     walk(toc_tokens)
-    out.append("</ul></nav>")
-    return "".join(out)
+    listing = "<ul>" + "".join(items) + "</ul>"
+    if len(items) <= TOC_COLLAPSE_THRESHOLD:
+        return f'<nav class="toc"><h4>On this page</h4>{listing}</nav>'
+    # Long TOCs (e.g. the skill usage examples) collapse behind a toggle so
+    # the right rail stays usable; the list still scrolls when expanded.
+    return (
+        f'<details class="toc toc-details">'
+        f'<summary>On this page <span class="toc-count">({len(items)})</span></summary>'
+        f'{listing}</details>'
+    )
 
 
 def main() -> None:
@@ -298,7 +327,7 @@ TEMPLATE = """<!DOCTYPE html>
       <span class="brand-text">minics</span>
       <span class="brand-divider">/</span>
       <span class="brand-strong">Docs</span>
-      <span class="badge">v0.3.2</span>
+      <span class="badge">v{version_badge}</span>
     </a>
     <div class="header-actions">
       <div class="search-box" id="search-box">
@@ -592,6 +621,23 @@ h2:hover .heading-anchor, h3:hover .heading-anchor { opacity: 1; }
 .toc a.active { color: var(--accent); border-left-color: var(--accent); font-weight: 500; }
 .toc-l3 a { padding-left: 24px; }
 
+/* Collapsible TOC for long pages (rendered as <details class="toc toc-details">) */
+.toc-details { border: 1px solid var(--border-muted); border-radius: 8px; padding: 8px 10px; }
+.toc-details summary {
+  cursor: pointer; user-select: none; list-style: none;
+  font-size: 12px; text-transform: uppercase; letter-spacing: .04em;
+  color: var(--fg-muted); font-weight: 600; padding: 2px 0;
+}
+.toc-details summary::-webkit-details-marker { display: none; }
+.toc-details summary::before {
+  content: "▸"; display: inline-block; margin-right: 6px;
+  transition: transform .15s; font-size: 11px;
+}
+.toc-details[open] summary::before { transform: rotate(90deg); }
+.toc-details summary:hover { color: var(--fg); }
+.toc-count { font-weight: 400; text-transform: none; letter-spacing: 0; }
+.toc-details ul { max-height: min(60vh, 640px); overflow-y: auto; margin-top: 6px; padding-right: 4px; }
+
 /* ---------- Pager ---------- */
 .pager { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border-muted); }
 .pager-card {
@@ -764,7 +810,12 @@ SITE_JS = r"""// MiniCS docs: theme toggle, search, TOC highlighting
         if (entry.isIntersecting) {
           tocLinks.forEach(function (a) { a.classList.remove("active"); });
           var link = map[entry.target.id];
-          if (link) link.classList.add("active");
+          if (link) {
+            link.classList.add("active");
+            // If the TOC is collapsible (<details>), keep it open when scrolling.
+            var details = link.closest("details.toc-details");
+            if (details) details.open = true;
+          }
         }
       });
     }, { rootMargin: "-80px 0px -70% 0px" });

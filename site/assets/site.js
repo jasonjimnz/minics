@@ -131,7 +131,12 @@
         if (entry.isIntersecting) {
           tocLinks.forEach(function (a) { a.classList.remove("active"); });
           var link = map[entry.target.id];
-          if (link) link.classList.add("active");
+          if (link) {
+            link.classList.add("active");
+            // If the TOC is collapsible (<details>), keep it open when scrolling.
+            var details = link.closest("details.toc-details");
+            if (details) details.open = true;
+          }
         }
       });
     }, { rootMargin: "-80px 0px -70% 0px" });

@@ -5,6 +5,9 @@ run mode wraps it: the desktop shell embeds it in a PyWebView window, `minics
 serve` exposes it to your browser, and Docker runs it in a container. This page
 explains the server itself and how to host it deliberately.
 
+A **second, independent server** — the OpenAI-compatible RAG proxy — is
+documented in section 7 (`minics proxy`, FastAPI).
+
 ---
 
 ## 1. The three run modes
@@ -176,3 +179,92 @@ The Docker image simply runs `minics serve --host 0.0.0.0 --no-browser` with
 the store mounted at `/data` — everything on this page (routes, proxying,
 auth) applies unchanged. Build and run instructions, compose file and
 container-specific troubleshooting are in [docker.md](docker.md).
+
+---
+
+## 7. `minics proxy` — the OpenAI-compatible RAG proxy (FastAPI)
+
+The studio UI answers questions *interactively*; the proxy lets **any other
+service** consume the same index through the OpenAI protocol. It is a separate
+FastAPI/uvicorn process, launchable from the CLI:
+
+```bash
+minics proxy                            # http://127.0.0.1:8766/v1
+minics proxy --host 0.0.0.0 --port 9000
+```
+
+It reads the same `~/.minics/config.json` (LLM, embedding, retrieval defaults,
+reranker), so it always serves the model configuration you set up in the
+studio.
+
+### Routes
+
+| Route | Purpose |
+| --- | --- |
+| `POST /v1/chat/completions` | Chat completions with automatic retrieval grounding. Supports `stream: true` (SSE). |
+| `GET /v1/models` | OpenAI model list containing the configured chat model. |
+| `GET /health` | `{status, version, model, ready, rerank}`. |
+
+### Flow
+
+```
+client ──► /v1/chat/completions
+             │ 1. last user message becomes the query
+             │ 2. hybrid retrieval (vector + graph [+ rerank])
+             │ 3. context injected as a system message (References: [n]…)
+             │ 4. enhanced prompt sent to the configured LLM
+             ▼
+          OpenAI-shaped response + minics metadata block
+```
+
+### The `minics` metadata block
+
+Every non-streaming response (and the first streaming chunk) carries the
+MiniCS metadata — version, model, which **documents** fed the answer,
+traceable citations and retrieval diagnostics:
+
+```json
+{
+  "minics": {
+    "version": "0.5.0",
+    "model": "llm-base",
+    "grounded": true,
+    "latency_ms": 7354,
+    "retrieval": {
+      "used": true, "used_rag": true, "used_graph": true, "rerank": false,
+      "top_k": 8, "chunks": 5,
+      "documents": [{"id": 2, "title": "tyness"}],
+      "citations": [{"kind": "vector", "ref": "doc-2-chunk-1", "title": "tyness", "score": 0.032}],
+      "diagnostics": {"vector_hits": 5, "graph_hits": 5}
+    }
+  }
+}
+```
+
+### Per-request options
+
+Pass an optional top-level `minics` object in the request body to override the
+defaults for that call: `use_rag`, `use_graph`, `use_grounding`, `top_k`,
+`document_ids` (restrict grounding to specific documents) and
+`max_context_chars`.
+
+### Example
+
+```python
+from openai import OpenAI
+
+client = OpenAI(base_url="http://127.0.0.1:8766/v1", api_key="none")
+reply = client.chat.completions.create(
+    model="llm-base",  # any name works; the configured model answers
+    messages=[{"role": "user", "content": "How does Tyness score replies?"}],
+)
+print(reply.choices[0].message.content)
+print(reply.model_extra["minics"]["retrieval"]["documents"])  # files used
+```
+
+Streaming works with the standard SDK (`stream=True`); metadata rides on the
+first chunk. Retrieval failures never break the chat — the request degrades to
+an ungrounded call and the metadata reports `grounded: false`.
+
+> Same trust model as the Flask server: **no authentication** — bind to
+> loopback unless the network is trusted and put auth in front otherwise.

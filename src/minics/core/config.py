@@ -72,6 +72,37 @@ class EmbeddingSettings(BaseModel):
         return value.strip().rstrip("/")
 
 
+class RerankSettings(BaseModel):
+    """Optional reranker endpoint settings (Cohere-compatible ``/rerank``).
+
+    Reranking is **disabled by default**.  When enabled, the hybrid retriever
+    sends the fused candidate pool to the reranker and reorders the final
+    results by relevance score.  Works with Cohere, Jina, TEI, vLLM rerank
+    endpoints and any server speaking the same request/response shape.
+    """
+
+    enabled: bool = Field(default=False, description="Master switch — off by default.")
+    base_url: str = Field(default="", description="Rerank base URL (blank = embedding URL).")
+    api_key: str = Field(default="", description="API key (blank = embedding key).")
+    model: str = Field(default="", description="Rerank model name, e.g. bge-reranker-v2-m3.")
+    endpoint: str = Field(
+        default="/rerank",
+        description="Rerank path appended to the base URL (Cohere/TEI compatible).",
+    )
+    pool: int = Field(
+        default=24,
+        ge=1,
+        le=200,
+        description="Candidate pool sent to the reranker before truncating to top_k.",
+    )
+    timeout: float = Field(default=60.0, ge=1.0)
+
+    @field_validator("base_url")
+    @classmethod
+    def _strip_url(cls, value: str) -> str:
+        return value.strip().rstrip("/")
+
+
 class RetrievalSettings(BaseModel):
     """Retrieval / grounding behaviour."""
 
@@ -84,6 +115,7 @@ class RetrievalSettings(BaseModel):
     use_rag: bool = True
     use_graph: bool = True
     use_grounding: bool = True
+    rerank: RerankSettings = Field(default_factory=RerankSettings)
 
 
 class AppSettings(BaseModel):
@@ -126,6 +158,22 @@ class Config(BaseModel):
         """Embedding key, falling back to the LLM key when left blank."""
         return self.embedding.api_key or self.llm.api_key
 
+    @property
+    def rerank_base_url(self) -> str:
+        """Rerank URL, falling back to the embedding/LLM URL when blank."""
+        return self.retrieval.rerank.base_url or self.embedding_base_url
+
+    @property
+    def rerank_api_key(self) -> str:
+        """Rerank key, falling back to the embedding/LLM key when blank."""
+        return self.retrieval.rerank.api_key or self.embedding_api_key
+
+    @property
+    def rerank_ready(self) -> bool:
+        """True when reranking can actually be attempted."""
+        rerank = self.retrieval.rerank
+        return bool(rerank.enabled and rerank.model and self.rerank_base_url)
+
     def missing_requirements(self) -> list[str]:
         """Return a list of human readable requirements that are not met."""
         missing: list[str] = []
@@ -152,6 +200,11 @@ class Config(BaseModel):
             key = data[section].get("api_key")
             data[section]["api_key_set"] = bool(key)
             data[section]["api_key"] = SECRET_MASK if key else ""
+        rerank = data["retrieval"]["rerank"]
+        rerank["api_key_set"] = bool(rerank["api_key"])
+        rerank["api_key"] = SECRET_MASK if rerank["api_key"] else ""
+        rerank["effective_base_url"] = self.rerank_base_url
+        rerank["ready"] = self.rerank_ready
         data["embedding"]["effective_base_url"] = self.embedding_base_url
         data["missing_requirements"] = self.missing_requirements()
         data["ready"] = self.is_ready()
@@ -204,6 +257,11 @@ class ConfigManager:
         for section in ("llm", "embedding"):
             if merged.get(section, {}).get("api_key") == SECRET_MASK:
                 merged[section]["api_key"] = current.get(section, {}).get("api_key", "")
+        rerank = merged.get("retrieval", {}).get("rerank", {})
+        if isinstance(rerank, dict) and rerank.get("api_key") == SECRET_MASK:
+            merged["retrieval"]["rerank"]["api_key"] = (
+                current.get("retrieval", {}).get("rerank", {}).get("api_key", "")
+            )
         config = Config.model_validate(merged)
         if apply:
             self.save(config)

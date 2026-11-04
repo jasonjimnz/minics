@@ -57,6 +57,28 @@ The config is four pydantic sections inside `Config`:
 | `vector_weight` / `graph_weight` | float | `1.0` / `1.0` | Retriever weights in the fusion sum. |
 | `graph_hops` | int | `1` | Entity-neighbour expansion hops (1–3). |
 | `use_rag` / `use_graph` / `use_grounding` | bool | all `true` | Per-conversation defaults; chat conversations store their own copy of these three switches. |
+| `rerank` | object | see below | Optional cross-encoder reranker (`RerankSettings`), **disabled by default**. |
+
+#### `retrieval.rerank` — optional reranker (`RerankSettings`)
+
+Wires a Cohere-compatible `POST /rerank` endpoint (Cohere, Jina, TEI, vLLM)
+into the hybrid retriever. Purely optional — retrieval works without it.
+
+| Key | Type | Default | Meaning |
+| --- | --- | --- | --- |
+| `enabled` | bool | `false` | Master switch — off unless explicitly enabled. |
+| `base_url` / `api_key` | str | `""` | Fall back to the embedding endpoint (`rerank_base_url` / `rerank_api_key`). |
+| `model` | str | `""` | Rerank model name (e.g. `bge-reranker-v2-m3`). |
+| `endpoint` | str | `"/rerank"` | Path appended to the base URL. |
+| `pool` | int | `24` | Candidates sent to the reranker before truncating to `top_k`. |
+| `timeout` | float | `60.0` | HTTP timeout. |
+
+`Config.rerank_ready` is `true` only when enabled **and** a model **and** a
+base URL resolve. When active, the fused pool is re-scored and the best
+`top_k` chunks survive; each chunk gains `rerank_score` plus a `rerank`
+rank/source. Endpoint failures degrade gracefully to the fused order
+(`retrieval.rerank_failed` warning event, `diagnostics.rerank: false`).
+`test_connection` includes a `rerank` report when enabled.
 
 ### `app` — desktop/server behaviour (`AppSettings`)
 
@@ -90,10 +112,12 @@ The config is four pydantic sections inside `Config`:
 API keys are masked before the config leaves the server:
 
 - `Config.public_dict()` replaces `llm.api_key` / `embedding.api_key` with
-  `********` (`SECRET_MASK`) and adds `api_key_set` booleans.
+  `********` (`SECRET_MASK`) and adds `api_key_set` booleans. The optional
+  `retrieval.rerank.api_key` is masked the same way (plus `effective_base_url`
+  and a `ready` flag for the UI).
 - When the UI submits settings, a value equal to `********` means "unchanged"
-  — `ConfigManager.update()` swaps the mask back for the stored value
-  (`config.py:203-206`). The browser never sees or re-sends real keys.
+  — `ConfigManager.update()` swaps the mask back for the stored value. The
+  browser never sees or re-sends real keys.
 
 ## 5. Changing configuration
 
@@ -156,3 +180,4 @@ Settings screen.
 | Variable | Purpose |
 | --- | --- |
 | `MINICS_HOME` | Redirect the entire home directory (config, db, stores, documents). Used by the test suite. |
+| `PI_CONFIG_DIR` | Redirect Pi's agent directory for `minics skills install --pi-trust` (default `~/.pi/agent`). |

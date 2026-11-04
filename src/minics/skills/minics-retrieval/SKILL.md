@@ -27,7 +27,8 @@ prompt injection (`result.context_text()`).
 1. The query is embedded against the Chroma collection (cosine space).
 2. The graph walk expands entity neighbours up to the configured hop count.
 3. Both ranked lists are fused with RRF using the configured `rrf_k`.
-4. The top `top_k` chunks are returned, each traceable to its document.
+4. Optionally, a cross-encoder **reranker** reorders the fused pool.
+5. The top `top_k` chunks are returned, each traceable to its document.
 
 ## Tuning
 
@@ -42,6 +43,25 @@ minics config --set '{"retrieval": {"top_k": 8, "rrf_k": 60}}'
 | `top_k` | Chunks returned / injected into grounded prompts. |
 | `rrf_k` | RRF smoothing constant — lower ranks the top hits harder. |
 | graph hops | How far the entity walk expands (higher = broader, noisier). |
+
+## Reranking (optional, disabled by default)
+
+`retrieval.rerank` wires a Cohere-compatible `POST /rerank` endpoint
+(Cohere, Jina, TEI, vLLM) into the pipeline. When enabled and a model is set,
+the fused candidate pool (`rerank.pool`, default 24) is re-scored against the
+query and the best `top_k` survive; every chunk then carries `rerank_score`
+and a `rerank` rank/source. Enable it via `minics setup --rerank-model ...`
+or config:
+
+```bash
+minics config --set '{"retrieval": {"rerank": {
+  "enabled": true, "model": "bge-reranker-v2-m3",
+  "base_url": "http://localhost:7002", "endpoint": "/rerank", "pool": 24}}}'
+```
+
+`base_url`/`api_key` fall back to the embedding endpoint. Any endpoint error
+degrades gracefully to the fused order (warning event
+`retrieval.rerank_failed`, `diagnostics.rerank: false`).
 
 ## Requirements
 

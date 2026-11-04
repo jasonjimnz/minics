@@ -13,6 +13,7 @@ minics skills install                # project-local: ./.agents/skills/
 minics skills install --global       # user-wide:     ~/.agents/skills/
 minics skills install --interactive  # pick individual skills
 minics skills install --force        # overwrite an existing installation
+minics skills install --pi-trust     # save the Pi project-trust decision
 minics skills list                   # see what is bundled / installed
 ```
 
@@ -108,6 +109,14 @@ How to install/update the skillset: local vs global targets, `--interactive`,
 `--force`, `--dir`, the list of bundled skills and when to reinstall (after
 upgrading `minichat-studio`).
 
+### `minics-proxy` — the OpenAI-compatible RAG proxy
+
+`minics proxy` (FastAPI): launches a second server exposing
+`/v1/chat/completions` with retrieval grounding injected automatically, plus
+`/v1/models` and `/health`. Covers the `minics` response metadata block
+(version, model, documents used, citations), per-request grounding options and
+client examples for the OpenAI SDK.
+
 ## Agent compatibility
 
 The `SKILL.md` + frontmatter format is the emerging cross-agent standard:
@@ -121,3 +130,20 @@ The `SKILL.md` + frontmatter format is the emerging cross-agent standard:
 
 That is exactly the layout `minics skills install` writes — install once and
 every compatible agent in the project benefits.
+
+### Pi project trust
+
+The SKILL.md files themselves are fully Pi-compatible; the one Pi-specific
+behaviour is **project trust**: Pi treats project-level `.agents/skills/` as a
+trust-protected resource and silently skips it until the project directory has
+been approved. `minics skills install` saves that decision automatically when
+a Pi installation is detected (or pass `--pi-trust` explicitly). Alternatives:
+
+- run `/trust` inside Pi and approve the project, or
+- start Pi once with `pi --approve`, or
+- use `minics skills install --global` — `~/.agents/skills/` is user scope and
+  loads without any trust decision.
+
+Decisions are stored in `~/.pi/agent/trust.json` (`{"<dir>": true}`); the
+closest parent directory decision applies. Restart Pi or run `/reload` after
+installing.

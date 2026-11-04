@@ -105,9 +105,7 @@ def list_models(
     from openai import OpenAI
 
     try:
-        client = client or OpenAI(
-            base_url=base_url or None, api_key=_key(api_key), timeout=timeout
-        )
+        client = client or OpenAI(base_url=base_url or None, api_key=_key(api_key), timeout=timeout)
         response = client.models.list()
     except Exception as exc:  # noqa: BLE001 - surfaced to the UI as "unavailable"
         raise LLMError(f"Could not list models from {base_url or 'default'}: {exc}") from exc
@@ -175,9 +173,7 @@ def list_available_models(config: Config | None = None) -> dict[str, list[str]]:
     if cfg.embedding_base_url and cfg.embedding_base_url != cfg.llm.base_url:
         try:
             embedding = split_models(
-                list_models(
-                    base_url=cfg.embedding_base_url, api_key=cfg.embedding_api_key
-                )
+                list_models(base_url=cfg.embedding_base_url, api_key=cfg.embedding_api_key)
             )["embedding"]
         except LLMError:
             pass
@@ -281,6 +277,101 @@ def probe_embedding_dimension(text: str = "dimension probe", config: Config | No
     return len(vectors[0])
 
 
+# ---------------------------------------------------------------------------
+# Reranking (optional, Cohere-compatible /rerank protocol)
+# ---------------------------------------------------------------------------
+def build_rerank_client(config: Config | None = None, *, timeout: float | None = None):
+    """Return ``(session, timeout)`` for the rerank endpoint.
+
+    Rerankers rarely speak the OpenAI SDK protocol, so a plain ``requests``
+    call is used instead.  Falls back to the embedding URL/key like the other
+    endpoint helpers.
+    """
+    import requests
+
+    cfg = _resolve(config)
+    session = requests.Session()
+    session.headers.update(
+        {
+            "Authorization": f"Bearer {_key(cfg.rerank_api_key)}",
+            "Content-Type": "application/json",
+            "Accept": "application/json",
+        }
+    )
+    return session, timeout or cfg.retrieval.rerank.timeout
+
+
+def rerank_docs(
+    query: str,
+    documents: Sequence[str],
+    config: Config | None = None,
+    *,
+    top_n: int | None = None,
+    client: Any | None = None,
+) -> list[dict[str, float]]:
+    """Rerank ``documents`` against ``query`` via a Cohere-compatible endpoint.
+
+    Returns ``[{"index": int, "score": float}, ...]`` sorted best-first.
+    Raises :class:`LLMError` on any failure — callers are expected to degrade
+    gracefully back to the fused ordering.
+    """
+    cfg = _resolve(config)
+    rerank = cfg.retrieval.rerank
+    if not rerank.model:
+        raise LLMError("No rerank model configured.")
+    if not cfg.rerank_base_url:
+        raise LLMError("No rerank base URL configured.")
+    url = f"{cfg.rerank_base_url}{rerank.endpoint}"
+    session, timeout = build_rerank_client(cfg) if client is None else (client, None)
+    payload: dict[str, Any] = {
+        "model": rerank.model,
+        "query": query,
+        "documents": list(documents),
+    }
+    if top_n is not None:
+        payload["top_n"] = top_n
+    try:
+        response = session.post(url, json=payload, timeout=timeout)
+        response.raise_for_status()
+        body = response.json()
+    except Exception as exc:  # noqa: BLE001 - callers degrade to fused order
+        raise LLMError(f"Rerank request failed ({url}): {exc}") from exc
+
+    results = body.get("results") if isinstance(body, dict) else body
+    if not isinstance(results, list):
+        raise LLMError("Rerank endpoint returned an unexpected response body.")
+    ranked: list[dict[str, float]] = []
+    for item in results:
+        index = int(item.get("index", -1))
+        score = float(item.get("relevance_score", item.get("score", 0.0)) or 0.0)
+        if index >= 0:
+            ranked.append({"index": index, "score": score})
+    return ranked
+
+
+def test_rerank(config: Config | None = None) -> dict[str, Any]:
+    """Probe the rerank endpoint with a tiny query (used by the setup test)."""
+    cfg = _resolve(config)
+    report: dict[str, Any] = {
+        "ok": False,
+        "enabled": cfg.retrieval.rerank.enabled,
+        "model": cfg.retrieval.rerank.model,
+        "error": None,
+    }
+    if not cfg.retrieval.rerank.enabled:
+        report["skipped"] = "reranking is disabled"
+        return report
+    try:
+        ranked = rerank_docs("what is a cat?", ["a feline animal", "a motor vehicle"], cfg)
+        report["ok"] = bool(ranked)
+        report["top_score"] = ranked[0]["score"] if ranked else None
+        if not ranked:
+            report["error"] = "endpoint returned no results"
+    except LLMError as exc:
+        report["error"] = str(exc)
+    return report
+
+
 def test_connection(config: Config | None = None) -> dict[str, Any]:
     """Check chat + embedding reachability and detect the embedding dimension.
 
@@ -291,8 +382,12 @@ def test_connection(config: Config | None = None) -> dict[str, Any]:
     report: dict[str, Any] = {
         "ok": False,
         "chat": {"ok": False, "error": None, "model": cfg.llm.model},
-        "embedding": {"ok": False, "error": None, "model": cfg.embedding.model,
-                      "dimension": cfg.embedding.dimension},
+        "embedding": {
+            "ok": False,
+            "error": None,
+            "model": cfg.embedding.model,
+            "dimension": cfg.embedding.dimension,
+        },
         "models": {"chat": [], "embedding": []},
     }
 
@@ -319,5 +414,6 @@ def test_connection(config: Config | None = None) -> dict[str, Any]:
     except LLMError:
         pass
 
+    report["rerank"] = test_rerank(cfg)
     report["ok"] = bool(report["chat"]["ok"] and report["embedding"]["ok"])
     return report

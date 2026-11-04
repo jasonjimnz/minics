@@ -20,7 +20,7 @@ init step. `minics app` instead launches the PyWebView desktop shell.
 A prebuilt server image is published on GHCR for every release:
 
 ```bash
-docker pull ghcr.io/jasonjimnz/minics:latest      # or a version tag, e.g. :0.4.0
+docker pull ghcr.io/jasonjimnz/minics:latest      # or a version tag, e.g. :0.5.0
 docker run -d -p 8765:8765 -v minics-data:/data ghcr.io/jasonjimnz/minics:latest
 ```
 
@@ -36,6 +36,9 @@ curl http://127.0.0.1:8765/api/overview
 ```
 
 Full REST reference: `docs/api.md` (HTTP API page of the documentation).
+
+> Need an **OpenAI-compatible API** instead of the REST UI API? That is the
+> separate FastAPI proxy — see the `minics-proxy` skill (`minics proxy`).
 
 ## Reverse proxy notes
 

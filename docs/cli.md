@@ -13,6 +13,7 @@ Run `minics --help` or `minics <command> --help` for the full, live reference.
 | --- | --- |
 | `minics` | Launch the desktop app (default, PyWebView shell). |
 | `minics serve` | Run the web server in a browser. |
+| `minics proxy` | Run the OpenAI-compatible RAG proxy (FastAPI). |
 | `minics init` | Create the `~/.minics` structure and run migrations. |
 | `minics setup` | Configure LLM + embedding endpoints (wizard or flags). |
 | `minics models` | List chat / embedding models from the endpoint. |
@@ -46,6 +47,10 @@ It lists available models, auto-detects the embedding dimension (required to
 create the Chroma collection), runs a connection test with `--test` and marks
 setup complete. Extra flags: `--api-key`, `--embedding-api-key`,
 `--embedding-dimension N`, `--temperature`, `--max-tokens`.
+
+Optional reranker flags (reranking stays **off** unless `--rerank-model` is
+passed): `--rerank-base-url`, `--rerank-api-key`, `--rerank-endpoint`,
+`--rerank-pool`, and `--no-rerank` to disable it again.
 
 ## `minics scan` — bulk document import
 
@@ -106,6 +111,26 @@ minics search "sorting" --top-k 10 --no-graph
 ```
 
 Prints JSON with the fused chunks, scores and ready-to-inject context text.
+When a reranker is configured, chunks carry `rerank_score` and the
+`rerank` diagnostic reports whether re-ranking was applied.
+
+## `minics proxy` — OpenAI-compatible RAG endpoint
+
+A second server (FastAPI + uvicorn) that exposes your index through the
+OpenAI protocol. Retrieval runs first, the context is injected as grounding,
+and answers carry a `minics` metadata block (version, model, documents used,
+citations). See [serving.md](serving.md) and the `minics-proxy` skill:
+
+```bash
+minics proxy                            # http://127.0.0.1:8766/v1
+minics proxy --host 0.0.0.0 --port 9000
+
+curl http://127.0.0.1:8766/v1/models
+curl http://127.0.0.1:8766/health
+curl -X POST http://127.0.0.1:8766/v1/chat/completions \
+  -H 'Content-Type: application/json' \
+  -d '{"model":"llm-base","messages":[{"role":"user","content":"How does Tyness score replies?"}]}'
+```
 
 ## `minics skills` — install the agent skillset
 
@@ -119,12 +144,19 @@ minics skills install --global       # user-wide:     ~/.agents/skills/
 minics skills install --interactive  # choose which skills to install
 minics skills install --force        # overwrite existing skills
 minics skills install --dir PATH     # custom target directory
+minics skills install --pi-trust     # save the Pi project-trust decision
 minics skills list                   # show bundled skills + install status
 ```
 
 Local installs (the default) live next to your project — commit them to share
 with the team; global installs live in your home directory. Existing skills
 are never overwritten unless `--force` is passed.
+
+> **Pi note.** Pi loads project `.agents/skills/` only after the project
+> directory is granted *project trust*. The installer saves that decision
+> automatically when Pi is detected (or pass `--pi-trust` explicitly); inside
+> Pi you can also run `/trust`, or start with `pi --approve`. Global installs
+> (`~/.agents/skills/`) need no trust. See [skills.md](skills.md).
 
 ## `minics datasets` / `minics entries`
 

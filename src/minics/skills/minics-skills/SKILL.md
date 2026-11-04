@@ -18,8 +18,27 @@ minics skills install --global       # user-wide: ~/.agents/skills/
 minics skills install --interactive  # pick which skills to install
 minics skills install --force        # overwrite existing versions
 minics skills install --dir PATH     # custom target directory
+minics skills install --pi-trust     # save Pi project-trust for this directory
 minics skills list                   # show bundled skills and their status
 ```
+
+## Pi (pi.dev) compatibility
+
+The SKILL.md format itself is Agent-Skills-spec compliant and loads in Pi as
+is. The one gotcha is **project trust**: Pi treats project-level
+`.agents/skills/` as a trust-protected resource and silently skips it until
+the project directory has been approved.
+
+- `minics skills install` auto-saves the Pi trust decision when Pi is
+  detected and no decision exists yet (or pass `--pi-trust` explicitly).
+- Inside Pi, `/trust` approves the current project interactively;
+  `pi --approve` is the one-shot CLI equivalent.
+- Decisions live in `~/.pi/agent/trust.json` (`{"<dir>": true}`), closest
+  parent decision wins.
+- **Global installs (`--global` → `~/.agents/skills/`) need no trust** — use
+  them when you want the skills in every Pi session without per-project
+  approval.
+- After (re)installing, restart Pi or run `/reload` to pick up the skills.
 
 ## What gets installed
 
@@ -36,6 +55,7 @@ Each skill is a directory with a `SKILL.md` (YAML frontmatter: `name` +
 - `minics-export` — collections and export formats
 - `minics-python` — library usage via `AppContext`
 - `minics-server` — headless serving and Docker
+- `minics-proxy` — OpenAI-compatible RAG proxy server (`minics proxy`)
 
 ## Notes
 

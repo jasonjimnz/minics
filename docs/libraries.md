@@ -11,6 +11,8 @@ well-scoped libraries over frameworks that own your code**.
 | Library | Version | Used in | Why |
 | --- | --- | --- | --- |
 | **Flask** | ≥ 3.0 | `server/app.py`, `server/api/*` | Minimal, explicit web framework. The app factory pattern + blueprints map 1:1 onto MiniCS's module layout; no ORM or auth machinery to fight. Werkzeug (bundled) also powers the threaded dev server inside the desktop shell (`werkzeug.serving.make_server`). |
+| **FastAPI + Uvicorn** | ≥ 0.110 / ≥ 0.29 | `proxy/app.py` | The OpenAI-compatible RAG proxy (`minics proxy`) is a separate ASGI server: async streaming (SSE) and automatic OpenAPI docs come for free, while the studio UI stays on Flask. |
+| **requests** | ≥ 2.31 | `llm/client.py` | Rerankers don't speak the OpenAI SDK protocol; a plain `POST /rerank` with the Cohere-compatible body is the de-facto standard (Cohere, Jina, TEI, vLLM). |
 | **PyWebView** | ≥ 5.0 | `desktop.py` | Renders the local Flask UI inside a native OS window using the system webview. Gives a "desktop app" feel with zero bundling. MiniCS degrades gracefully to the system browser if no GUI backend is available. |
 
 ## 2. Config / validation

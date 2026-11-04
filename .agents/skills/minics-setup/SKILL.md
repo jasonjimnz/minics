@@ -37,6 +37,25 @@ minics setup \
 Useful flags: `--embedding-dimension N` (skip auto-detection), `--temperature`,
 `--max-tokens`, `--test`.
 
+## Optional reranker (off by default)
+
+Retrieval quality can be improved with a cross-encoder reranker speaking the
+Cohere-compatible `POST /rerank` protocol (Cohere, Jina, TEI, vLLM). It is
+disabled unless `--rerank-model` is given:
+
+```bash
+minics setup \
+  --rerank-base-url http://localhost:7002 \
+  --rerank-model bge-reranker-v2-m3 \
+  --rerank-pool 24 --test
+minics setup --no-rerank      # turn it back off
+```
+
+`--rerank-base-url` / `--rerank-api-key` fall back to the embedding endpoint
+when blank. Reranking only reorders retrieval results — it is never required
+for MiniCS to work. Test it with `test_connection` (shows a `rerank` report
+when enabled) or watch `retrieval.rerank_failed` warnings for degradation.
+
 ## Model discovery
 
 ```bash

@@ -1,6 +1,6 @@
 ---
 name: minics
-description: Use MiniCS (minichat-studio) — a local-first studio for building high quality LLM datasets with hybrid RAG + knowledge-graph grounding. Covers the full workflow: setup, document ingestion (`minics scan`), dataset authoring, retrieval, grounded chat, curation and export. Use when the user mentions MiniCS, minics CLI, ChatML datasets, grounding documents, or wants to build/tune a dataset from local files.
+description: "Use MiniCS (minichat-studio) — a local-first studio for building high quality LLM datasets with hybrid RAG + knowledge-graph grounding. Covers the full workflow: setup, document ingestion (`minics scan`), dataset authoring, retrieval, grounded chat, curation and export. Use when the user mentions MiniCS, minics CLI, ChatML datasets, grounding documents, or wants to build/tune a dataset from local files."
 ---
 
 # MiniCS
@@ -51,6 +51,7 @@ Load the specific sub-skill for the task at hand:
 | `minics-export` | Collections and exporting to ChatML, JSONL, Alpaca, ShareGPT, Markdown. |
 | `minics-python` | Using MiniCS as a Python library (`minics.services.context.AppContext`). |
 | `minics-server` | Headless serving: `minics serve`, Docker/GHCR image, reverse proxies. |
+| `minics-proxy` | OpenAI-compatible RAG proxy: `minics proxy` exposes grounded `/v1/chat/completions`. |
 
 ## Quick CLI reference
 
@@ -66,6 +67,7 @@ minics datasets --create NAME    list/create datasets
 minics entries [--dataset ID]    list entries
 minics export <collection>       export a collection (-o file --format jsonl)
 minics serve / minics app        browser server / desktop shell
+minics proxy                     OpenAI-compatible RAG proxy (FastAPI)
 minics skills install            install the MiniCS agent skillset (.agents/skills)
 minics info                      show resolved paths and state
 ```

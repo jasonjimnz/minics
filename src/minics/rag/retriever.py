@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 from typing import Any
 
 from minics.domain.entities import Citation
-from minics.llm.client import LLMError, embed_texts
+from minics.llm.client import LLMError, embed_texts, rerank_docs
 from minics.rag.fusion import fuse_hit_lists
 from minics.services.base import Service
 from minics.services.repositories import DocumentChunkRepository, DocumentRepository
@@ -32,6 +32,7 @@ class RetrievedChunk:
     vector_score: float = 0.0
     graph_score: float = 0.0
     fused_score: float = 0.0
+    rerank_score: float = 0.0
     ranks: dict[str, int] = field(default_factory=dict)
     sources: list[str] = field(default_factory=list)
     entities: list[str] = field(default_factory=list)
@@ -47,6 +48,7 @@ class RetrievedChunk:
             "vector_score": round(self.vector_score, 4),
             "graph_score": round(self.graph_score, 4),
             "fused_score": round(self.fused_score, 6),
+            "rerank_score": round(self.rerank_score, 4),
             "ranks": self.ranks,
             "sources": self.sources,
             "entities": self.entities,
@@ -151,7 +153,17 @@ class HybridRetriever(Service):
             rankings,
             k=settings.rrf_k,
             weights={"vector": settings.vector_weight, "graph": settings.graph_weight},
-        )[:top_k]
+        )
+
+        # Optional cross-encoder reranking: reorder the fused candidate pool
+        # by reranker relevance and keep the best ``top_k``.  Degrades to the
+        # fused ordering when the endpoint is missing or fails.
+        rerank_applied = False
+        if self.config.rerank_ready:
+            fused, rerank_applied = self._rerank(query, fused, top_k)
+        result.diagnostics["rerank"] = rerank_applied
+
+        fused = fused[:top_k]
 
         result.chunks = self._enrich(fused)
         result.diagnostics["fused"] = len(result.chunks)
@@ -203,6 +215,43 @@ class HybridRetriever(Service):
             hits = [h for h in hits if int(h.get("document_id") or 0) in allowed]
         return hits
 
+    # -- reranking -------------------------------------------------------
+    def _rerank(
+        self, query: str, fused: list[dict[str, Any]], top_k: int
+    ) -> tuple[list[dict[str, Any]], bool]:
+        """Reorder ``fused`` hits with the configured reranker.
+
+        Returns the (possibly unchanged) hit list plus whether reranking was
+        actually applied.  Any endpoint failure falls back to fused order.
+        """
+        settings = self.config.retrieval.rerank
+        pool = fused[: settings.pool]
+        texts: list[str] = []
+        for hit in pool:
+            heading = str(hit.get("heading") or "")
+            body = str(hit.get("document") or hit.get("text") or "")
+            texts.append(f"{heading}\n{body}".strip()[:4000])
+        if not texts:
+            return fused, False
+        try:
+            ranked = rerank_docs(query, texts, self.config, top_n=top_k)
+        except LLMError as exc:
+            self.emit("retrieval.rerank_failed", str(exc), level="warning")
+            return fused, False
+        if not ranked:
+            return fused, False
+        reordered: list[dict[str, Any]] = []
+        for position, item in enumerate(ranked, start=1):
+            hit = dict(pool[int(item["index"])])
+            hit["rerank_score"] = float(item["score"])
+            hit.setdefault("ranks", {})["rerank"] = position
+            hit.setdefault("sources", []).append("rerank")
+            reordered.append(hit)
+        # Keep any fused hits beyond the reranked pool untouched, after the
+        # reranked head, so no candidate is silently dropped.
+        tail = [h for h in fused[len(pool) :] if h not in reordered]
+        return reordered + tail, True
+
     # -- enrichment ------------------------------------------------------
     def _enrich(self, fused: list[dict[str, Any]]) -> list[RetrievedChunk]:
         if not fused:
@@ -231,6 +280,7 @@ class HybridRetriever(Service):
                     vector_score=float(hit.get("vector_score") or 0.0),
                     graph_score=float(hit.get("graph_score") or 0.0),
                     fused_score=float(hit.get("fused_score") or 0.0),
+                    rerank_score=float(hit.get("rerank_score") or 0.0),
                     ranks=dict(hit.get("ranks") or {}),
                     sources=list(hit.get("sources") or []),
                     entities=[e for e in (hit.get("entities") or []) if e],

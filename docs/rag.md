@@ -176,11 +176,15 @@ candidates)`:
    Failures warn on the bus and return `[]`.
 3. **Graph side**: `GraphIndexer.search` (term → entity → chunks). Same
    failure policy.
-4. **Fuse** with `fuse_hit_lists`, take `top_k`.
-5. **Enrich** from SQLite: canonical chunk text, document titles, heading and
+4. **Fuse** with `fuse_hit_lists`.
+5. **Rerank (optional)**: when `retrieval.rerank` is enabled and a model is
+   configured, the fused pool (`rerank.pool`, default 24) is re-scored by a
+   Cohere-compatible `POST /rerank` endpoint and the best `top_k` survive.
+   Failures degrade to the fused order.
+6. **Enrich** from SQLite: canonical chunk text, document titles, heading and
    index — producing `RetrievedChunk` objects carrying
-   `vector_score` / `graph_score` / `fused_score` / `ranks` / `sources` /
-   `entities`.
+   `vector_score` / `graph_score` / `fused_score` / `rerank_score` / `ranks` /
+   `sources` / `entities`.
 
 `RetrievalResult` adds `used_rag` / `used_graph` / diagnostics and:
 
@@ -210,4 +214,6 @@ the chat service injects into prompts and the UI renders as `[n]` references.
 | `graph_hops` (1) | Entity-neighbour expansion depth (1–3). |
 | `use_rag` / `use_graph` | Retriever switches (also per conversation). |
 | `use_grounding` | Whether retrieved context is actually injected into prompts. |
+| `rerank.enabled` (false) | Cross-encoder reordering — off unless explicitly enabled. |
+| `rerank.model` / `base_url` / `endpoint` / `pool` | Rerank endpoint wiring (Cohere-compatible `/rerank`). |
 | `embedding.chunk_size` / `chunk_overlap` | Chunking granularity (re-index after changing). |

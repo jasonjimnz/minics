@@ -2,6 +2,8 @@
 
 from __future__ import annotations
 
+import json
+
 from minics import cli
 
 
@@ -111,7 +113,12 @@ def test_scan_dry_run_changes_nothing(home, tmp_path, capsys):
     assert cli.main(["--home", str(home), "scan", str(docs), "--dry-run"]) == 0
     out = capsys.readouterr().out
     assert "would import" in out
-    assert not (home / "minics.sqlite3").exists()
+    # The store is initialised, but nothing is imported or indexed.
+    assert "0 imported" not in out  # dry-run reports, does not import
+    assert not list((home / "documents" / "originals").glob("*"))
+    assert cli.main(["--home", str(home), "documents"]) == 0
+    listed = json.loads(capsys.readouterr().out)
+    assert listed == []
 
 
 def test_scan_format_flags_filter_files(home, tmp_path, capsys):
@@ -141,28 +148,32 @@ def test_skills_list(home, tmp_path, capsys, monkeypatch):
 
 
 def test_skills_install_local_and_skip(home, tmp_path, capsys):
+    from minics.skills_install import bundled_skills
+
+    total = len(bundled_skills())
     target = tmp_path / "agents"
     assert cli.main(["--home", str(home), "skills", "install", "--dir", str(target)]) == 0
     out = capsys.readouterr().out
-    assert "11 installed" in out
+    assert f"{total} installed" in out
     assert (target / "minics" / "SKILL.md").is_file()
     assert (target / "minics-documents" / "SKILL.md").is_file()
 
     # Without --force everything is skipped; with --force it overwrites.
     assert cli.main(["--home", str(home), "skills", "install", "--dir", str(target)]) == 0
-    assert "0 installed, 11 skipped" in capsys.readouterr().out
-    assert cli.main(
-        ["--home", str(home), "skills", "install", "--dir", str(target), "--force"]
-    ) == 0
-    assert "11 installed" in capsys.readouterr().out
+    assert f"0 installed, {total} skipped" in capsys.readouterr().out
+    assert (
+        cli.main(["--home", str(home), "skills", "install", "--dir", str(target), "--force"]) == 0
+    )
+    assert f"{total} installed" in capsys.readouterr().out
 
 
 def test_skills_install_interactive_selection(home, tmp_path, capsys, monkeypatch):
     target = tmp_path / "agents"
     monkeypatch.setattr("builtins.input", lambda *a: "minics, minics-setup")
-    assert cli.main(
-        ["--home", str(home), "skills", "install", "--dir", str(target), "--interactive"]
-    ) == 0
+    assert (
+        cli.main(["--home", str(home), "skills", "install", "--dir", str(target), "--interactive"])
+        == 0
+    )
     out = capsys.readouterr().out
     assert "2 installed" in out
     assert (target / "minics" / "SKILL.md").is_file()
@@ -173,7 +184,28 @@ def test_skills_install_interactive_selection(home, tmp_path, capsys, monkeypatc
 def test_skills_install_unknown_name_fails(home, tmp_path, capsys, monkeypatch):
     target = tmp_path / "agents"
     monkeypatch.setattr("builtins.input", lambda *a: "not-a-skill")
-    assert cli.main(
-        ["--home", str(home), "skills", "install", "--dir", str(target), "--interactive"]
-    ) == 1
+    assert (
+        cli.main(["--home", str(home), "skills", "install", "--dir", str(target), "--interactive"])
+        == 1
+    )
     assert "Unknown skill" in capsys.readouterr().err
+
+
+def test_home_flag_before_and_after_subcommand(tmp_path, capsys):
+    """Regression: `minics --home X <cmd>` used to be silently ignored because
+    the subparser's default clobbered the main parser's value."""
+    a = tmp_path / "home-before"
+    b = tmp_path / "home-after"
+
+    # --home before the subcommand
+    assert cli.main(["--home", str(a), "init"]) == 0
+    assert (a / "documents").is_dir()
+
+    # --home after the subcommand
+    assert cli.main(["init", "--home", str(b)]) == 0
+    assert (b / "documents").is_dir()
+
+    # config writes land in the flagged home, not ~/.minics
+    assert cli.main(["--home", str(a), "config", "--set", '{"llm": {"model": "flagged"}}']) == 0
+    config = json.loads((a / "config.json").read_text())
+    assert config["llm"]["model"] == "flagged"

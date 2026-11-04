@@ -1025,6 +1025,13 @@
     const useRag = el("input", { type: "checkbox", checked: retrieval.use_rag });
     const useGraph = el("input", { type: "checkbox", checked: retrieval.use_graph });
     const useGrounding = el("input", { type: "checkbox", checked: retrieval.use_grounding });
+    const rerank = retrieval.rerank || { enabled: false, base_url: "", api_key: "", model: "", endpoint: "/rerank", pool: 24 };
+    const rerankEnabled = el("input", { type: "checkbox", checked: rerank.enabled });
+    const rerankBaseUrl = el("input", { type: "text", value: rerank.base_url, placeholder: "same as embeddings by default" });
+    const rerankApiKey = el("input", { type: "password", value: rerank.api_key });
+    const rerankModel = el("input", { type: "text", value: rerank.model, placeholder: "bge-reranker-v2-m3" });
+    const rerankEndpoint = el("input", { type: "text", value: rerank.endpoint || "/rerank" });
+    const rerankPool = el("input", { type: "number", min: "1", value: rerank.pool || 24 });
 
     const themeSelect = el("select");
     themeSelect.appendChild(UI.themeOptions(app.theme));
@@ -1078,6 +1085,11 @@
         retrieval: {
           top_k: Number(topK.value), rrf_k: Number(rrfK.value), graph_hops: Number(graphHops.value),
           use_rag: useRag.checked, use_graph: useGraph.checked, use_grounding: useGrounding.checked,
+          rerank: {
+            enabled: rerankEnabled.checked,
+            base_url: rerankBaseUrl.value, api_key: rerankApiKey.value, model: rerankModel.value,
+            endpoint: rerankEndpoint.value || "/rerank", pool: Number(rerankPool.value),
+          },
         },
         app: { theme: themeSelect.value, max_workers: Number(workers.value), clean_imports_with_llm: cleanImports.checked },
       };
@@ -1097,6 +1109,11 @@
         const embText = report.embedding.error
           || `${report.embedding.model} (${report.embedding.dimension}d)`;
         UI.clear(reportBox);
+        const rerankNode = report.rerank && report.rerank.enabled
+          ? el("div", null,
+              el("span", { class: `pill ${report.rerank.ok ? "ok" : "err"}`, text: report.rerank.ok ? "rerank ok" : "rerank failed" }),
+              el("span", { class: "muted", text: " " + (report.rerank.error || report.rerank.model || "") }))
+          : null;
         reportBox.appendChild(
           el("div", { style: { display: "grid", gap: "6px" } },
             el("div", null,
@@ -1106,7 +1123,8 @@
             el("div", null,
               el("span", { class: `pill ${report.embedding.ok ? "ok" : "err"}`, text: report.embedding.ok ? "embeddings ok" : "embeddings failed" }),
               el("span", { class: "muted", text: " " + embText })
-            )
+            ),
+            rerankNode
           )
         );
         if (report.embedding.ok && report.embedding.dimension) dimension.value = report.embedding.dimension;
@@ -1151,6 +1169,15 @@
         el("label", { class: "switch" }, useRag, el("span", { text: "Use vector (RAG) by default" })),
         el("label", { class: "switch" }, useGraph, el("span", { text: "Use graph retrieval by default" })),
         el("label", { class: "switch" }, useGrounding, el("span", { text: "Inject grounding into prompts by default" })),
+      ]),
+      card("Rerank (optional, off by default)", [
+        el("label", { class: "switch" }, rerankEnabled, el("span", { text: "Rerank retrieval results with a cross-encoder" })),
+        field("Base URL", rerankBaseUrl, "leave empty to reuse the embeddings base URL"),
+        field("API key", rerankApiKey),
+        field("Model", rerankModel),
+        el("div", { style: { display: "flex", gap: "12px" } },
+          el("div", { style: { flex: "1" } }, field("Endpoint path", rerankEndpoint, "Cohere/TEI compatible /rerank")),
+          el("div", { style: { flex: "1" } }, field("Candidate pool", rerankPool))),
       ]),
       card("Application", [
         field("Theme", themeSelect),

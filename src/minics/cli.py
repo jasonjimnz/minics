@@ -125,15 +125,38 @@ def cmd_setup(args: argparse.Namespace) -> int:
         if models["chat"]:
             print("Available chat models:", ", ".join(models["chat"][:20]))
         patch["llm"]["model"] = _ask("Chat model", current.llm.model)
-        patch["embedding"]["base_url"] = _ask(
-            "Embedding base URL (blank = same as LLM)", current.embedding.base_url
-        ) or patch["llm"]["base_url"]
-        patch["embedding"]["api_key"] = _ask(
-            "Embedding API key (blank = same as LLM)", current.embedding.api_key, secret=True
-        ) or patch["llm"]["api_key"]
+        patch["embedding"]["base_url"] = (
+            _ask("Embedding base URL (blank = same as LLM)", current.embedding.base_url)
+            or patch["llm"]["base_url"]
+        )
+        patch["embedding"]["api_key"] = (
+            _ask("Embedding API key (blank = same as LLM)", current.embedding.api_key, secret=True)
+            or patch["llm"]["api_key"]
+        )
         if models["embedding"]:
             print("Available embedding models:", ", ".join(models["embedding"][:20]))
         patch["embedding"]["model"] = _ask("Embedding model", current.embedding.model)
+        rerank_model = _ask(
+            "Rerank model (optional, blank = disabled)", current.retrieval.rerank.model
+        )
+        if rerank_model:
+            patch["retrieval"] = {
+                "rerank": {
+                    "enabled": True,
+                    "model": rerank_model,
+                    "base_url": _ask(
+                        "Rerank base URL (blank = embedding URL)",
+                        current.retrieval.rerank.base_url,
+                    ),
+                    "api_key": _ask(
+                        "Rerank API key (blank = embedding key)",
+                        current.retrieval.rerank.api_key,
+                        secret=True,
+                    ),
+                }
+            }
+        elif not current.retrieval.rerank.enabled:
+            patch["retrieval"] = {"rerank": {}}
     else:
         patch["llm"]["base_url"] = args.base_url or ctx.config.llm.base_url
         patch["llm"]["api_key"] = args.api_key or ctx.config.llm.api_key
@@ -146,6 +169,24 @@ def cmd_setup(args: argparse.Namespace) -> int:
         patch["llm"]["temperature"] = args.temperature
     if args.max_tokens is not None:
         patch["llm"]["max_tokens"] = args.max_tokens
+
+    # Optional reranker (off unless --rerank-model is given).
+    patch["retrieval"] = {"rerank": {}}
+    if getattr(args, "no_rerank", False):
+        patch["retrieval"]["rerank"]["enabled"] = False
+    elif args.rerank_model:
+        patch["retrieval"]["rerank"].update(
+            {
+                "enabled": True,
+                "base_url": args.rerank_base_url or "",
+                "api_key": args.rerank_api_key or "",
+                "model": args.rerank_model,
+            }
+        )
+        if args.rerank_endpoint:
+            patch["retrieval"]["rerank"]["endpoint"] = args.rerank_endpoint
+        if args.rerank_pool is not None:
+            patch["retrieval"]["rerank"]["pool"] = args.rerank_pool
 
     ctx.update_config(patch)
 
@@ -279,9 +320,21 @@ def cmd_scan(args: argparse.Namespace) -> int:
     extensions = {ext for ext, kind in SUPPORTED_EXTENSIONS.items() if kind in selected}
 
     _SKIP_DIRS = {
-        ".git", ".hg", ".svn", ".venv", "venv", "node_modules", "__pycache__",
-        ".pytest_cache", ".mypy_cache", ".ruff_cache", "dist", "build",
-        ".agents", ".idea", ".vscode",
+        ".git",
+        ".hg",
+        ".svn",
+        ".venv",
+        "venv",
+        "node_modules",
+        "__pycache__",
+        ".pytest_cache",
+        ".mypy_cache",
+        ".ruff_cache",
+        "dist",
+        "build",
+        ".agents",
+        ".idea",
+        ".vscode",
     }
     files: list[Path] = []
     for path in sorted(root.rglob("*")):
@@ -301,10 +354,7 @@ def cmd_scan(args: argparse.Namespace) -> int:
         ctx.close()
         return 0
 
-    print(
-        f"Scanning {root} — {len(files)} document(s) "
-        f"[{', '.join(sorted(selected))}]\n"
-    )
+    print(f"Scanning {root} — {len(files)} document(s) [{', '.join(sorted(selected))}]\n")
     if args.dry_run:
         for path in files:
             print(f"  would import {path.relative_to(root)}")
@@ -362,8 +412,12 @@ def cmd_skills(args: argparse.Namespace) -> int:
     from minics.skills_install import (
         bundled_skills,
         default_target,
+        description_yaml_issue,
         install_skills,
         installed_version,
+        pi_installed,
+        pi_trust_decision,
+        register_pi_trust,
     )
 
     if args.action == "list" or args.list:
@@ -413,9 +467,52 @@ def cmd_skills(args: argparse.Namespace) -> int:
         print(f"  + {name}")
     for name in skipped:
         print(f"  = {name} (already installed, use --force to overwrite)")
+    # Frontmatter sanity: Pi silently drops skills whose description breaks
+    # strict YAML (e.g. an unquoted ": " inside the value).
+    for skill in bundled_skills():
+        issue = description_yaml_issue(skill)
+        if issue:
+            print(
+                f"  ! WARNING: skill '{skill.name}' {issue}; Pi will not load it.",
+                file=sys.stderr,
+            )
     print(
         f"\nDone: {len(installed)} installed, {len(skipped)} skipped.\n"
         "Restart your agent so it picks up the new skills."
+    )
+
+    # --- Pi project-trust integration ---------------------------------
+    # Pi only loads project-level `.agents/skills` once the project
+    # directory has been granted project trust. User-scope installs
+    # (~/.agents/skills) are always loaded and need no decision.
+    is_global = target == default_target(True)
+    project_dir = target.parent.parent if target.parent.name == ".agents" else Path.cwd()
+    if pi_installed() and not is_global:
+        decision = pi_trust_decision(project_dir)
+        if args.pi_trust or (args.pi_trust is None and decision is None):
+            register_pi_trust(project_dir, trusted=True)
+            decision = True
+            print(f"Pi project trust saved for {project_dir}")
+        if decision is None:
+            print(
+                "\nPi note: project `.agents/skills` requires project trust.\n"
+                "  - run `minics skills install --pi-trust` to save the decision, or\n"
+                "  - run `/trust` inside Pi and approve this project, or\n"
+                "  - start Pi with `pi --approve` (one-shot).\n"
+                "Alternatively install globally with `minics skills install --global`\n"
+                "(~/.agents/skills is user scope and needs no trust)."
+            )
+    return 0
+
+
+def cmd_proxy(args: argparse.Namespace) -> int:
+    """Run the OpenAI-compatible RAG proxy server."""
+    from minics.proxy.app import run_proxy
+
+    print(f"MiniCS proxy v{__version__} — http://{args.host}:{args.port}/v1")
+    print("OpenAI-compatible endpoint with retrieval grounding (Ctrl+C to stop).")
+    run_proxy(
+        host=args.host, port=args.port, home=getattr(args, "home", None), log_level=args.log_level
     )
     return 0
 
@@ -437,7 +534,9 @@ def cmd_export(args: argparse.Namespace) -> int:
     ctx = _ctx(args)
     ctx.ensure_ready()
     content = ctx.collections.export(
-        args.collection, fmt=args.format, include_metadata=args.include_metadata,
+        args.collection,
+        fmt=args.format,
+        include_metadata=args.include_metadata,
         only_approved=args.approved,
     )
     if args.output:
@@ -486,7 +585,13 @@ def _safe_models(base_url: str, api_key: str) -> dict:
 
 
 def _add_common(parser: argparse.ArgumentParser) -> None:
-    parser.add_argument("--home", default=None, help="Override the MiniCS home directory.")
+    # ``--home`` also exists on the main parser. The subparser copy must use
+    # SUPPRESS as default: a regular ``default=None`` would clobber the value
+    # parsed by the main parser whenever the flag is given *before* the
+    # subcommand (argparse copies every subparser namespace entry over).
+    parser.add_argument(
+        "--home", default=argparse.SUPPRESS, help="Override the MiniCS home directory."
+    )
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -497,7 +602,7 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument(
         "--home",
         default=None,
-        help="Override the MiniCS home directory (also accepted after a command).",
+        help="Override the MiniCS home directory (before or after the command).",
     )
     sub = parser.add_subparsers(dest="command", metavar="<command>")
 
@@ -525,6 +630,11 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--debug", action="store_true")
     sp.add_argument("--no-browser", action="store_true")
 
+    sp = add("proxy", cmd_proxy, "Run the OpenAI-compatible RAG proxy (FastAPI).")
+    sp.add_argument("--host", default="127.0.0.1")
+    sp.add_argument("--port", type=int, default=8766)
+    sp.add_argument("--log-level", default="info")
+
     sp = add("setup", cmd_setup, "Configure LLM and embedding endpoints.")
     sp.add_argument("--base-url")
     sp.add_argument("--api-key")
@@ -533,6 +643,16 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--embedding-api-key")
     sp.add_argument("--embedding-model")
     sp.add_argument("--embedding-dimension", type=int)
+    sp.add_argument("--rerank-base-url", help="Rerank endpoint (blank = embedding URL).")
+    sp.add_argument("--rerank-api-key", help="Rerank API key (blank = embedding key).")
+    sp.add_argument(
+        "--rerank-model", help="Enable reranking with this model (e.g. bge-reranker-v2-m3)."
+    )
+    sp.add_argument("--rerank-endpoint", default=None, help="Rerank path (default /rerank).")
+    sp.add_argument(
+        "--rerank-pool", type=int, default=None, help="Candidates sent to the reranker."
+    )
+    sp.add_argument("--no-rerank", action="store_true", help="Disable reranking.")
     sp.add_argument("--temperature", type=float)
     sp.add_argument("--max-tokens", type=int)
     sp.add_argument("--test", action="store_true")
@@ -596,6 +716,13 @@ def build_parser() -> argparse.ArgumentParser:
     sp.add_argument("--force", action="store_true", help="Overwrite already-installed skills.")
     sp.add_argument("--dir", metavar="PATH", help="Install into a custom directory.")
     sp.add_argument("--list", action="store_true", help="List bundled skills and exit.")
+    sp.add_argument(
+        "--pi-trust",
+        dest="pi_trust",
+        action="store_true",
+        default=None,
+        help="Save a Pi project-trust decision so Pi loads ./.agents/skills (recommended for Pi).",
+    )
 
     add("reindex", cmd_reindex, "Re-index all documents.")
 

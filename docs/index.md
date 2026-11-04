@@ -25,7 +25,7 @@ theme picker in the browser.
 | 9 | [Core & backend](backend.md) | The SQLite writer thread, event bus, job manager, generic repository, domain entities, services, CLI and desktop shell. |
 | 10 | [LLM layer](llm.md) | The OpenAI-protocol client, embeddings, structured output with fallbacks + truncation handling, the prompt library and the authoring helpers. |
 | 11 | [RAG & graph](rag.md) | Document conversion, markdown-aware chunking, entity extraction, the Ladybug graph schema, ChromaDB, the indexing pipeline and RRF hybrid retrieval. |
-| 12 | [Serving with Flask](serving.md) | `minics serve`, the Flask app factory, reverse proxies, security and WSGI notes. |
+| 12 | [Serving](serving.md) | `minics serve`, the Flask app factory, reverse proxies, WSGI notes and the OpenAI-compatible `minics proxy`. |
 | 13 | [Docker](docker.md) | Running MiniCS as a server container: build, volumes, first-run setup, operations. |
 | 14 | [HTTP API](api.md) | Every REST endpoint, the SSE event stream, the background-job workflow and error mapping. |
 | 15 | [Frontend](frontend.md) | The no-build SPA: module layout, hash routing, SSE consumption, theming, the markdown renderer, the graph canvas and every screen. |

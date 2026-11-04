@@ -38,7 +38,8 @@ Internals: [rag.md](rag.md).
 | Vector search | Semantic similarity over document chunks. |
 | Graph search | Topology-aware results from the entity graph. |
 | RRF fusion | Reciprocal Rank Fusion merges both ranked lists. |
-| Graceful degradation | If the graph is unavailable, retrieval degrades to vectors-only (and vice versa) — nothing crashes. |
+| Reranking (optional) | A Cohere-compatible cross-encoder (`/rerank`) re-scores the fused pool — off by default, enabled per config or `minics setup --rerank-model`. |
+| Graceful degradation | If the graph is unavailable, retrieval degrades to vectors-only (and vice versa) — nothing crashes. Reranker failures fall back to the fused order. |
 | Terminal search | `minics search "query" --top-k 5` for quick checks. |
 
 ## 4. LLM authoring toolbox
@@ -87,10 +88,11 @@ Internals: [backend.md](backend.md) (jobs, events) and [api.md](api.md) (the SSE
 | --- | --- | --- |
 | Desktop | `minics` | Daily authoring — native window via PyWebView. |
 | Browser | `minics serve` | Headless machines, remote boxes, quick demos. |
+| OpenAI proxy | `minics proxy` | Let any other service consume the index through `/v1/chat/completions` with grounding. |
 | Container | `docker compose up -d` | Home server / VPS with a persistent volume. |
 
-All three share the same Flask engine and the same store — see
-[serving.md](serving.md) and [docker.md](docker.md).
+All of them share the same store and configuration — see [serving.md](serving.md)
+and [docker.md](docker.md).
 
 ## 9. CLI and Python API
 

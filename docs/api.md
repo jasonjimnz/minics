@@ -1,5 +1,9 @@
 # HTTP API
 
+> Looking for the **OpenAI-compatible** API (for OpenAI SDKs, GUIs and other
+> services)? That is the separate proxy server — see [Proxy API](proxy.md).
+> This page documents the studio's own REST API consumed by the web UI.
+
 The Flask layer (`minics/server`) is a thin, typed façade over the service
 layer. Every endpoint returns the same JSON envelope, long work returns a job,
 and live progress streams over Server-Sent Events. The API is what the

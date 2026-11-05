@@ -207,7 +207,7 @@ A prebuilt server image is published on **GHCR** for every release — pull it
 directly instead of building:
 
 ```bash
-docker pull ghcr.io/jasonjimnz/minics:0.5.0   # or :latest
+docker pull ghcr.io/jasonjimnz/minics:0.5.1   # or :latest
 ```
 
 The container keeps the whole store in a volume and
@@ -297,6 +297,7 @@ Every layer is documented in depth in [`docs/`](docs/index.md):
 | [LLM layer](docs/llm.md) | OpenAI protocol client, embeddings, structured output + truncation handling, prompts, authoring helpers. |
 | [RAG & graph](docs/rag.md) | Conversion, chunking, entity extraction, Ladybug schema, Chroma, indexing pipeline, RRF hybrid retrieval. |
 | [HTTP API](docs/api.md) | Full REST reference, SSE event stream, job workflow, error mapping. |
+| [Proxy API](docs/proxy.md) | The OpenAI-compatible `minics proxy`: grounding flow, endpoints, payloads, the `minics` metadata block and client examples. |
 | [Serving](docs/serving.md) | `minics serve`, reverse proxies, and the OpenAI-compatible `minics proxy`. |
 | [Docker](docs/docker.md) | Server container: build, run, Compose, volumes, first-run setup, troubleshooting. |
 | [Frontend](docs/frontend.md) | The no-build SPA: modules, hash routing, SSE, themes, markdown, graph view, every screen. |
@@ -359,7 +360,7 @@ and style conventions.
 
 ## Status
 
-**Version 0.5.0 is ready.** The project is still a **beta** and intentionally
+**Version 0.5.1 is ready.** The project is still a **beta** and intentionally
 a **small project** — a lite blend of ChatML Studio and Tyness — built in
 small, versioned increments (see `git log`).
 

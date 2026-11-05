@@ -20,7 +20,7 @@ init step. `minics app` instead launches the PyWebView desktop shell.
 A prebuilt server image is published on GHCR for every release:
 
 ```bash
-docker pull ghcr.io/jasonjimnz/minics:latest      # or a version tag, e.g. :0.5.0
+docker pull ghcr.io/jasonjimnz/minics:latest      # or a version tag, e.g. :0.5.1
 docker run -d -p 8765:8765 -v minics-data:/data ghcr.io/jasonjimnz/minics:latest
 ```
 

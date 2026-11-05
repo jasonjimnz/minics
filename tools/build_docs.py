@@ -17,12 +17,12 @@ import argparse
 import json
 import re
 import shutil
-import tomllib
 from datetime import datetime, timezone
 from html import escape
 from pathlib import Path
 
 import markdown
+import tomllib
 from pygments.formatters import HtmlFormatter
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -65,6 +65,8 @@ PAGES: list[tuple[str, str, str, str]] = [
     ("llm", "LLM layer", "OpenAI-protocol client, embeddings, structured output, prompt library.", "Core"),
     ("rag", "RAG & graph engine", "Conversion, chunking, entity extraction, ChromaDB, Ladybug graph, RRF.", "Core"),
     ("serving", "Serving with Flask", "minics serve, the app factory, reverse proxies and security notes.", "Running"),
+    ("proxy", "Proxy API",
+     "The OpenAI-compatible endpoint: grounding, the minics metadata block, payloads and clients.", "Running"),
     ("docker", "Docker", "Running MiniCS as a server container: build, volumes, operations.", "Running"),
     ("api", "HTTP API", "Every REST endpoint, the SSE stream, background jobs, error mapping.", "Reference"),
     ("frontend", "Frontend", "The no-build SPA: routing, SSE, theming, markdown renderer, graph canvas.", "Reference"),

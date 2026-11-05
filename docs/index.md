@@ -25,11 +25,12 @@ theme picker in the browser.
 | 9 | [Core & backend](backend.md) | The SQLite writer thread, event bus, job manager, generic repository, domain entities, services, CLI and desktop shell. |
 | 10 | [LLM layer](llm.md) | The OpenAI-protocol client, embeddings, structured output with fallbacks + truncation handling, the prompt library and the authoring helpers. |
 | 11 | [RAG & graph](rag.md) | Document conversion, markdown-aware chunking, entity extraction, the Ladybug graph schema, ChromaDB, the indexing pipeline and RRF hybrid retrieval. |
-| 12 | [Serving](serving.md) | `minics serve`, the Flask app factory, reverse proxies, WSGI notes and the OpenAI-compatible `minics proxy`. |
-| 13 | [Docker](docker.md) | Running MiniCS as a server container: build, volumes, first-run setup, operations. |
-| 14 | [HTTP API](api.md) | Every REST endpoint, the SSE event stream, the background-job workflow and error mapping. |
-| 15 | [Frontend](frontend.md) | The no-build SPA: module layout, hash routing, SSE consumption, theming, the markdown renderer, the graph canvas and every screen. |
-| 16 | [Data & storage](storage.md) | The `~/.minics` store, the three embedded databases, backups, portability and privacy. |
+| 12 | [Serving](serving.md) | `minics serve`, the Flask app factory, reverse proxies and WSGI notes. |
+| 13 | [Proxy API](proxy.md) | The OpenAI-compatible `minics proxy`: endpoints, payloads, the `minics` metadata block, streaming and client examples. |
+| 14 | [Docker](docker.md) | Running MiniCS as a server container: build, volumes, first-run setup, operations. |
+| 15 | [HTTP API](api.md) | Every REST endpoint, the SSE event stream, the background-job workflow and error mapping. |
+| 16 | [Frontend](frontend.md) | The no-build SPA: module layout, hash routing, SSE consumption, theming, the markdown renderer, the graph canvas and every screen. |
+| 17 | [Data & storage](storage.md) | The `~/.minics` store, the three embedded databases, backups, portability and privacy. |
 | 17 | [Development](development.md) | Setting up a dev environment, running tests, fixtures, code style, schema migrations and contribution workflow. |
 | 18 | [Colab + vLLM example](colab-example.md) | Running the whole MiniCS library programmatically on a free Google Colab T4 GPU, with vLLM serving the chat + embedding models in the background. |
 

@@ -4,7 +4,7 @@
 #   open http://localhost:8765
 #
 # Uses the published image, so you only need this file — not the repo.
-# Pin a specific release by replacing `latest` with e.g. `0.5.0`.
+# Pin a specific release by replacing `latest` with e.g. `0.5.1`.
 
 services:
   minics:
